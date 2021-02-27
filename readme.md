@@ -1,9 +1,10 @@
 # MERN Boilerplate
 
 MERN Boilerplate is a project made with the follow technologies:
-- MongoDB
 - Express JS
 - React JS
+- MongoDB
+- Typescript
 - NodeJs
 
 ## Installation
