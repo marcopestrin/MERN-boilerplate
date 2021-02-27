@@ -1,4 +1,4 @@
-# Foobar
+# MERN Boilerplate
 
 MERN Boilerplate is a project made with the follow technologies:
 - MongoDB
