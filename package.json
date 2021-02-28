@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "test",
+    "lint":"eslint",
     "dev": "env-cmd -f .env.development nodemon --exec \"ts-node-dev\" ./index.ts"
   },
   "author": "Marco Pestrin",
@@ -21,6 +22,14 @@
   },
   "devDependencies": {
     "@types/express": "^4.17.11",
-    "@types/passport": "^1.0.6"
+    "@types/passport": "^1.0.6",
+    "@typescript-eslint/eslint-plugin": "^4.15.2",
+    "@typescript-eslint/parser": "^4.15.2",
+    "eslint": "^7.21.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-react": "^7.22.0",
+    "eslint-plugin-react-hooks": "^4.2.0"
   }
 }

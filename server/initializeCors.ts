@@ -5,7 +5,7 @@ import { Express } from "express";
 export default function initializeCors(app: Express): void {
 	let whitelist: string[];
 	if (isProduction) {
-        whitelist = [process.env.FRONTEND_URL as string];
+        whitelist = [ process.env.FRONTEND_URL as string ];
     } else {
 		whitelist = [
 			`http://localhost:3000`,
