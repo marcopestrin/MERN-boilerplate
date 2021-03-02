@@ -1,14 +1,17 @@
 import express, { Response, Request, NextFunction } from "express";
+import User from '../../models/user';
 
 const router: express.Router = express.Router();
+const user = new User();
+const { createNewUser } = user;
 
-router.get("/getUsers", async(req: Request, res: Response, next: NextFunction) => {
+router.post("/create", async(req: Request, res: Response, next: NextFunction) => {
 	try {
-        res.json({
-			'example': 'lorem ipsum'
-		});
+        const result: any = await createNewUser(req.body);
+		res.json(result);
+
 	} catch (e) {
-		next(e);
+		console.log(e);
 	}
 });
 

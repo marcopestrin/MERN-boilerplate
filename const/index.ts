@@ -12,3 +12,6 @@ export const logSettings = {
 		"error_log": "./errors.log",
 	}
 };
+export const databaseName = "mern-boilerplate";
+export const databasePort = "27017";
+export const databaseServer = "localhost";
