@@ -7,23 +7,18 @@ MERN Boilerplate is a project made with the follow technologies:
 - Typescript
 - JWT
 - NodeJs
-
-## Set .env file
-Example:
+## Installation
+set .env file in root with this template:
 ```bash
-CLUSTER=false
-NODE_ENV=development
-PORT=8000
+CLUSTER=
+NODE_ENV=
+PORT=
 FRONTEND_URL=
 ```
-
-## Installation
-
+run to CLI:
 ```bash
 npm install
 npm run dev
 ```
-
-
 ## Contributing
 Under construction by Marco Pestrin
