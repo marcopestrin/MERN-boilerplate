@@ -1,5 +1,5 @@
-import schema from './schema/user';
 import { Response, Request, NextFunction } from "express";
+import schema from './schema/user';
 
 export default class User {
 
