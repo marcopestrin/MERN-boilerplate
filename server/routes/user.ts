@@ -5,11 +5,13 @@ const router: express.Router = express.Router();
 const user = new User();
 const { createNewUser, getAllUser, getUserById, toggleActiveUser, deleteUser } = user;
 
-const checkAuth = () => {}
+const checkAuth = () => {};
+const validateInput = () => {};
 
 const middleware = async(req: Request, res: Response, next: NextFunction) => {
 	await checkAuth();
-	next()
+	await validateInput();
+	next();
 };
 
 router.post("/create", middleware, createNewUser);

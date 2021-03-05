@@ -1,15 +1,23 @@
 import { Response, Request, NextFunction } from "express";
 import jwt from 'jsonwebtoken';
+import passport from 'passport'
 import schema from './schema/user';
+import { applicationDomain, expiresAccessToken } from '../const';
+import { json } from "body-parser";
 
+const LocalStrategy = require('passport-local').Strategy
+interface tokens {
+    accessToken: String,
+    refreshToken: String
+}
 export default class Auth {
 
-    constructor() {
-        this.generateAccessToken = this.generateAccessToken.bind(this);
-        this.validationInput = this.validationInput.bind(this);
-    };
+    // constructor() {
+    //     this.generateAccessToken = this.generateAccessToken.bind(this);
+    //     this.validationInput = this.validationInput.bind(this);
+    // };
 
-    generateAccessToken(username: string, password: string){
+    generateTokens(username: string, password: string){
         const payload: object = {
             username,
             password
@@ -28,14 +36,63 @@ export default class Auth {
         return true;
     };
 
+
+    initializePassport() {
+        const authenticateUser = async(username: string, password: string, done: Function) => {
+            try {
+                const user: any = await schema.find({ username }, (err: object, res: object) => {
+                    if (err) {
+                        throw err;   
+                    }
+                    console.log(res)
+                    return res
+                });
+                if (user === null) {
+                    return done(null, false, {
+                        message: 'user not found'
+                    });
+                }
+                if (password === user.password) {
+                    // PASS !!
+                    return done(null, user);
+                } else {
+                    return done(null, false, {
+                        message: 'password wrong'
+                    });
+                }
+            } catch (error) {
+                done(error);
+            }
+        };
+
+        passport.use(new LocalStrategy({
+            usernameField: 'username',
+            passwordField: 'password' 
+        }, authenticateUser))
+    };
+
     login(req: Request, res: Response, next: NextFunction) {
-        const { username, password } = req.body;
-        const validate: boolean = this.validationInput(username, password);
-        if (validate){
-            const tokens: object = this.generateAccessToken(username, password);
-            res.json(tokens);
-        } else {
-            res.json("wrong input")
+        try {
+            const { username, password } = req.body;
+            const validate: boolean = this.validationInput(username, password);
+            if (validate) {
+                const tokens: tokens = this.generateTokens(username, password);
+                const options: object = {
+                    domain: applicationDomain,
+                    expires: new Date(Date.now() + expiresAccessToken)
+                };
+                console.log("tokens", tokens);
+                this.initializePassport() 
+
+                res.cookie('accessToken', tokens.accessToken, options)
+                .cookie('refreshToken', tokens.refreshToken, options);
+                res.json(tokens);
+
+            } else {
+                res.json("wrong input")
+            }
+        } catch (error) {
+            next(error);
         }
     };
 

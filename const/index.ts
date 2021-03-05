@@ -15,3 +15,5 @@ export const logSettings = {
 export const databaseName = "mern-boilerplate";
 export const databasePort = "27017";
 export const databaseServer = "localhost";
+export const applicationDomain = "pes-mern-boilerplate";
+export const expiresAccessToken =  900000; // millisecond
