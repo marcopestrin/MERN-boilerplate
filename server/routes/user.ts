@@ -1,16 +1,17 @@
 import express, { Response, Request, NextFunction } from "express";
 import User from '../../models/user';
+import Auth from '../../models/auth';
 
 const router: express.Router = express.Router();
 const user = new User();
+const auth = new Auth();
+
 const { createNewUser, getAllUser, getUserById, toggleActiveUser, deleteUser } = user;
 
-const checkAuth = () => {};
-const validateInput = () => {};
-
 const middleware = async(req: Request, res: Response, next: NextFunction) => {
-	await checkAuth();
-	await validateInput();
+	console.log("inizio middleware degli user");
+	const result = await auth.verifyToken(req, res, next);
+	console.log("fine middleware degli user", result);
 	next();
 };
 

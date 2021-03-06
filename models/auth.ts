@@ -2,22 +2,38 @@ import { Response, Request, NextFunction } from "express";
 import jwt from 'jsonwebtoken';
 import passport from 'passport'
 import schema from './schema/user';
-import { applicationDomain, expiresAccessToken } from '../const';
-import { json } from "body-parser";
+import { Strategy, ExtractJwt } from 'passport-jwt';
 
-const LocalStrategy = require('passport-local').Strategy
 interface tokens {
     accessToken: String,
     refreshToken: String
-}
+};
+
+export const applyPassportStrategy = () => {
+    const options: any = {};
+    options.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+    options.secretOrKey = 'ciao';
+    // passport.use(
+    //   new Strategy(options, (payload, done) => {
+    //     schema.findOne({ email: payload.email }, (err, user) => {
+    //       if (err) {
+    //         return done(err, false);
+    //       }
+    //       if (user) {
+    //         return done(null, {
+    //           email: user.email,
+    //         });
+    //       }
+    //       return done(null, false);
+    //     });
+    //   })
+    // );
+  };
+  
 export default class Auth {
 
-    // constructor() {
-    //     this.generateAccessToken = this.generateAccessToken.bind(this);
-    //     this.validationInput = this.validationInput.bind(this);
-    // };
-
     generateTokens(username: string, password: string){
+        console.log("Generate tokens");
         const payload: object = {
             username,
             password
@@ -33,63 +49,47 @@ export default class Auth {
     };
 
     validationInput(username: string, password: string) {
+        // inserire qui il valiatore dei dati di input
+        console.log("validate input");
         return true;
     };
 
-
-    initializePassport() {
-        const authenticateUser = async(username: string, password: string, done: Function) => {
-            try {
-                const user: any = await schema.find({ username }, (err: object, res: object) => {
-                    if (err) {
-                        throw err;   
-                    }
-                    console.log(res)
-                    return res
-                });
-                if (user === null) {
-                    return done(null, false, {
-                        message: 'user not found'
-                    });
-                }
-                if (password === user.password) {
-                    // PASS !!
-                    return done(null, user);
-                } else {
-                    return done(null, false, {
-                        message: 'password wrong'
-                    });
-                }
-            } catch (error) {
-                done(error);
-            }
-        };
-
-        passport.use(new LocalStrategy({
-            usernameField: 'username',
-            passwordField: 'password' 
-        }, authenticateUser))
+    checkCredentials(username: string, password: string) {
+        // verificare se le credenziali sono corrette
+        console.log('checkCredentials');
+        return true;
     };
+
+    verifyToken = async (req, res, next) => {
+        try {
+            console.log("verifyToken")
+            const token = req.cookies.accessToken || '';
+        if (!token) {
+            return res.status(401).json('You need to Login')
+        }
+        return await jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);          
+        } catch (err) {
+            return res.status(500).json(err.toString());
+        }
+    };
+
 
     login(req: Request, res: Response, next: NextFunction) {
         try {
+            console.log("login inizio");
             const { username, password } = req.body;
-            const validate: boolean = this.validationInput(username, password);
-            if (validate) {
-                const tokens: tokens = this.generateTokens(username, password);
-                const options: object = {
-                    domain: applicationDomain,
-                    expires: new Date(Date.now() + expiresAccessToken)
-                };
-                console.log("tokens", tokens);
-                this.initializePassport() 
-
-                res.cookie('accessToken', tokens.accessToken, options)
-                .cookie('refreshToken', tokens.refreshToken, options);
-                res.json(tokens);
-
+            if (this.validationInput(username, password)) {
+                if (this.checkCredentials(username, password)) {
+                    const tokens: tokens = this.generateTokens(username, password);
+                    res.cookie('accessToken', tokens.accessToken);
+                    res.cookie('refreshToken', tokens.refreshToken);
+                    console.log("fine login")
+                    res.json(tokens);
+                } else {
+                    res.json('wrong credentials');
+                }
             } else {
-                res.json("wrong input")
+                res.json("wrong input");
             }
         } catch (error) {
             next(error);
