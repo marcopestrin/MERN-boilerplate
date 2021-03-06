@@ -48,6 +48,11 @@ export default class Auth {
         };
     };
 
+    validateBody(req: Request, res: Response, next: NextFunction) {
+        // inseire qui la validazione del body quando faccio update
+        return true
+    };
+
     validationInput(username: string, password: string) {
         // inserire qui il valiatore dei dati di input
         console.log("validate input");
@@ -60,7 +65,7 @@ export default class Auth {
         return true;
     };
 
-    verifyToken = async (req, res, next) => {
+    verifyToken = async (req: Request, res: Response, next: NextFunction) => {
         try {
             console.log("verifyToken")
             const token = req.cookies.accessToken || '';

@@ -82,4 +82,21 @@ export default class User {
             res.status(500).json(error);
         }
     }
+
+    updateUser(req: Request, res: Response) {
+        try {
+            const { username, password, email } = req.body;
+            const { id } = req.query;
+            const query: object = { id };
+            const set: object = { $set: { username, password, email } }
+            schema.updateOne(query, set)
+            .exec((err: object, result:object) => {
+                if (err) throw err;
+                res.json(result);
+            })
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(error);
+        }
+    }
 };
