@@ -3,6 +3,7 @@
 MERN Boilerplate is a project made with the follow technologies:
 - Express JS
 - React JS
+- Redux
 - MongoDB / Mongoose
 - Typescript
 - JWT
@@ -17,6 +18,7 @@ FRONTEND_URL=
 ACCESS_TOKEN_SECRET=
 REFRESH_TOKEN_SECRET=
 ACCESS_TOKEN_LIFE=
+ADMIN_PASSWORD=
 ```
 run to CLI:
 ```bash
