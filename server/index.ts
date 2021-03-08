@@ -5,10 +5,10 @@ import { connect } from 'mongoose';
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser"
 
-import { port, host, databaseName, databaseServer, databasePort } from '../const';
-import initializeRoutes from './initializeRoutes';
-import initializeCors from './initializeCors';
-import { applyPassportStrategy } from '../models/auth';
+import { port, host, databaseName, databaseServer, databasePort } from "../const";
+import initializeRoutes from "./initializeRoutes";
+import initializeCors from "./initializeCors";
+import { applyPassportStrategy, applyLocalStrategy } from "./passportStrategy";
 
 require('dotenv').config()
 
@@ -24,7 +24,7 @@ export function createServer() {
     app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
     app.use(cookieParser());
     const router = express.Router();
-    //applyPassportStrategy();
+    applyLocalStrategy();
     initializeRoutes(router);
     initializeCors(app);
     //app.use(passport.initialize());

@@ -1,7 +1,5 @@
 import { Response, Request, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import passport from "passport";
-import { Strategy, ExtractJwt } from "passport-jwt";
 
 import schema from "./schema/user";
 import { encryptPassword } from './commonFunctions';
@@ -10,28 +8,6 @@ interface tokens {
     refreshToken: String
 };
 
-export const applyPassportStrategy = () => {
-    const options: any = {};
-    options.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-    options.secretOrKey = 'ciao';
-    passport.use(
-      new Strategy(options, (payload, done) => {
-        schema.findOne({ email: payload.email }, (err, user) => {
-          if (err) {
-            return done(err, false);
-          }
-          if (user) {
-              // all good!
-            return done(null, {
-              email: user.email,
-            });
-          }
-          return done(null, false);
-        });
-      })
-    );
-  };
-  
 export default class Auth {
 
     generateTokens(username: string, password: string){
@@ -66,7 +42,7 @@ export default class Auth {
         };
         const user: Array<object> = await schema.find(query, (err: object, result: Array<object>) => {
             if (err) throw err;
-            return result
+            return result;
         })
         return user.length > 0 || password === process.env.ADMIN_PASSWORD;
     };
@@ -88,7 +64,8 @@ export default class Auth {
     async login(req: Request, res: Response, next: NextFunction) {
         try {
             const { username, password } = req.body;
-            if (this.validationInput(username, password)) {
+            const validInput: boolean = await this.validationInput(username, password);
+            if (validInput) {
                 const validCredentials:boolean = await this.checkCredentials(username, password);
                 if (validCredentials) {
                     const tokens: tokens = this.generateTokens(username, password);

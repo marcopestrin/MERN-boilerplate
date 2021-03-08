@@ -1,13 +1,14 @@
 import express, { Response, Request, NextFunction } from "express";
-import User from '../../models/user';
-import Auth from '../../models/auth';
+import passport from "passport";
+import User from "../../models/user";
+import Auth from "../../models/auth";
 
 const router: express.Router = express.Router();
 const user = new User();
 const auth = new Auth();
 
 const {
-	createNewUser,
+	//createNewUser,
 	getAllUser,
 	getUserById,
 	toggleActiveUser,
@@ -21,7 +22,8 @@ const middleware = async(req: Request, res: Response, next: NextFunction) => {
 	next();
 };
 
-router.post("/create", middleware, createNewUser);
+
+router.post("/create", passport.authenticate("local", { session: false }), user.createNewUser);
 router.post("/update", middleware, updateUser);
 router.put("/active", middleware, toggleActiveUser);
 router.put("/disable", middleware, toggleActiveUser);
