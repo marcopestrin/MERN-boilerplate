@@ -1,11 +1,18 @@
 import { Response, Request, NextFunction } from "express";
 import schema from './schema/user';
-
+import { encryptPassword } from './commonFunctions';
 export default class User {
 
     createNewUser(req: Request, res: Response) {
         try {
-            const payload: object = req.body;
+            const { password, username, email, id } = req.body;
+            const passwordEncrypt: string = encryptPassword(password);
+            const payload: object = {
+                password: passwordEncrypt,
+                username,
+                email,
+                id
+            };
             schema.create(payload, (err: object, result: object) => {
                 if (err) throw err;
                 res.json(result);

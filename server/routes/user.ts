@@ -16,10 +16,8 @@ const {
 } = user;
 
 const middleware = async(req: Request, res: Response, next: NextFunction) => {
-	console.log("inizio middleware degli user");
 	const result = await auth.verifyToken(req, res, next);
 	const validate = await auth.validateBody(req, res, next);
-	console.log("fine middleware degli user", result, validate);
 	next();
 };
 

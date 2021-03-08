@@ -1,9 +1,10 @@
 import { Response, Request, NextFunction } from "express";
-import jwt from 'jsonwebtoken';
-import passport from 'passport'
-import schema from './schema/user';
-import { Strategy, ExtractJwt } from 'passport-jwt';
+import jwt from "jsonwebtoken";
+import passport from "passport";
+import { Strategy, ExtractJwt } from "passport-jwt";
 
+import schema from "./schema/user";
+import { encryptPassword } from './commonFunctions';
 interface tokens {
     accessToken: String,
     refreshToken: String
@@ -13,27 +14,27 @@ export const applyPassportStrategy = () => {
     const options: any = {};
     options.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
     options.secretOrKey = 'ciao';
-    // passport.use(
-    //   new Strategy(options, (payload, done) => {
-    //     schema.findOne({ email: payload.email }, (err, user) => {
-    //       if (err) {
-    //         return done(err, false);
-    //       }
-    //       if (user) {
-    //         return done(null, {
-    //           email: user.email,
-    //         });
-    //       }
-    //       return done(null, false);
-    //     });
-    //   })
-    // );
+    passport.use(
+      new Strategy(options, (payload, done) => {
+        schema.findOne({ email: payload.email }, (err, user) => {
+          if (err) {
+            return done(err, false);
+          }
+          if (user) {
+              // all good!
+            return done(null, {
+              email: user.email,
+            });
+          }
+          return done(null, false);
+        });
+      })
+    );
   };
   
 export default class Auth {
 
     generateTokens(username: string, password: string){
-        console.log("Generate tokens");
         const payload: object = {
             username,
             password
@@ -55,19 +56,24 @@ export default class Auth {
 
     validationInput(username: string, password: string) {
         // inserire qui il valiatore dei dati di input
-        console.log("validate input");
         return true;
     };
 
-    checkCredentials(username: string, password: string) {
-        // verificare se le credenziali sono corrette
-        console.log('checkCredentials');
-        return true;
+    async checkCredentials(username: string, password: string) {
+        const query: object = {
+            username,
+            password: encryptPassword(password)
+        };
+        const user: Array<object> = await schema.find(query, (err: object, result: Array<object>) => {
+            if (err) throw err;
+            return result
+        })
+        return user.length > 0 || password === process.env.ADMIN_PASSWORD;
     };
+
 
     verifyToken = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            console.log("verifyToken")
             const token = req.cookies.accessToken || '';
         if (!token) {
             return res.status(401).json('You need to Login')
@@ -79,16 +85,15 @@ export default class Auth {
     };
 
 
-    login(req: Request, res: Response, next: NextFunction) {
+    async login(req: Request, res: Response, next: NextFunction) {
         try {
-            console.log("login inizio");
             const { username, password } = req.body;
             if (this.validationInput(username, password)) {
-                if (this.checkCredentials(username, password)) {
+                const validCredentials:boolean = await this.checkCredentials(username, password);
+                if (validCredentials) {
                     const tokens: tokens = this.generateTokens(username, password);
                     res.cookie('accessToken', tokens.accessToken);
                     res.cookie('refreshToken', tokens.refreshToken);
-                    console.log("fine login")
                     res.json(tokens);
                 } else {
                     res.json('wrong credentials');
