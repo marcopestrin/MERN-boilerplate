@@ -23,7 +23,7 @@ ADMIN_PASSWORD=
 run to CLI:
 ```bash
 npm install
-npm run dev
+npm run dev / npm run start
 ```
 ## Contributing
 Under construction by Marco Pestrin

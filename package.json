@@ -6,7 +6,9 @@
   "scripts": {
     "test": "test",
     "lint": "eslint",
-    "dev": "nodemon index.ts"
+    "dev": "nodemon index.ts",
+    "start": "pm2 start index.ts -i 2 --no-daemon",
+    "shutdown": "pm2 delete index"
   },
   "author": "Marco Pestrin",
   "license": "ISC",

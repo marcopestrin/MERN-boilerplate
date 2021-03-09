@@ -20,9 +20,11 @@ export const applyPassportStrategy = () => {
         passReqToCallback: true
     };
 
+    console.log("applyPassportStrategy --- qui dentro ci passo solo all'inizio");
     passport.use(
         new JwtStrategy(options, async(req, payload, done) => {
             try {
+                console.log("applyPassportStrategy --- qui dentro ci passo ogni volta che uso la strategia");
                 const query: object = { username: payload.username };
                 schema.findOne(query, (err, user) => {
                     if (err) throw err;
