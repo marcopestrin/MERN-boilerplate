@@ -1,50 +1,36 @@
 import passport from "passport";
-import { Strategy, ExtractJwt } from "passport-jwt";
-const LocalStrategy = require("passport-local").Strategy;
 import schema from "../models/schema/user";
 
-export const applyLocalStrategy = () => {
-    const options: object = {
-        usernameField: 'email'
-    }
-    passport.use(
-        new LocalStrategy(options,
-            async(email: string, password: string, done: any) => {
-                try {
-                    schema.findOne({ email }, (err, user) => {
-                        if (err) throw err;
-                        if (user) {
-                            // all good!
-                            return done(null, user);
-                        }
-                        return done(null, false);
-                    })
-                } catch (error) {
-                    done(error, false);
-                }
-            }
-        )
-    )
-};
+const JwtStrategy = require('passport-jwt').Strategy;
 
 
 export const applyPassportStrategy = () => {
+
+    const cookieExtractor = (req) => {
+        let token = null;
+        if (req && req.cookies) {
+            token = req.cookies['accessToken'];
+        }
+        return token;
+    }
+
     const options: object = {
-        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-        secretOrKey: 'ciao'
+        jwtFromRequest: cookieExtractor,
+        secretOrKey: process.env.ACCESS_TOKEN_SECRET,
+        passReqToCallback: true
     };
+
     passport.use(
-      new Strategy(options,
-        async(payload, done) => {
-            const query: object = { email: payload.email };
+        new JwtStrategy(options, async(req, payload, done) => {
             try {
+                const query: object = { username: payload.username };
                 schema.findOne(query, (err, user) => {
                     if (err) throw err;
                     if (user) {
                         // all good!
-                      return done(null, {
-                        email: user.email,
-                      });
+                        return done(null, {
+                            email: user.email,
+                        });
                     }
                     return done(null, false);
                 });

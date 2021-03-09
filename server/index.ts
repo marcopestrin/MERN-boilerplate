@@ -8,7 +8,7 @@ import cookieParser from "cookie-parser"
 import { port, host, databaseName, databaseServer, databasePort } from "../const";
 import initializeRoutes from "./initializeRoutes";
 import initializeCors from "./initializeCors";
-import { applyPassportStrategy, applyLocalStrategy } from "./passportStrategy";
+import { applyPassportStrategy } from "./passportStrategy";
 
 require('dotenv').config()
 
@@ -24,12 +24,16 @@ export function createServer() {
     app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
     app.use(cookieParser());
     const router = express.Router();
-    applyLocalStrategy();
+    applyPassportStrategy();
     initializeRoutes(router);
     initializeCors(app);
     //app.use(passport.initialize());
     app.use(router);
     const server: Server = http.createServer(app);
 	server.listen(port, () => console.log(`App listening on ${host}`));
+
+    // process.on('uncaughtException', function (error) {
+    //     console.log(error.stack);
+    //  });
 };
 

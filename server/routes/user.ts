@@ -21,9 +21,9 @@ const middleware = async(req: Request, res: Response, next: NextFunction) => {
 	const validate = await auth.validateBody(req, res, next);
 	next();
 };
+const passportJWT = passport.authenticate('jwt', { session: false });
 
-
-router.post("/create", passport.authenticate("local", { session: false }), user.createNewUser);
+router.post("/create", passportJWT, user.createNewUser);
 router.post("/update", middleware, updateUser);
 router.put("/active", middleware, toggleActiveUser);
 router.put("/disable", middleware, toggleActiveUser);
