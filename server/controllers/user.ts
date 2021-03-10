@@ -1,5 +1,5 @@
 import { Response, Request, NextFunction } from "express";
-import schema from './schema/user';
+import schema from '../models/user';
 import { encryptPassword } from './commonFunctions';
 export default class User {
 
@@ -13,13 +13,20 @@ export default class User {
                 email,
                 id
             };
-            schema.create(payload, (err: object, result: object) => {
-                if (err) throw err;
-                res.json(result);
-            })
+            schema.create(payload, (err: any, result: object) => {
+                if (err) {
+                    if (11000 === err.code && err.name === 'MongoError') {
+                        return res.status(422).json({
+                            succes: false,
+                            message: 'User already exist!'
+                        });
+                    }
+                    throw err;
+                }
+                res.status(200).json(result);
+            });
         } catch (error) {
-            console.log(error);
-            res.status(500).json(error);
+            res.status(500).send(error);
         }
     };
 
@@ -27,7 +34,7 @@ export default class User {
         try {
             schema.find({}, (err: object, result: object) => {
                 if (err) throw err;
-                res.json(result);
+                res.status(200).json(result);
             })
         } catch (error) {
             console.log(error);
@@ -43,7 +50,7 @@ export default class User {
             schema.find(query, fieldsToReturn)
             .exec((err: object, result: object) => {
                 if (err) throw err;
-                res.json(result);
+                res.status(200).json(result);
             });
         } catch (error) {
             console.log(error);
@@ -67,7 +74,7 @@ export default class User {
             schema.updateOne(query, set)
             .exec((err: object, result:object) => {
                 if (err) throw err;
-                res.json(result);
+                res.status(200).json(result);
             })
         } catch (error) {
             console.log(error);
@@ -82,7 +89,7 @@ export default class User {
             schema.deleteOne(query)
             .exec((err: object, result: object) => {
                 if (err) throw err;
-                res.json(result);
+                res.status(200).json(result);
             });
         } catch (error) {
             console.log(error);
@@ -99,7 +106,7 @@ export default class User {
             schema.updateOne(query, set)
             .exec((err: object, result:object) => {
                 if (err) throw err;
-                res.json(result);
+                res.status(200).json(result);
             })
         } catch (error) {
             console.log(error);

@@ -1,5 +1,5 @@
 import passport from "passport";
-import schema from "../models/schema/user";
+import schema from "./models/user";
 
 const JwtStrategy = require('passport-jwt').Strategy;
 

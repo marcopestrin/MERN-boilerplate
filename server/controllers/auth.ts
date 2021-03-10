@@ -1,7 +1,7 @@
 import { Response, Request, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
-import schema from "./schema/user";
+import schema from "../models/user";
 import { encryptPassword } from './commonFunctions';
 interface tokens {
     accessToken: String,
@@ -47,8 +47,7 @@ export default class Auth {
         return user.length > 0 || password === process.env.ADMIN_PASSWORD;
     };
 
-
-    verifyToken = async (req: Request, res: Response, next: NextFunction) => {
+    async verifyToken(req: Request, res: Response, next: NextFunction) {
         try {
             const token = req.cookies.accessToken || '';
         if (!token) {
@@ -58,8 +57,7 @@ export default class Auth {
         } catch (err) {
             return res.status(500).json(err.toString());
         }
-    };
-
+    }
 
     async login(req: Request, res: Response, next: NextFunction) {
         try {
@@ -71,20 +69,16 @@ export default class Auth {
                     const tokens: tokens = this.generateTokens(username, password);
                     res.cookie('accessToken', tokens.accessToken);
                     res.cookie('refreshToken', tokens.refreshToken);
-                    res.json(tokens);
+                    res.status(200).json(tokens);
                 } else {
-                    res.json('wrong credentials');
+                    res.status(401).json('wrong credentials');
                 }
             } else {
-                res.json("wrong input");
+                res.status(400).json("wrong input");
             }
         } catch (error) {
             next(error);
         }
-    };
-
-    logout(req: Request, res: Response, next: NextFunction){
-
     };
 
 };
