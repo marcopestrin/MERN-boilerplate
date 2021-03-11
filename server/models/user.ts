@@ -6,6 +6,7 @@ interface IUser extends Document {
     email: String,
     id: String,
     active: Boolean
+    timeRegistration: Date
 }
 
 const UserSchema: Schema = new Schema({
@@ -13,7 +14,9 @@ const UserSchema: Schema = new Schema({
     password: { type: String, required: true },
     email: {type: String, required: true },
     id: { type: String, required: true },
-    active: { type: Boolean, default: false }
+    active: { type: Boolean, default: false },
+    timeRegistration : { type : Date, default: Date.now }
+
 });
 
 export default mongoose.model<IUser>('User', UserSchema);

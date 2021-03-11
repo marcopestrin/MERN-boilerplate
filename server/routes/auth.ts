@@ -21,4 +21,5 @@ router.post("/reset", (req: Request, res: Response, next: NextFunction) => {
         res.json(error);
     }
 });
+
 module.exports = router;

@@ -70,7 +70,9 @@ export default class User {
             }
             const { id } = req.query;
             const query: object = { id };
-            const set: object = { $set: { active } }
+            const set: object = { $set:
+                { active }
+            }
             schema.updateOne(query, set)
             .exec((err: object, result:object) => {
                 if (err) throw err;
@@ -102,7 +104,11 @@ export default class User {
             const { username, password, email } = req.body;
             const { id } = req.query;
             const query: object = { id };
-            const set: object = { $set: { username, password, email } }
+            const set: object = { $set: {
+                username,
+                password,
+                email
+            } }
             schema.updateOne(query, set)
             .exec((err: object, result:object) => {
                 if (err) throw err;

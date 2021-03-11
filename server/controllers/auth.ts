@@ -18,7 +18,6 @@ interface MailOptions {
     text: string,
 };
 
-
 export default class Auth {
 
     generateTokens(username: string, password: string){

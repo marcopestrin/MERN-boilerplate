@@ -1,5 +1,4 @@
-import express, { Response, Request, NextFunction } from "express";
-import passport from "passport";
+import express from "express";
 import http, { Server } from "http";
 import { connect } from 'mongoose';
 import bodyParser from "body-parser";
@@ -17,17 +16,19 @@ function connectDatabase() {
     connect(`mongodb://${databaseServer}:${databasePort}/${databaseName}`);
 }
 
-export function createServer() {
+export function createServer(): void {
     const app = express();
-    connectDatabase();
+    const router = express.Router();
+
     app.use(bodyParser.json({ limit: "10mb" }));
     app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
     app.use(cookieParser());
-    const router = express.Router();
+
+    connectDatabase();
     applyPassportStrategy();
     initializeRoutes(router);
     initializeCors(app);
-    //app.use(passport.initialize());
+
     app.use(router);
     const server: Server = http.createServer(app);
 	server.listen(port, () => console.log(`App listening on ${host}`));
