@@ -5,3 +5,9 @@ export const encryptPassword = (password: string) => {
     .update(password)
     .digest("hex")
 };
+
+export const generateRecoveryToken = () => {
+    return crypto
+    .randomBytes(32)
+    .toString("hex")
+}
