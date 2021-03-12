@@ -8,6 +8,7 @@ interface IUser extends Document {
     active: Boolean,
     timeRegistration: Date,
     resetToken: String,
+    activeCode: String,
     role: Number
 }
 
@@ -19,6 +20,7 @@ const UserSchema: Schema = new Schema({
     active: { type: Boolean, default: false },
     timeRegistration: { type : Date, default: Date.now },
     resetToken: { type: String },
+    activeCode: { type: String },
     role: { type: Number, default: 1 } // 1 --> user, 2 --> admin
 });
 

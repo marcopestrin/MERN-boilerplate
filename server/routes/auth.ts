@@ -1,9 +1,7 @@
 import express, { Response, Request, NextFunction } from "express";
-import { logSettings } from "../../const";
-import Auth from '../controllers/auth';
+import auth from '../controllers/auth';
 
 const router: express.Router = express.Router();
-const auth = new Auth();
 
 router.post("/login", (req: Request, res: Response, next: NextFunction) => {
     try {

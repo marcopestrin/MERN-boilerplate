@@ -13,6 +13,7 @@ const router: express.Router = express.Router();
 const passportJWT = passport.authenticate('jwt', { session: false });
 
 router.post("/create", user.createNewUser);
+router.post("/confirmEmail", user.confirmEmail);
 router.post("/update", passportJWT, user.updateUser);
 router.put("/active", passportJWT, user.toggleActiveUser);
 router.put("/disable", passportJWT, user.toggleActiveUser);

@@ -1,19 +1,11 @@
 import { Response, Request, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import Mail from "nodemailer/lib/mailer";
 
 import schema from "../models/user";
-import { encryptPassword, generateRecoveryToken, getTransporterEmail } from './commonFunctions';
+import { encryptPassword, generateRecoveryToken, sendEmail, MailOptions } from './commonFunctions';
 interface Tokens {
     accessToken: String,
     refreshToken: String
-};
-interface MailOptions {
-    from: string,
-    to: string,
-    subject: string,
-    html: string,
-    text: string,
 };
 
 class Auth {
@@ -156,7 +148,6 @@ class Auth {
 
     sendRecoveryEmail(resetToken: string, email: string, result: any) {
 
-        const transporter: Mail = getTransporterEmail();
         const url: string = `http://${process.env.HOST_APPLICATION}:${process.env.PORT}/reset?id=${result.id}&resetToken=${resetToken}&username${result.username}}`;
 
         const mailOptions: MailOptions = {
@@ -167,14 +158,7 @@ class Auth {
             html: `this is the token: <b>${resetToken}</b>; this is the id: ${result.id}. Click <a href='${url}'>here</a>`
         };
 
-        return new Promise((resolve) => {
-            transporter.sendMail(mailOptions, (error, info) => {
-                if (error) {
-                     resolve(error);
-                }
-                resolve(info);
-            })
-        })
+        return sendEmail(mailOptions)
     }
 };
 

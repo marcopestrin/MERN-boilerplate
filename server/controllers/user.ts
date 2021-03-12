@@ -1,19 +1,46 @@
 import { Response, Request, NextFunction } from "express";
 import schema from '../models/user';
-import { encryptPassword } from './commonFunctions';
+import { encryptPassword, generateActiveCode, MailOptions, sendEmail } from './commonFunctions';
 class User {
+
+    confirmEmail(req: Request, res: Response) {
+        try {
+            const { email, activeCode } = req.query;
+            const query: object = {
+                email,
+                activeCode
+            };
+            const set: object = { $set: {
+                activeCode: '',
+                active: true
+            }}
+            schema.findOneAndUpdate(query, set)
+            .exec((err: object, result: any) => {
+                if (err) throw err;
+                res.status(200).json({
+                    active: result.active,
+                    username: result.username
+                })
+            })
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(error);
+        }
+
+    };
 
     createNewUser(req: Request, res: Response) {
         try {
             const { password, username, email, id } = req.body;
-            const passwordEncrypt: string = encryptPassword(password);
+            const activeCode: string = generateActiveCode(password)
             const payload: object = {
-                password: passwordEncrypt,
+                password: encryptPassword(password),
+                activeCode,
                 username,
                 email,
-                id
+                id,
             };
-            schema.create(payload, (err: any, result: object) => {
+            schema.create(payload, async(err: any, result: object) => {
                 if (err) {
                     if (11000 === err.code && err.name === 'MongoError') {
                         res.status(422).json({
@@ -23,7 +50,13 @@ class User {
                     }
                     throw err;
                 }
-                res.status(200).json(result);
+
+                const isSended = await this.sendRegistrationEmail(email, activeCode);
+                if (isSended) {
+                    res.status(200).json(result);
+                } else {
+                    res.status(500).json('errore da gestire');
+                }
             });
         } catch (error) {
             res.status(500).send(error);
@@ -119,6 +152,19 @@ class User {
             res.status(500).json(error);
         }
     }
+
+    sendRegistrationEmail (email: string, activeCode: string) {
+        const url: string = `http://${process.env.HOST_APPLICATION}:${process.env.PORT}/confirmEmail?email=${email}&activeCode=${activeCode}}`;
+        const mailOptions: MailOptions = {
+            from: `${process.env.applicationDomain}`,
+            to: email,
+            subject: "Confirm Email",
+            text: "Hello world?",
+            html: `Click <a href='${url}'>here</a> to activate the account`
+        };
+        return sendEmail(mailOptions);
+    };
+
 };
 
 export default new User();
