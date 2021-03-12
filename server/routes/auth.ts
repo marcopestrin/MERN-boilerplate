@@ -22,4 +22,11 @@ router.post("/reset", (req: Request, res: Response, next: NextFunction) => {
     }
 });
 
+router.post("/recoveryPassword", (req: Request, res: Response, next: NextFunction) => {
+    try {
+        auth.recoveryPassword(req, res, next);
+    } catch (error) {
+        res.json(error);
+    }
+});
 module.exports = router;

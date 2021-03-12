@@ -5,8 +5,9 @@ interface IUser extends Document {
     password: String,
     email: String,
     id: String,
-    active: Boolean
-    timeRegistration: Date
+    active: Boolean,
+    timeRegistration: Date,
+    resetToken: String
 }
 
 const UserSchema: Schema = new Schema({
@@ -15,7 +16,8 @@ const UserSchema: Schema = new Schema({
     email: {type: String, required: true },
     id: { type: String, required: true },
     active: { type: Boolean, default: false },
-    timeRegistration : { type : Date, default: Date.now }
+    timeRegistration: { type : Date, default: Date.now },
+    resetToken: { type: String }
 
 });
 

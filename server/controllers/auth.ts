@@ -1,11 +1,9 @@
 import { Response, Request, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import nodemailer from "nodemailer";
-import SMTPTransport from "nodemailer/lib/smtp-transport";
 import Mail from "nodemailer/lib/mailer";
 
 import schema from "../models/user";
-import { encryptPassword, generateRecoveryToken } from './commonFunctions';
+import { encryptPassword, generateRecoveryToken, getTransporterEmail } from './commonFunctions';
 interface Tokens {
     accessToken: String,
     refreshToken: String
@@ -45,6 +43,11 @@ export default class Auth {
         return true;
     };
 
+    isValidPassword(password: string) {
+        // validatore della password in caso di recovery
+        return true
+    };
+
     async checkCredentials(username: string, password: string) {
         const query: object = {
             username,
@@ -61,11 +64,11 @@ export default class Auth {
         try {
             const token = req.cookies.accessToken || '';
         if (!token) {
-            return res.status(401).json('You need to Login')
+            res.status(401).json('You need to Login');
         }
         return await jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);          
         } catch (err) {
-            return res.status(500).json(err.toString());
+            res.status(500).json(err.toString());
         }
     }
 
@@ -91,49 +94,80 @@ export default class Auth {
         }
     };
 
+    async recoveryPassword(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { id, password, resetToken } = req.body;
+            const isValidPassword: boolean = this.isValidPassword(password);
+
+            const query: object = {
+                resetToken,
+                id
+            };
+
+            // il token deve essere eliminato
+            const set: object = {
+                $set: { resetToken: '' },
+                password: encryptPassword(password)
+            };
+
+            if (isValidPassword) {
+                schema.updateOne(query, set)
+                .exec((err: object, result:object) => {
+                    if (err) throw err;
+                    // all good!!
+                    res.status(200).json(result);
+                })
+            } else {
+                res.status(403).json({
+                    error: 'password not valid'
+                });
+            }
+
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(error);
+        }
+    };
+
     async reset(req: Request, res: Response, next: NextFunction) {
         try {
             const { email } = req.body;
-            schema.findOne({ email }, async(error: object, result: any) => {
+            const resetToken: string = generateRecoveryToken();
+
+            schema.findOneAndUpdate({ email }, { $set: { resetToken } })
+            .exec(async(error: object, result: any) => {
                 if (error) throw error;
                 if (result) {
-                    const resetToken: string = generateRecoveryToken();
-                    const emailResult: any = await this.sendRecoveryEmail(resetToken, email);
+                    const emailResult: any = await this.sendRecoveryEmail(resetToken, email, result);
                     if (emailResult.accepted) {
+                        // ATTENZIONE: non ritornare il token!!!!
                         res.status(200).json({
                             valid: 'ok',
                             id: result.id
-                        })
+                        });
                     }
                     throw emailResult
                 }
             })
         } catch (error) {
-            return res.status(500).json(error);
+            res.status(500).json(error);
         }
     }
 
-    sendRecoveryEmail(resetToken: string, email: string) {
+    sendRecoveryEmail(resetToken: string, email: string, result: any) {
 
-        const transporter: Mail = nodemailer.createTransport(<SMTPTransport.Options>{
-            host: process.env.MAILER_HOST,
-            port: process.env.MAILER_PORT,
-            secure: false,
-            auth: {
-                user: process.env.MAILER_USER,
-                pass: process.env.MAILER_PASSWORD,
-            }
-        });
+        const transporter: Mail = getTransporterEmail();
+        const url: string = `http://${process.env.HOST_APPLICATION}:${process.env.PORT}/reset?id=${result.id}&resetToken=${resetToken}&username${result.username}}`;
 
         const mailOptions: MailOptions = {
             from: `${process.env.applicationDomain} - recovery password`,
             to: email,
             subject: "Recovery Password",
             text: "Hello world?",
-            html: `this is the token: <b>${resetToken}</b>`
+            html: `this is the token: <b>${resetToken}</b>; this is the id: ${result.id}. Click <a href='${url}'>here</a>`
         };
 
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             transporter.sendMail(mailOptions, (error, info) => {
                 if (error) {
                      resolve(error);

@@ -16,7 +16,7 @@ export default class User {
             schema.create(payload, (err: any, result: object) => {
                 if (err) {
                     if (11000 === err.code && err.name === 'MongoError') {
-                        return res.status(422).json({
+                        res.status(422).json({
                             succes: false,
                             message: 'User already exist!'
                         });
