@@ -16,7 +16,7 @@ interface MailOptions {
     text: string,
 };
 
-export default class Auth {
+class Auth {
 
     generateTokens(username: string, password: string){
         const payload: object = {
@@ -177,3 +177,5 @@ export default class Auth {
         })
     }
 };
+
+export default new Auth();

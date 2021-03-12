@@ -7,7 +7,8 @@ interface IUser extends Document {
     id: String,
     active: Boolean,
     timeRegistration: Date,
-    resetToken: String
+    resetToken: String,
+    role: Number
 }
 
 const UserSchema: Schema = new Schema({
@@ -17,8 +18,8 @@ const UserSchema: Schema = new Schema({
     id: { type: String, required: true },
     active: { type: Boolean, default: false },
     timeRegistration: { type : Date, default: Date.now },
-    resetToken: { type: String }
-
+    resetToken: { type: String },
+    role: { type: Number, default: 1 } // 1 --> user, 2 --> admin
 });
 
 export default mongoose.model<IUser>('User', UserSchema);

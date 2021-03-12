@@ -1,7 +1,7 @@
 import { Response, Request, NextFunction } from "express";
 import schema from '../models/user';
 import { encryptPassword } from './commonFunctions';
-export default class User {
+class User {
 
     createNewUser(req: Request, res: Response) {
         try {
@@ -120,3 +120,5 @@ export default class User {
         }
     }
 };
+
+export default new User();

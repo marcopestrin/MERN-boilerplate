@@ -2,7 +2,7 @@ import { Response, Request } from "express";
 
 const packJson = require('../../package.json');
 
-export default class Dev {
+class Dev {
 
     getVersion(req: Request, res: Response) {
         return res.status(200)
@@ -12,3 +12,5 @@ export default class Dev {
     }
 
 };
+
+export default new Dev();

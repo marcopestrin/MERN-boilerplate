@@ -13,7 +13,6 @@ router.post("/login", (req: Request, res: Response, next: NextFunction) => {
     }
 });
 
-
 router.post("/reset", (req: Request, res: Response, next: NextFunction) => {
     try {
         auth.reset(req, res, next);
@@ -29,4 +28,5 @@ router.post("/recoveryPassword", (req: Request, res: Response, next: NextFunctio
         res.json(error);
     }
 });
+
 module.exports = router;

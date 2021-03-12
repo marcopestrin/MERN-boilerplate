@@ -1,12 +1,10 @@
 import express, { Response, Request, NextFunction } from "express";
 import passport from "passport";
-import User from "../controllers/user";
-//import Auth from "../controllers/auth";
+import user from "../controllers/user";
+//import auth from "../controllers/auth";
 
 const router: express.Router = express.Router();
-const user = new User();
 
-// const auth = new Auth();
 // const middleware = async(req: Request, res: Response, next: NextFunction) => {
 // 	const result = await auth.verifyToken(req, res, next);
 // 	const validate = await auth.validateBody(req, res, next);
@@ -14,7 +12,7 @@ const user = new User();
 // };
 const passportJWT = passport.authenticate('jwt', { session: false });
 
-router.post("/create", passportJWT, user.createNewUser);
+router.post("/create", user.createNewUser);
 router.post("/update", passportJWT, user.updateUser);
 router.put("/active", passportJWT, user.toggleActiveUser);
 router.put("/disable", passportJWT, user.toggleActiveUser);
