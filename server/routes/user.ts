@@ -14,13 +14,7 @@ const passportJWT = passport.authenticate('jwt', { session: false });
 
 
 router.post("/update", passportJWT, user.updateUser);
-router.post("/create", (req: Request, res: Response, next: NextFunction) => {
-    try {
-        user.createNewUser(req, res, next);
-    } catch (error) {
-        res.json(error);
-    }
-});
+router.post("/create", user.createNewUser.bind(user));
 router.put("/active", passportJWT, user.toggleActiveUser);
 router.put("/disable", passportJWT, user.toggleActiveUser);
 
@@ -28,11 +22,5 @@ router.delete("/delete", passportJWT, user.deleteUser);
 
 router.get("/getAllUser", passportJWT, user.getAllUser);
 router.get("/getUserById", passportJWT, user.getUserById);
-router.get("/confirmEmail/:email/:activeCode", (req: Request, res: Response) => {
-    try {
-        user.confirmEmail(req, res);
-    } catch (error) {
-        res.json(error);
-    }
-});
+router.get("/confirmEmail/:email/:activeCode", user.confirmEmail.bind(user));
 module.exports = router;
