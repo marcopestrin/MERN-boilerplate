@@ -5,16 +5,14 @@ class User {
 
     confirmEmail(req: Request, res: Response) {
         try {
-            const { email, activeCode } = req.query;
             const query: object = {
-                email,
-                activeCode
+                activeCode: req.params.activeCode
             };
             const set: object = { $set: {
                 activeCode: '',
                 active: true
-            }}
-            schema.findOneAndUpdate(query, set)
+            }};
+            schema.updateOne(query, set)
             .exec((err: object, result: any) => {
                 if (err) throw err;
                 res.status(200).json({
@@ -26,8 +24,8 @@ class User {
             console.log(error);
             res.status(500).json(error);
         }
-
     };
+
 
     createNewUser(req: Request, res: Response) {
         try {
@@ -50,7 +48,6 @@ class User {
                     }
                     throw err;
                 }
-
                 const isSended = await this.sendRegistrationEmail(email, activeCode);
                 if (isSended) {
                     res.status(200).json(result);
@@ -58,6 +55,7 @@ class User {
                     res.status(500).json('errore da gestire');
                 }
             });
+
         } catch (error) {
             res.status(500).send(error);
         }
@@ -101,11 +99,12 @@ class User {
             } else {
                 throw new Error('path not found')
             }
-            const { id } = req.query;
-            const query: object = { id };
+            const query: object = {
+                id: req.query.id
+            };
             const set: object = { $set:
                 { active }
-            }
+            };
             schema.updateOne(query, set)
             .exec((err: object, result:object) => {
                 if (err) throw err;

@@ -1,6 +1,7 @@
 import { Response, Request, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
+import { applicationDomain } from '../../const';
 import schema from "../models/user";
 import { encryptPassword, generateRecoveryToken, sendEmail, MailOptions } from './commonFunctions';
 interface Tokens {
@@ -146,19 +147,19 @@ class Auth {
         }
     }
 
-    sendRecoveryEmail(resetToken: string, email: string, result: any) {
-
-        const url: string = `http://${process.env.HOST_APPLICATION}:${process.env.PORT}/reset?id=${result.id}&resetToken=${resetToken}&username${result.username}}`;
+    async sendRecoveryEmail(resetToken: string, email: string, result: any) {
+        const url: string = `http://${process.env.HOST_APPLICATION}:${process.env.PORT}/reset?id=${result.id}&resetToken=${resetToken}&username=${result.username}}`;
 
         const mailOptions: MailOptions = {
-            from: `${process.env.applicationDomain} - recovery password`,
+            from: `${applicationDomain} - recovery password`,
             to: email,
             subject: "Recovery Password",
             text: "Hello world?",
-            html: `this is the token: <b>${resetToken}</b>; this is the id: ${result.id}. Click <a href='${url}'>here</a>`
+            html: `this is the token: <b>${resetToken}</b>; this is the id: ${result.id}. Click <a target='_blank' href='${url}'>here</a>`
         };
 
-        return sendEmail(mailOptions)
+        const ex: any = await sendEmail(mailOptions);
+        return ex
     }
 };
 

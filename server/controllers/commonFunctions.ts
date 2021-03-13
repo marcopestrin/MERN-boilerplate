@@ -47,7 +47,7 @@ export const getTransporterEmail = () => {
 
 export const sendEmail = (mailOptions: MailOptions) => {
     const transporter: Mail = getTransporterEmail();
-
+    
     return new Promise((resolve) => {
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
