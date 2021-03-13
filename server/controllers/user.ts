@@ -6,7 +6,8 @@ class User {
     confirmEmail(req: Request, res: Response) {
         try {
             const query: object = {
-                activeCode: req.params.activeCode
+                activeCode: req.params.activeCode,
+                email: req.params.email
             };
             const set: object = { $set: {
                 activeCode: '',
@@ -15,10 +16,14 @@ class User {
             schema.updateOne(query, set)
             .exec((err: object, result: any) => {
                 if (err) throw err;
-                res.status(200).json({
-                    active: result.active,
-                    username: result.username
-                })
+                if (result.ok) {
+                    if (result.nModified){
+                        res.status(200).send('all good!! user activated');
+                    } else {
+                        res.status(200).send('good');
+                    }
+                }
+                throw result
             })
         } catch (error) {
             console.log(error);
@@ -26,8 +31,7 @@ class User {
         }
     };
 
-
-    createNewUser(req: Request, res: Response) {
+    createNewUser(req: Request, res: Response, next: NextFunction) {
         try {
             const { password, username, email, id } = req.body;
             const activeCode: string = generateActiveCode(password)
@@ -38,7 +42,7 @@ class User {
                 email,
                 id,
             };
-            schema.create(payload, async(err: any, result: object) => {
+            schema.create(payload, async(err: any, result: any) => {
                 if (err) {
                     if (11000 === err.code && err.name === 'MongoError') {
                         res.status(422).json({
@@ -50,7 +54,10 @@ class User {
                 }
                 const isSended = await this.sendRegistrationEmail(email, activeCode);
                 if (isSended) {
-                    res.status(200).json(result);
+                    res.status(200).json({
+                        email: result.email,
+                        username: result.username
+                    });
                 } else {
                     res.status(500).json('errore da gestire');
                 }
@@ -153,13 +160,13 @@ class User {
     }
 
     sendRegistrationEmail (email: string, activeCode: string) {
-        const url: string = `http://${process.env.HOST_APPLICATION}:${process.env.PORT}/confirmEmail?email=${email}&activeCode=${activeCode}}`;
+        const url: string = `http://${process.env.HOST_APPLICATION}:${process.env.PORT}/v1/user/confirmEmail/${email}/${activeCode}`;
         const mailOptions: MailOptions = {
             from: `${process.env.applicationDomain}`,
             to: email,
             subject: "Confirm Email",
             text: "Hello world?",
-            html: `Click <a href='${url}'>here</a> to activate the account`
+            html: `Click <a target='_blank' href='${url}'>here</a> to activate the account`
         };
         return sendEmail(mailOptions);
     };
