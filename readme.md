@@ -51,9 +51,9 @@ npm run dev / npm run start
 - 4:
 - 5:
 
-# Others
+## Others
 This project are made in my free time. Currently under construction by myself.
 If you have any suggestions to improve the project or noticed errors please make a pull-request or send me an email to: pestrinmarco@gmail.com
 
-# Mood
+## Mood
 Done is better than perfect
