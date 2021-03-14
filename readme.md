@@ -32,12 +32,12 @@ npm run dev / npm run start
 - Authentication with JWT (Web JSON Token)
 - API documentation with Swagger model
 - Data typing with Typescript
-- User registration flow with account activation
-- CORS management
+- User registration flow with MVC pattern (Model-View-Controller)
+- CORS management (Cross-Origin Resource Sharing)
 - Project tree with code subdivision
 - Detailed and generic management of HTTP call status codes
 - Personal data managed through environment variables
-- CRUD pattern on model
+- CRUD pattern on model (Create, Read, Update, Delete)
 
 ## Next Steps
 - Log management system
