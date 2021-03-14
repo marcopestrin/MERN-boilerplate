@@ -1,4 +1,5 @@
 import { Response, Request, NextFunction } from "express";
+import crypto from "crypto";
 import schema from '../models/user';
 import { encryptPassword, generateActiveCode, MailOptions, sendEmail } from './commonFunctions';
 class User {
@@ -31,16 +32,24 @@ class User {
         }
     };
 
+    generateUserId(email: string) {
+        return crypto
+        .createHash("sha256")
+        .update(email)
+        .digest("hex")
+    }
+
     createNewUser(req: Request, res: Response, next: NextFunction) {
         try {
-            const { password, username, email, id } = req.body;
+            const { password, username, email } = req.body;
             const activeCode: string = generateActiveCode(password)
+
             const payload: object = {
                 password: encryptPassword(password),
                 activeCode,
                 username,
                 email,
-                id,
+                id: this.generateUserId(email)
             };
             schema.create(payload, async(err: any, result: any) => {
                 if (err) {
