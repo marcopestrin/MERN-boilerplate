@@ -5,7 +5,7 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import swaggerUi from "swagger-ui-express";
 
-import { port, host, databaseName, databaseServer, databasePort } from "../const";
+import { port, host, databaseName, usernameDatabase, passwordDatabase, hostDatabase, nameDatabase } from "../const";
 import initializeRoutes from "./initializeRoutes";
 import initializeCors from "./initializeCors";
 import { applyPassportStrategy } from "./passportStrategy";
@@ -15,7 +15,7 @@ require('dotenv').config()
 
 function connectDatabase() {
     // METTERE LE CREDENZIALI DEL DATABASE
-    connect(`mongodb://${databaseServer}:${databasePort}/${databaseName}`);
+    connect(`mongodb://${usernameDatabase}:${passwordDatabase}@${hostDatabase}/${nameDatabase}`);
 }
 
 export function createServer(): void {

@@ -17,3 +17,8 @@ export const databasePort = "27017";
 export const databaseServer = "localhost";
 export const applicationDomain = "pes-mern-boilerplate";
 export const expiresAccessToken =  900000; // millisecond
+
+export const usernameDatabase = process.env.USERNAME_DATABASE;
+export const passwordDatabase = process.env.PASSWORD_DATABASE;
+export const hostDatabase = process.env.HOST_DATABASE;
+export const nameDatabase = process.env.NAME_DATABASE;
