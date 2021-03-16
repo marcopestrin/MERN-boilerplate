@@ -22,4 +22,5 @@ export const usernameDatabase = process.env.USERNAME_DATABASE;
 export const passwordDatabase = process.env.PASSWORD_DATABASE;
 export const hostDatabase = process.env.HOST_DATABASE;
 export const nameDatabase = process.env.NAME_DATABASE;
-export const urlDatabase = process.env.URL_DATABASE;
+export const urlDatabaseProduction = process.env.URL_DATABASE;
+export const urlDatabaseDevelopment = `mongodb://${databaseServer}:${databasePort}/${databaseName}`

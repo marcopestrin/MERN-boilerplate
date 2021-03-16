@@ -5,7 +5,7 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import swaggerUi from "swagger-ui-express";
 
-import { port, host, databaseName, usernameDatabase, passwordDatabase, hostDatabase, nameDatabase, urlDatabase } from "../const";
+import { port, host, isProduction, urlDatabaseDevelopment, urlDatabaseProduction } from "../const";
 import initializeRoutes from "./initializeRoutes";
 import initializeCors from "./initializeCors";
 import { applyPassportStrategy } from "./passportStrategy";
@@ -14,12 +14,15 @@ import swaggerDocument from "../swagger.json";
 require('dotenv').config()
 
 function connectDatabase() {
-    connect(`${urlDatabase}`, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-    });
-    //connect(`mongodb://${usernameDatabase}:${passwordDatabase}@${hostDatabase}/${nameDatabase}`);
-}
+    if (isProduction ) {
+        connect(`${urlDatabaseProduction}`, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        });
+    } else {
+        connect(urlDatabaseDevelopment);
+    }
+};
 
 export function createServer(): void {
     const app = express();
