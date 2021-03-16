@@ -14,7 +14,10 @@ import swaggerDocument from "../swagger.json";
 require('dotenv').config()
 
 function connectDatabase() {
-    connect(`${urlDatabase}`);
+    connect(`${urlDatabase}`, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    });
     //connect(`mongodb://${usernameDatabase}:${passwordDatabase}@${hostDatabase}/${nameDatabase}`);
 }
 
