@@ -5,6 +5,7 @@ import { encryptPassword, generateActiveCode, MailOptions, sendEmail } from './c
 class User {
 
     confirmEmail(req: Request, res: Response) {
+        console.log("Confirm email request", req.params)
         try {
             const query: object = {
                 activeCode: req.params.activeCode,
@@ -19,15 +20,17 @@ class User {
                 if (err) throw err;
                 if (result.ok) {
                     if (result.nModified){
+                        console.log("Confirm email: all good!")
                         res.status(200).send('all good!! user activated');
                     } else {
+                        console.log("Confirm email: user already activated!")
                         res.status(200).send('good');
                     }
                 }
                 throw result
             })
         } catch (error) {
-            console.log(error);
+            console.error("Confirm email:", error);
             res.status(500).json(error);
         }
     };
@@ -40,6 +43,7 @@ class User {
     }
 
     createNewUser(req: Request, res: Response, next: NextFunction) {
+        console.log("Create new user:", req.body);
         try {
             const { password, username, email } = req.body;
             const activeCode: string = generateActiveCode(password)
@@ -54,6 +58,7 @@ class User {
             schema.create(payload, async(err: any, result: any) => {
                 if (err) {
                     if (11000 === err.code && err.name === 'MongoError') {
+                        console.error("Create new user: user already exist");
                         res.status(422).json({
                             succes: false,
                             message: 'User already exist!'
@@ -63,6 +68,7 @@ class User {
                 }
                 const isSended = await this.sendRegistrationEmail(email, activeCode);
                 if (isSended) {
+                    console.log("Create new user: all good");
                     res.status(200).json({
                         email: result.email,
                         username: result.username
@@ -73,40 +79,45 @@ class User {
             });
 
         } catch (error) {
+            console.error("Create new user error", error);
             res.status(500).send(error);
         }
     };
 
     getAllUser(req: Request, res: Response) {
         try {
+            console.log("Get all user request");
             schema.find({}, (err: object, result: object) => {
                 if (err) throw err;
                 res.status(200).json(result);
             })
         } catch (error) {
-            console.log(error);
+            console.error("Get all user request error:", error);
             res.status(500).json(error);
         }
     };
 
     getUserById(req: Request, res: Response) {
         try {
+            console.log("Get user by id request", req.query);
             const { id } = req.query;
             const fieldsToReturn: string = "username password id email -_id";
             const query: object = { id };
             schema.find(query, fieldsToReturn)
             .exec((err: object, result: object) => {
                 if (err) throw err;
+                console.log("Get user by id: success", result);
                 res.status(200).json(result);
             });
         } catch (error) {
-            console.log(error);
+            console.error("Get user by id: error", error);
             res.status(500).json(error);
         }
     };
 
     toggleActiveUser(req: Request, res: Response) {
         try {
+            console.log("Toggle user request", req.query);
             let active: boolean;
             if (req.path === "/disable") {
                 active = false
@@ -124,31 +135,35 @@ class User {
             schema.updateOne(query, set)
             .exec((err: object, result:object) => {
                 if (err) throw err;
+                console.log("Toggle user success", result);
                 res.status(200).json(result);
             })
         } catch (error) {
-            console.log(error);
+            console.error("Toggle user", error);
             res.status(500).json(error);
         }
     };
 
     deleteUser(req: Request, res: Response){
         try {
+            console.log("Delete user request", req.query);
             const { id } = req.query;
             const query: object = { id };
             schema.deleteOne(query)
             .exec((err: object, result: object) => {
                 if (err) throw err;
+                console.log("Delete user success", result);
                 res.status(200).json(result);
             });
         } catch (error) {
-            console.log(error);
+            console.error("Delete user error", error);
             res.status(500).json(error);
         }
     }
 
     updateUser(req: Request, res: Response) {
         try {
+            console.log("Update user request", req.body);
             const { username, password, email } = req.body;
             const { id } = req.query;
             const query: object = { id };
@@ -160,10 +175,11 @@ class User {
             schema.updateOne(query, set)
             .exec((err: object, result:object) => {
                 if (err) throw err;
+                console.log("Update user success", result);
                 res.status(200).json(result);
             })
         } catch (error) {
-            console.log(error);
+            console.error("Update user error", error);
             res.status(500).json(error);
         }
     }

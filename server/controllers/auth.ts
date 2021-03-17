@@ -68,21 +68,26 @@ class Auth {
     async login(req: Request, res: Response, next: NextFunction) {
         try {
             const { username, password } = req.body;
+            console.log("Login request: ", req.body);
             const validInput: boolean = await this.validationInput(username, password);
             if (validInput) {
                 const validCredentials:boolean = await this.checkCredentials(username, password);
                 if (validCredentials) {
                     const tokens: Tokens = this.generateTokens(username, password);
-                    res.cookie('accessToken', tokens.accessToken);
-                    res.cookie('refreshToken', tokens.refreshToken);
+                    res.cookie("accessToken", tokens.accessToken);
+                    res.cookie("refreshToken", tokens.refreshToken);
+                    console.log("Login request success ", tokens);
                     res.status(200).json(tokens);
                 } else {
+                    console.error("Login request error: wrong credentials");
                     res.status(401).json('wrong credentials');
                 }
             } else {
+                console.error("Login request error: wrong input");
                 res.status(400).json("wrong input");
             }
         } catch (error) {
+            console.error("Login request error: ", error);
             res.status(500).json(error);
         }
     };
@@ -91,7 +96,7 @@ class Auth {
         try {
             const { id, password, resetToken } = req.body;
             const isValidPassword: boolean = this.isValidPassword(password);
-
+            console.log("Recovery password", req.body);
             const query: object = {
                 resetToken,
                 id
@@ -108,16 +113,18 @@ class Auth {
                 .exec((err: object, result:object) => {
                     if (err) throw err;
                     // all good!!
+                    console.log("Recovery password: all good!")
                     res.status(200).json(result);
                 })
             } else {
+                console.error("Recovery password error: password not valid");
                 res.status(403).json({
                     error: 'password not valid'
                 });
             }
 
         } catch (error) {
-            console.log(error);
+            console.error("Recovery password error:", error);
             res.status(500).json(error);
         }
     };
@@ -125,6 +132,7 @@ class Auth {
     async reset(req: Request, res: Response, next: NextFunction) {
         try {
             const { email } = req.body;
+            console.log("Reset password. Email:", req.body)
             const resetToken: string = generateRecoveryToken();
 
             schema.findOneAndUpdate({ email }, { $set: { resetToken } })
@@ -134,6 +142,7 @@ class Auth {
                     const emailResult: any = await this.sendRecoveryEmail(resetToken, email, result);
                     if (emailResult.accepted) {
                         // ATTENZIONE: non ritornare il token!!!!
+                        console.log("Reset password success:", result)
                         res.status(200).json({
                             valid: 'ok',
                             id: result.id
@@ -143,6 +152,7 @@ class Auth {
                 }
             })
         } catch (error) {
+            console.error("Reset password error:", error)
             res.status(500).json(error);
         }
     }

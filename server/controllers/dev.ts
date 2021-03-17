@@ -5,6 +5,7 @@ const packJson = require('../../package.json');
 class Dev {
 
     getVersion(req: Request, res: Response) {
+        console.log("Get version request")
         return res.status(200)
         .json({
             version: packJson.version
