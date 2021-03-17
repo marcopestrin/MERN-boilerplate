@@ -5,8 +5,8 @@ import { encryptPassword, generateActiveCode, MailOptions, sendEmail } from './c
 class User {
 
     confirmEmail(req: Request, res: Response) {
-        console.log("Confirm email request", req.params)
         try {
+            console.log("Confirm email request", req.params)
             const query: object = {
                 activeCode: req.params.activeCode,
                 email: req.params.email
@@ -43,8 +43,8 @@ class User {
     }
 
     createNewUser(req: Request, res: Response, next: NextFunction) {
-        console.log("Create new user:", req.body);
         try {
+            console.log("Create new user:", req.body);
             const { password, username, email } = req.body;
             const activeCode: string = generateActiveCode(password)
 
