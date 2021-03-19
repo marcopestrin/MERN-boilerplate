@@ -17,7 +17,7 @@ class Auth {
             password
         };
         const options: object = {
-            expiresIn: process.env.ACCESS_TOKEN_LIFE,
+            expiresIn: process.env.ACCESS_TOKEN_LIFE, //1d
             algorithm: 'HS256'
         };
         return {
