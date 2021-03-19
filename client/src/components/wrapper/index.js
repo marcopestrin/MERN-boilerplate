@@ -1,24 +1,60 @@
 import React from "react";
-import { Container, Grid} from "@material-ui/core";
+import { Container, Grid, Button } from "@material-ui/core";
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link
+} from "react-router-dom";
 
 import Login from "../login";
 import SignUp from "../signup";
+import RecoveryPassword from "../recoveryPassword";
 
-import "./_styles.scss";
+import "./styles.scss";
 
 const Wrapper = () => {
     return (
-        <Container maxWidth="sm" className="wrapper-container">
-            <Grid container spacing={2}>
-                <Grid item xs={12}>
-                    <Login />
+        <Router>
+            <Container maxWidth="md" className="wrapper-container">
+                <Grid container spacing={2}>
+                    <Grid item container xs={12} spacing={2}>
+                        <Switch>
+                            <Route path="/login">
+                                <Login />
+                            </Route>
+                            <Route path="/signUp">
+                                <SignUp />
+                            </Route>
+                            <Route path="/recoveryPassword">
+                                <RecoveryPassword />
+                            </Route>
+                            <Route path="/">
+                                <Grid item xs={6}>
+                                    <Button
+                                        variant="outlined"
+                                        color="primary"
+                                        fullWidth
+                                    >
+                                        <Link to="/signUp">Registrati</Link>   
+                                    </Button>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <Button
+                                        variant="outlined"
+                                        color="primary"
+                                        fullWidth
+                                    >
+                                        <Link to="/login">Accedi alla piattaforma</Link>   
+                                    </Button>
+                                </Grid>
+                                
+                            </Route>
+                        </Switch>
+                    </Grid>
                 </Grid>
-
-                <Grid item xs={12}>
-                    <SignUp />
-                </Grid>
-            </Grid>
-        </Container>
+            </Container>
+        </Router>
     )
 };
 
