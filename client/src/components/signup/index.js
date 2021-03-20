@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { FormControl, TextField, Typography, Grid, Button } from '@material-ui/core';
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+
+import { REGISTRATION_REQUEST } from "../../redux/actions";
 import "./styles.scss";
 const SignUp = () => {
 
@@ -8,13 +11,21 @@ const SignUp = () => {
     const [ password, setPassword ] = useState("");
     const [ repeatPassword, setRepeatPassword ] = useState("");
     const [ email, setEmail ] = useState("");
+    const dispatch = useDispatch();
 
     const goToLogin = () => {
 
     };
 
     const signUpRequest = () => {
-
+        dispatch({
+            type: REGISTRATION_REQUEST,
+            payload: {
+                username,
+                password,
+                email
+            }
+        })
     };
     
     return (

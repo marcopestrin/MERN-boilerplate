@@ -3,8 +3,8 @@ import { createStore, applyMiddleware, compose, combineReducers } from "redux";
 import createSagaMiddleware from "redux-saga";
 import { takeLatest } from "redux-saga/effects";
 import auth from "./reducers/auth";
-import { LOGIN_REQUEST } from "./actions";
-import { loginRequest } from "./saga";
+import { LOGIN_REQUEST, REGISTRATION_REQUEST } from "./actions";
+import { loginRequest, registrationRequest } from "./saga";
 
 export const configureStore = () => {
 
@@ -42,4 +42,5 @@ export const configureStore = () => {
 
 function* rootSaga() {
   yield takeLatest(LOGIN_REQUEST, loginRequest);
+  yield takeLatest(REGISTRATION_REQUEST, registrationRequest);
 }

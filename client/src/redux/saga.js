@@ -1,7 +1,7 @@
 import { put } from "redux-saga/effects";
 
-import { LOGIN_SUCCESS, LOGIN_FAILURE } from "./actions";
-import { login } from "./requests/auth";
+import { LOGIN_SUCCESS, LOGIN_FAILURE, REGISTRATION_FAILURE, REGISTRATION_SUCCESS } from "./actions";
+import { login, registration } from "./requests/auth";
 
 export function* loginRequest(payload) {
     try {
@@ -13,6 +13,21 @@ export function* loginRequest(payload) {
     } catch (error) {
         yield put({
             type: LOGIN_FAILURE,
+            payload: { error }
+        })
+    }
+}
+
+export function* registrationRequest(payload) {
+    try {
+        const res = yield registration(payload);
+        yield put({
+            type: REGISTRATION_SUCCESS,
+            payload: res
+        })
+    } catch (error) {
+        yield put({
+            type: REGISTRATION_FAILURE,
             payload: { error }
         })
     }
