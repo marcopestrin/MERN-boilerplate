@@ -40,10 +40,9 @@ npm run dev / npm run start
 - CRUD pattern on model (Create, Read, Update, Delete)
 
 ## Next Steps
-- Log management system
+- Improve log management system
 - Export data in another format (might be CSV)
 - Avoid crashing whenever there is an error
-- Create a Frontend with React and Redux
 
 ## Changelog by weeks
 - 1/2: Authentication system + CRUD API on User Model
