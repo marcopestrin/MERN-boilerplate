@@ -1,11 +1,7 @@
 import Wrapper from "./components/wrapper";
 
 function App() {
-  return (
-    <>
-      <Wrapper />
-    </>
-  );
+  return <Wrapper />
 }
 
 export default App;

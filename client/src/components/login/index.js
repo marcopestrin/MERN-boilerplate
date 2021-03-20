@@ -1,11 +1,16 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux"
 import { FormControl, TextField, Typography, Grid, Button } from '@material-ui/core';
+
+import { LOGIN_REQUEST } from "../../redux/actions";
+
 import "./styles.scss";
 const Login = () => {
 
     const [ username, setUsername ] = useState("");
     const [ password, setPassword ] = useState("");
+    const dispatch = useDispatch();
 
     const goToForgetPassword = () => {
 
@@ -16,7 +21,13 @@ const Login = () => {
     };
 
     const loginRequest = () => {
-
+        dispatch({
+            type: LOGIN_REQUEST,
+            payload: {
+                username,
+                password
+            }
+        });
     };
 
     return (
@@ -50,7 +61,7 @@ const Login = () => {
                         variant="outlined"
                         color="primary"
                         fullWidth
-                        onChange={loginRequest}
+                        onClick={loginRequest}
                     >
                         Accedi alla piattaforma
                     </Button>

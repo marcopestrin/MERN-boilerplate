@@ -68,7 +68,7 @@ const SignUp = () => {
                         variant="outlined"
                         color="primary"
                         fullWidth
-                        onChange={signUpRequest}
+                        onClick={signUpRequest}
                     >
                         Registra nuovo utente
                     </Button>

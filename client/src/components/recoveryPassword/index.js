@@ -30,7 +30,7 @@ const RecoveryPassword = () => {
                         variant="outlined"
                         color="primary"
                         fullWidth
-                        onChange={recoveryPasswordRequest}
+                        onClick={recoveryPasswordRequest}
                     >
                         Recupera password
                     </Button>
