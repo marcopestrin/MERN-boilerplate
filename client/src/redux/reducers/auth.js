@@ -27,9 +27,11 @@ export default function auth(prevState = {}, action){
             break;
 
         case LOGIN_SUCCESS:
+            const { refreshToken, accessToken } = payload;
             clonedState = {
                 ...clonedState,
-                token: payload.token
+                accessToken,
+                refreshToken
             };
             break;
               

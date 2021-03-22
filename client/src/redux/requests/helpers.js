@@ -16,3 +16,19 @@ export async function getEndpointList() {
     const response = await fetch(apiURL);
     return await response.json();
 };
+
+
+export async function request({url, method, payload}) {
+
+    const response = await fetch(url, {
+        method,
+        headers:  {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Credentials': 'true',
+            'Access-Control-Allow-Origin': 'http://localhost:8000',
+        },
+        body: JSON.stringify(payload)
+    });
+    return response.json();
+
+}

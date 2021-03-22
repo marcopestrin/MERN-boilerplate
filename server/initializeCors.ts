@@ -25,5 +25,6 @@ export default function initializeCors(app: Express): void {
             }
 		},
 	};
+
 	app.use(cors(corsOptions));
 }
