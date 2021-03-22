@@ -1,0 +1,17 @@
+{
+    "auth": {
+        "login": "/v1/auth/login",
+        "logout": "/v1/auth/logout",
+        "resetPassword": "v1/auth/reset",
+        "recoveryPassword": "/v1/auth/recoveryPassword"
+    },
+    "user": {
+        "update": "/v1/user/update",
+        "create": "/v1/user/create",
+        "active": "/v1/user/active",
+        "disable": "/v1/user/disable",
+        "delete": "/v1/user/delete",
+        "getAllUsers": "/v1/user/getAllUsers",
+        "getUserById": "/v1/user/getUserById"
+    }
+}

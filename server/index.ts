@@ -11,7 +11,8 @@ import initializeCors from "./initializeCors";
 import { applyPassportStrategy } from "./passportStrategy";
 import swaggerDocument from "../swagger.json";
 
-require('dotenv').config()
+require('dotenv').config();
+
 
 function connectDatabase() {
     if (isProduction ) {
@@ -37,7 +38,6 @@ export function createServer(): void {
     applyPassportStrategy();
     initializeRoutes(router);
     initializeCors(app);
-
     app.use(router);
     const server: Server = http.createServer(app);
 	server.listen(port, () => console.log(`App listening on ${host}`));

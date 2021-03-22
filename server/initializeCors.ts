@@ -10,6 +10,7 @@ export default function initializeCors(app: Express): void {
 		whitelist = [
 			`http://localhost:3000`,
 			`http://localhost:9000`,
+			`http://localhost:3000`,
 		];
     }
 	const corsOptions: CorsOptions = {
