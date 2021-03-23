@@ -1,12 +1,23 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { FormControl, TextField, Grid, Button } from '@material-ui/core';
 import "./styles.scss";
-const RecoveryPassword = () => {
+
+import { RESET_PASSWORD_REQUEST } from "../../redux/actions";
+
+const ResetPassword = () => {
 
     const [ email, setEmail ] = useState("");
 
-    const recoveryPasswordRequest = () => {
+    const dispatch = useDispatch();
 
+    const resetPasswordRequest = () => {
+        dispatch({
+            type: RESET_PASSWORD_REQUEST,
+            payload: {
+                email
+            }
+        });
     };
 
     return (
@@ -17,7 +28,7 @@ const RecoveryPassword = () => {
             <Grid container spacing={2}>
                 <Grid item xs={12}>
                     <TextField
-                        label="Username"
+                        label="email"
                         type="input"
                         color="primary"
                         fullWidth
@@ -30,7 +41,7 @@ const RecoveryPassword = () => {
                         variant="outlined"
                         color="primary"
                         fullWidth
-                        onClick={recoveryPasswordRequest}
+                        onClick={resetPasswordRequest}
                     >
                         Recupera password
                     </Button>
@@ -41,4 +52,4 @@ const RecoveryPassword = () => {
     )
 }
 
-export default RecoveryPassword
+export default ResetPassword

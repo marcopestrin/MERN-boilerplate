@@ -9,7 +9,7 @@ import {
 
 import Login from "../login";
 import SignUp from "../signup";
-import RecoveryPassword from "../recoveryPassword";
+import ResetPassword from "../resetPassword";
 import Logout from "../logout";
 import "./styles.scss";
 
@@ -27,8 +27,8 @@ const Wrapper = () => {
                             <Route path="/signUp">
                                 <SignUp />
                             </Route>
-                            <Route path="/recoveryPassword">
-                                <RecoveryPassword />
+                            <Route path="/resetPassword">
+                                <ResetPassword />
                             </Route>
                             <Route path="/">
                                 <Grid item xs={6}>

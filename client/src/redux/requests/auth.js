@@ -28,3 +28,17 @@ export const registration = async({payload}) => {
         }
     });
 };
+
+export const resetPassword = async({payload}) => {
+
+    const { auth } = await getEndpointList();
+    const { email } = payload;
+
+    return await request({
+        url: auth.resetPassword,
+        method: "POST",
+        payload: {
+            email
+        }
+    });
+}

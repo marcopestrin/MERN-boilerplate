@@ -4,7 +4,9 @@ import {
     LOGOUT_SUCCESS,
     LOGOUT_FAILURE,
     REGISTRATION_SUCCESS,
-    REGISTRATION_FAILURE
+    REGISTRATION_FAILURE,
+    RESET_PASSWORD_SUCCESS,
+    RESET_PASSWORD_FAILURE
 } from "../actions";
 
 export default function auth(prevState = {}, action){
@@ -25,6 +27,12 @@ export default function auth(prevState = {}, action){
             clonedState = {
                 error: payload.error,
             };
+            break;
+
+        case RESET_PASSWORD_SUCCESS:
+            break;
+            
+        case RESET_PASSWORD_FAILURE:
             break;
 
         case LOGIN_SUCCESS:

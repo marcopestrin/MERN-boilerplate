@@ -6,9 +6,11 @@ import {
     REGISTRATION_FAILURE,
     REGISTRATION_SUCCESS,
     LOGOUT_FAILURE,
-    LOGOUT_SUCCESS
+    LOGOUT_SUCCESS,
+    RESET_PASSWORD_FAILURE,
+    RESET_PASSWORD_SUCCESS
 } from "./actions";
-import { login, registration } from "./requests/auth";
+import { login, registration, resetPassword } from "./requests/auth";
 
 export function* loginRequest(payload) {
     try {
@@ -29,7 +31,7 @@ export function* loginRequest(payload) {
             payload: { error }
         })
     }
-}
+};
 
 export function* registrationRequest(payload) {
     try {
@@ -46,7 +48,7 @@ export function* registrationRequest(payload) {
             payload: { error }
         })
     }
-}
+};
 
 export function* logoutRequest() {
     try {
@@ -61,4 +63,18 @@ export function* logoutRequest() {
             payload: { error }
         })
     }
-}
+};
+
+export function* resetPasswordRequest(payload) {
+    try {
+        yield resetPassword(payload);
+        yield put({
+            type: RESET_PASSWORD_SUCCESS
+        })
+    } catch (error) {
+        yield put({
+            type: RESET_PASSWORD_FAILURE,
+            payload: { error }
+        })
+    }
+};
