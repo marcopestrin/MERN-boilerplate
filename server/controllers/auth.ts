@@ -77,7 +77,10 @@ class Auth {
                     res.cookie("accessToken", tokens.accessToken);
                     res.cookie("refreshToken", tokens.refreshToken);
                     console.log("Login request success ", tokens);
-                    res.status(200).json(tokens);
+                    res.status(200).json({
+                        ...tokens,
+                        success: true
+                    });
                 } else {
                     console.error("Login request error: wrong credentials");
                     res.status(401).json('wrong credentials');

@@ -15,7 +15,9 @@ export default function auth(prevState = {}, action){
         case REGISTRATION_SUCCESS:
             clonedState = {
                 ...clonedState,
-                newUser: payload.response
+                newUser: {
+                    ...payload
+                }
             };
             break;
                           

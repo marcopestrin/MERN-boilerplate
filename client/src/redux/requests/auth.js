@@ -13,8 +13,18 @@ export const login = async({payload}) => {
     });
 };
 
-export const registration = async(payload) => {
-    return {
-        response: "ok!"
-    }
+export const registration = async({payload}) => {
+
+    const { user } = await getEndpointList();
+    const { username, password, email } = payload;
+
+    return await request({
+        url: user.registration,
+        method: "POST",
+        payload: {
+            username,
+            password,
+            email
+        }
+    });
 };

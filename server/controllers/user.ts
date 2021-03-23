@@ -60,7 +60,7 @@ class User {
                     if (11000 === err.code && err.name === 'MongoError') {
                         console.error("Create new user: user already exist");
                         res.status(422).json({
-                            succes: false,
+                            success: false,
                             message: 'User already exist!'
                         });
                     }
@@ -70,6 +70,7 @@ class User {
                 if (isSended) {
                     console.log("Create new user: all good");
                     res.status(200).json({
+                        success: true,
                         email: result.email,
                         username: result.username
                     });

@@ -1,11 +1,11 @@
 {
     "auth": {
-        "login": "/v1/auth/login",
-        "logout": "/v1/auth/logout",
-        "resetPassword": "v1/auth/reset",
-        "recoveryPassword": "/v1/auth/recoveryPassword"
+        "login": "http://localhost:8000/v1/auth/login",
+        "resetPassword": "localhost:8000/v1/auth/reset",
+        "recoveryPassword": "localhost:8000/v1/auth/recoveryPassword"
     },
     "user": {
+        "registration": "localhost:8000/v1/user/create",
         "update": "/v1/user/update",
         "create": "/v1/user/create",
         "active": "/v1/user/active",

@@ -13,12 +13,16 @@ import { login, registration } from "./requests/auth";
 export function* loginRequest(payload) {
     try {
         const res = yield login(payload);
-        const { refreshToken, accessToken } = res;
-        localStorage.setItem('refreshToken', refreshToken);
-        localStorage.setItem('accessToken', accessToken);
-        yield put({
-            type: LOGIN_SUCCESS,
-        })
+        const { refreshToken, accessToken, success } = res;
+        if (success) {
+            localStorage.setItem('refreshToken', refreshToken);
+            localStorage.setItem('accessToken', accessToken);
+            yield put({
+                type: LOGIN_SUCCESS,
+            })
+        } else {
+            throw res;
+        }
     } catch (error) {
         yield put({
             type: LOGIN_FAILURE,
@@ -30,13 +34,11 @@ export function* loginRequest(payload) {
 export function* registrationRequest(payload) {
     try {
         const res = yield registration(payload);
-        if (res.accessToken) {
+        if (res.success) {
             yield put({
                 type: REGISTRATION_SUCCESS,
                 payload: res
             })
-        } else {
-            throw res;
         }
     } catch (error) {
         yield put({
