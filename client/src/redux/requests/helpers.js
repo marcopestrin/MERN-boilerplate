@@ -18,17 +18,28 @@ export async function getEndpointList() {
 };
 
 
-export async function request({url, method, payload}) {
-
-    const response = await fetch(url, {
-        method,
-        headers:  {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Credentials': 'true',
-            'Access-Control-Allow-Origin': 'http://localhost:8000',
-        },
-        body: JSON.stringify(payload)
-    });
-    return response.json();
-
+export async function request({
+    url,
+    method,
+    payload
+}) {
+    try {
+        const response = await fetch(url, {
+            method,
+            headers:  {
+                "refreshToken": localStorage.getItem("refreshToken"),
+                "accessToken": localStorage.getItem("accessToken"),
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Credentials": "true",
+                "Access-Control-Allow-Origin": "http://localhost:8000",
+            },
+            body: JSON.stringify(payload)
+        });
+        if (response.status !== 200){
+            throw response;
+        }
+        return response.json();
+    } catch (error){
+        console.log(error);
+    }
 }

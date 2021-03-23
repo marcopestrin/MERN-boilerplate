@@ -22,37 +22,32 @@ export default function auth(prevState = {}, action){
         case REGISTRATION_FAILURE:
             clonedState = {
                 error: payload.error,
-                isLoading: false
             };
             break;
 
         case LOGIN_SUCCESS:
-            const { refreshToken, accessToken } = payload;
             clonedState = {
                 ...clonedState,
-                accessToken,
-                refreshToken
+                logged: true
             };
             break;
               
         case LOGIN_FAILURE:
             clonedState = {
                 error: payload.error,
-                isLoading: false
             };
             break;
 
         case LOGOUT_SUCCESS:
             clonedState = {
                 ...clonedState,
-                token: ""
+                logged: false
             };
             break;
               
         case LOGOUT_FAILURE:
             clonedState = {
                 error: payload.error,
-                isLoading: false
             };
             break;
 

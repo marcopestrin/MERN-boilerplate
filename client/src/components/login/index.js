@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux"
+import { useDispatch } from "react-redux";
 import { FormControl, TextField, Typography, Grid, Button } from '@material-ui/core';
 
 import { LOGIN_REQUEST } from "../../redux/actions";

@@ -10,7 +10,7 @@ import {
 import Login from "../login";
 import SignUp from "../signup";
 import RecoveryPassword from "../recoveryPassword";
-
+import Logout from "../logout";
 import "./styles.scss";
 
 const Wrapper = () => {
@@ -22,6 +22,7 @@ const Wrapper = () => {
                         <Switch>
                             <Route path="/login">
                                 <Login />
+                                <Logout />
                             </Route>
                             <Route path="/signUp">
                                 <SignUp />
@@ -48,7 +49,6 @@ const Wrapper = () => {
                                         <Link to="/login">Accedi alla piattaforma</Link>   
                                     </Button>
                                 </Grid>
-                                
                             </Route>
                         </Switch>
                     </Grid>
