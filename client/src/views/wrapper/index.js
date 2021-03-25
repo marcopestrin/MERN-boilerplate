@@ -4,9 +4,11 @@ import {
     BrowserRouter as Router,
     Switch,
     Route,
+    BrowserRouter,
     Link
 } from "react-router-dom";
 import { useSelector } from "react-redux";
+
 
 import Login from "../login";
 import SignUp from "../signup";
@@ -14,36 +16,42 @@ import ResetPassword from "../resetPassword";
 import Logout from "../logout";
 import "./styles.scss";
 import { selectorAuth } from "../../redux/selectors";
-import PrivateRoute from "../../components/privateRoute";
+import PrivateRoute from "../../hooks/privateRoute";
 import Dashboard from "../../components/dashboard";
 
 
 const Wrapper = () => {
-    const auth = useSelector(selectorAuth);
-    console.log(auth.logged);
+    const profile = useSelector(selectorAuth);
+
+    console.log("profile", profile)
 
     return (
-        <Router>
-            <Container maxWidth="md" className="wrapper-container">
-                <Grid container spacing={2}>
-                    <Grid item container xs={12} spacing={2}>
-                        <PrivateRoute
-                            exec
-                            path="/dashboard"
-                            component={Dashboard}
-                        />
-                        <Switch>
-                            <Route path="/login">
-                                <Login />
-                                <Logout />
+        <Container maxWidth="md" className="wrapper-container">
+            <Grid container spacing={2}>
+                <Grid item container xs={12} spacing={2}>
+                    <BrowserRouter>
+                            <Route
+                                path="/login"
+                                component={Login}
+                            >
                             </Route>
-                            <Route path="/signUp">
-                                <SignUp />
+                            <Route
+                                path="/signUp"
+                                component={SignUp}
+                            >
                             </Route>
-                            <Route path="/resetPassword">
-                                <ResetPassword />
+                            <Route
+                                path="/resetPassword"
+                                component={ResetPassword}
+                            >
                             </Route>
-                            <Route path="/">
+                            <PrivateRoute
+                                exec
+                                path="/dashboard"
+                                component={Dashboard}
+                                profile={profile}
+                            />
+                            {/* <Route path="/">
                                 <Grid item xs={6}>
                                     <Button
                                         variant="outlined"
@@ -62,12 +70,11 @@ const Wrapper = () => {
                                         <Link to="/login">Accedi alla piattaforma</Link>   
                                     </Button>
                                 </Grid>
-                            </Route>
-                        </Switch>
-                    </Grid>
+                            </Route> */}
+                    </BrowserRouter>
                 </Grid>
-            </Container>
-        </Router>
+            </Grid>
+        </Container>
     )
 };
 
