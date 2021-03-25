@@ -24,7 +24,11 @@ export const configureStore = () => {
 
   let store;
   const middlewareSaga = createSagaMiddleware();
-  const initialState = {};
+  const initialState = {
+    auth: {
+      logged: false
+    }
+  };
 
   const reducers = combineReducers({
     auth,
