@@ -1,15 +1,6 @@
 import { put } from "redux-saga/effects";
 
-import {
-    LOGIN_SUCCESS,
-    LOGIN_FAILURE,
-    REGISTRATION_FAILURE,
-    REGISTRATION_SUCCESS,
-    LOGOUT_FAILURE,
-    LOGOUT_SUCCESS,
-    RESET_PASSWORD_FAILURE,
-    RESET_PASSWORD_SUCCESS
-} from "./actions";
+import * as actions from "./actions";
 import { login, registration, resetPassword } from "./requests/auth";
 
 export function* loginRequest(payload) {
@@ -20,14 +11,14 @@ export function* loginRequest(payload) {
             localStorage.setItem('refreshToken', refreshToken);
             localStorage.setItem('accessToken', accessToken);
             yield put({
-                type: LOGIN_SUCCESS,
+                type: actions.LOGIN_SUCCESS,
             })
         } else {
             throw res;
         }
     } catch (error) {
         yield put({
-            type: LOGIN_FAILURE,
+            type: actions.LOGIN_FAILURE,
             payload: { error }
         })
     }
@@ -38,13 +29,13 @@ export function* registrationRequest(payload) {
         const res = yield registration(payload);
         if (res.success) {
             yield put({
-                type: REGISTRATION_SUCCESS,
+                type: actions.REGISTRATION_SUCCESS,
                 payload: res
             })
         }
     } catch (error) {
         yield put({
-            type: REGISTRATION_FAILURE,
+            type: actions.REGISTRATION_FAILURE,
             payload: { error }
         })
     }
@@ -55,11 +46,11 @@ export function* logoutRequest() {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         yield put({
-            type: LOGOUT_SUCCESS
+            type: actions.LOGOUT_SUCCESS
         })
     } catch (error) {
         yield put({
-            type: LOGOUT_FAILURE,
+            type: actions.LOGOUT_FAILURE,
             payload: { error }
         })
     }
@@ -69,11 +60,11 @@ export function* resetPasswordRequest(payload) {
     try {
         yield resetPassword(payload);
         yield put({
-            type: RESET_PASSWORD_SUCCESS
+            type: actions.RESET_PASSWORD_SUCCESS
         })
     } catch (error) {
         yield put({
-            type: RESET_PASSWORD_FAILURE,
+            type: actions.RESET_PASSWORD_FAILURE,
             payload: { error }
         })
     }
