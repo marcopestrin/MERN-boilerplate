@@ -25,6 +25,7 @@ export default function auth(prevState = {}, action){
                           
         case REGISTRATION_FAILURE:
             clonedState = {
+                ...clonedState,
                 error: payload.error,
             };
             break;
@@ -38,25 +39,31 @@ export default function auth(prevState = {}, action){
         case LOGIN_SUCCESS:
             clonedState = {
                 ...clonedState,
+                loginRedirect: true,
+                logoutRedirect: false,
                 logged: true
-            };
-            break;
-              
-        case LOGIN_FAILURE:
-            clonedState = {
-                error: payload.error,
             };
             break;
 
         case LOGOUT_SUCCESS:
             clonedState = {
                 ...clonedState,
+                loginRedirect: false,
+                logoutRedirect: true,
                 logged: false
             };
             break;
               
         case LOGOUT_FAILURE:
             clonedState = {
+                logoutRedirect: false,
+                error: payload.error,
+            };
+            break;
+                          
+        case LOGIN_FAILURE:
+            clonedState = {
+                loginRedirect: false,
                 error: payload.error,
             };
             break;

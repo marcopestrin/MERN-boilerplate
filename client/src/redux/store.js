@@ -26,7 +26,9 @@ export const configureStore = () => {
   const middlewareSaga = createSagaMiddleware();
   const initialState = {
     auth: {
-      logged: false
+      logged: false,
+      loginRedirect: false,
+      logoutRedirect: false,
     }
   };
 

@@ -1,6 +1,12 @@
+
+import Logout from "../logout";
 const Dashboard = () => {
     return (
-        <p>example</p>
+        <>
+            <p>example</p>
+            <p>qui dentrooo</p>
+            <Logout />
+        </>
     )
 }
 
