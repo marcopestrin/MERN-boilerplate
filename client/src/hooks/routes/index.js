@@ -1,6 +1,13 @@
 import React from "react";
 import { Redirect, Route } from "react-router-dom";
-import { isAuthenticate } from "../../utils/helpers";
+
+function isAuthenticate(){
+    const accessToken = localStorage.getItem("accessToken");
+    if (accessToken === null || accessToken === "") {
+        return false;
+    }
+    return true;
+};
 
 export const PrivateRoute = ({
     component: Component,
@@ -36,6 +43,3 @@ export const PublicRoute = ({
         }}
     />
 )
-
-
-
