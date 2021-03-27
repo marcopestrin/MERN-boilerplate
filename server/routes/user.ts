@@ -21,7 +21,7 @@ router.put("/disable", passportJWT, user.toggleActiveUser);
 
 router.delete("/delete", passportJWT, user.deleteUser);
 
-router.get("/getAllUsers", passportJWT, user.getAllUser);
+router.get("/getAllUsers", passportJWT, user.getAllUsers);
 router.get("/getUserById", passportJWT, user.getUserById);
 router.get("/confirmEmail/:email/:activeCode", user.confirmEmail.bind(user));
 module.exports = router;

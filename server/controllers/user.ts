@@ -85,15 +85,15 @@ class User {
         }
     };
 
-    getAllUser(req: Request, res: Response) {
+    getAllUsers(req: Request, res: Response) {
         try {
-            console.log("Get all user request");
+            console.log("Get all users request");
             schema.find({}, (err: object, result: object) => {
                 if (err) throw err;
                 res.status(200).json(result);
             })
         } catch (error) {
-            console.error("Get all user request error:", error);
+            console.error("Get all users request error:", error);
             res.status(500).json(error);
         }
     };

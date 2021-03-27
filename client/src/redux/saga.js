@@ -2,6 +2,25 @@ import { put } from "redux-saga/effects";
 
 import * as actions from "./actions";
 import { login, registration, resetPassword } from "./requests/auth";
+import { getUsersList } from "./requests/users";
+
+export function* getUsersListRequest() {
+    try {
+        const res = yield getUsersList();
+        if (res) {
+            yield put({
+                type: actions.GET_USERS_LIST_SUCCESS,
+                payload: res
+            })
+        }
+    } catch (error) {
+        yield put({
+            type: actions.GET_USERS_LIST_FAILURE,
+            payload: { error }
+        })
+    }
+
+}
 
 export function* loginRequest(payload) {
     try {

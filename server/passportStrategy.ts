@@ -13,8 +13,17 @@ export const applyPassportStrategy = () => {
         return token;
     }
 
+    const tokensExtractor = (req) => {
+        let token = null;
+        if (req && req.headers) {
+            token = req.headers.accesstoken
+        }
+        return token;
+    }
+
     const options: object = {
-        jwtFromRequest: cookieExtractor,
+        //jwtFromRequest: cookieExtractor,
+        jwtFromRequest: tokensExtractor,
         secretOrKey: process.env.ACCESS_TOKEN_SECRET,
         passReqToCallback: true
     };
