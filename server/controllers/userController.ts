@@ -1,10 +1,11 @@
 import { Response, Request, NextFunction } from "express";
 import crypto from "crypto";
-import schema from '../models/user';
-import { encryptPassword, generateActiveCode, MailOptions, sendEmail } from './commonFunctions';
+import schema from "../models/user";
+import { encryptPassword, generateActiveCode, sendEmail } from "./functions";
+import { MailOptions } from "./interfaces";
 class User {
 
-    confirmEmail(req: Request, res: Response) {
+    confirmEmail(req: Request, res: Response, next: NextFunction) {
         try {
             console.log("Confirm email request", req.params)
             const query: object = {
@@ -31,7 +32,7 @@ class User {
             })
         } catch (error) {
             console.error("Confirm email:", error);
-            res.status(500).json(error);
+            next(error);
         }
     };
 
@@ -80,12 +81,11 @@ class User {
             });
 
         } catch (error) {
-            console.error("Create new user error", error);
-            res.status(500).send(error);
+            next(error);
         }
     };
 
-    getAllUsers(req: Request, res: Response) {
+    getAllUsers(req: Request, res: Response, next: NextFunction) {
         try {
             console.log("Get all users request");
             schema.find({}, (err: object, result: object) => {
@@ -93,12 +93,11 @@ class User {
                 res.status(200).json(result);
             })
         } catch (error) {
-            console.error("Get all users request error:", error);
-            res.status(500).json(error);
+            next(error);
         }
     };
 
-    getUserById(req: Request, res: Response) {
+    getUserById(req: Request, res: Response, next: NextFunction) {
         try {
             console.log("Get user by id request", req.query);
             const { id } = req.query;
@@ -111,12 +110,11 @@ class User {
                 res.status(200).json(result);
             });
         } catch (error) {
-            console.error("Get user by id: error", error);
-            res.status(500).json(error);
+            next(error);
         }
     };
 
-    toggleActiveUser(req: Request, res: Response) {
+    toggleActiveUser(req: Request, res: Response, next: NextFunction) {
         try {
             console.log("Toggle user request", req.query);
             let active: boolean;
@@ -140,12 +138,11 @@ class User {
                 res.status(200).json(result);
             })
         } catch (error) {
-            console.error("Toggle user", error);
-            res.status(500).json(error);
+            next(error);
         }
     };
 
-    deleteUser(req: Request, res: Response){
+    deleteUser(req: Request, res: Response, next: NextFunction){
         try {
             console.log("Delete user request", req.query);
             const { id } = req.query;
@@ -157,12 +154,11 @@ class User {
                 res.status(200).json(result);
             });
         } catch (error) {
-            console.error("Delete user error", error);
-            res.status(500).json(error);
+            next(error);
         }
     }
 
-    updateUser(req: Request, res: Response) {
+    updateUser(req: Request, res: Response, next: NextFunction) {
         try {
             console.log("Update user request", req.body);
             const { username, password, email } = req.body;
@@ -180,8 +176,7 @@ class User {
                 res.status(200).json(result);
             })
         } catch (error) {
-            console.error("Update user error", error);
-            res.status(500).json(error);
+            next(error);
         }
     }
 

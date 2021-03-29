@@ -1,13 +1,10 @@
 import { Response, Request, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
-import { applicationDomain } from '../../const';
+import { applicationDomain } from "../../const";
 import schema from "../models/user";
-import { encryptPassword, generateRecoveryToken, sendEmail, MailOptions } from './commonFunctions';
-interface Tokens {
-    accessToken: String,
-    refreshToken: String
-};
+import { encryptPassword, generateRecoveryToken, sendEmail } from "./functions";
+import { Update, Tokens, MailOptions } from "./interfaces";
 
 class Auth {
 
@@ -24,6 +21,14 @@ class Auth {
             accessToken: jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, options).toString(),
             refreshToken: jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, options).toString()
         };
+    };
+
+    async saveRefreshToken(refreshToken: String, next: NextFunction) {
+        const { ok }: Update  = await schema.updateOne({ refreshToken }, (err: object, result: object) => {
+            if (err) throw err;
+            return result
+        })
+        return ok ? true : false;
     };
 
     validateBody(req: Request, res: Response, next: NextFunction) {
@@ -60,8 +65,8 @@ class Auth {
             res.status(401).json('You need to Login');
         }
         return await jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);          
-        } catch (err) {
-            res.status(500).json(err.toString());
+        } catch (error) {
+            next(error);
         }
     }
 
@@ -73,14 +78,23 @@ class Auth {
             if (validInput) {
                 const validCredentials:boolean = await this.checkCredentials(username, password);
                 if (validCredentials) {
-                    const tokens: Tokens = this.generateTokens(username, password);
-                    res.cookie("accessToken", tokens.accessToken);
-                    res.cookie("refreshToken", tokens.refreshToken);
-                    console.log("Login request success ", tokens);
-                    res.status(200).json({
-                        ...tokens,
-                        success: true
-                    });
+                    const { accessToken, refreshToken }: Tokens = this.generateTokens(username, password);
+
+                    if (await this.saveRefreshToken(refreshToken, next)) {
+
+                        res.cookie("accessToken", accessToken);
+                        res.cookie("refreshToken", refreshToken);
+    
+                        console.log("Login request success ", accessToken);
+                        res.status(200).json({
+                            accessToken,
+                            refreshToken,
+                            success: true
+                        });
+                    } else {
+                        res.status(500).json('generic error');
+                    }
+  
                 } else {
                     console.error("Login request error: wrong credentials");
                     res.status(401).json('wrong credentials');
@@ -90,8 +104,7 @@ class Auth {
                 res.status(400).json("wrong input");
             }
         } catch (error) {
-            console.error("Login request error: ", error);
-            res.status(500).json(error);
+            next(error);
         }
     };
 
@@ -127,8 +140,7 @@ class Auth {
             }
 
         } catch (error) {
-            console.error("Recovery password error:", error);
-            res.status(500).json(error);
+            next(error);
         }
     };
 
@@ -155,8 +167,7 @@ class Auth {
                 }
             })
         } catch (error) {
-            console.error("Reset password error:", error)
-            res.status(500).json(error);
+            next(error);
         }
     }
 

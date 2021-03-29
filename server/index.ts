@@ -10,6 +10,8 @@ import initializeRoutes from "./initializeRoutes";
 import initializeCors from "./initializeCors";
 import { applyPassportStrategy } from "./passportStrategy";
 import swaggerDocument from "../swagger.json";
+import errorMiddlewares from "./middlewares/error";
+import headersResponseMiddlewares from "./middlewares/headers";
 
 require('dotenv').config();
 
@@ -29,18 +31,7 @@ export function createServer(): void {
     const app = express();
     const router = express.Router();
 
-    app.use(function(req, res, next) {
-        res.header("Access-Control-Allow-Origin", "*"); //no cors
-        res.header(
-          "Access-Control-Allow-Headers",
-          "Origin, X-Requested-With, Content-Type, Accept"
-        );
-        res.header(
-          "Content-Type",
-          "application/x-www-form-urlencoded; charset=UTF-8"
-        );
-        next();
-    });
+    headersResponseMiddlewares(app);
 
     app.use(bodyParser.json({ limit: "10mb" }));
     app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
@@ -53,6 +44,7 @@ export function createServer(): void {
     initializeCors(app);
     app.use(router);
     const server: Server = http.createServer(app);
+    errorMiddlewares(app);
 	server.listen(port, () => console.log(`App listening on ${host}`));
 
     // process.on('uncaughtException', function (error) {

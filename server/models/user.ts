@@ -21,6 +21,7 @@ const UserSchema: Schema = new Schema({
     timeRegistration: { type : Date, default: Date.now },
     resetToken: { type: String },
     activeCode: { type: String },
+    refreshToken: { type: String },
     role: { type: Number, default: 1 } // 1 --> user, 2 --> admin
 });
 

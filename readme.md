@@ -47,8 +47,7 @@ npm run dev / npm run start
 
 ## Changelog by weeks
 - 1/2: Authentication system + CRUD API on User Model
-- 3:
-- 4:
+- 3/4: First deploy by Heroky + Creating Frontend (login/signUp/logout)
 - 5:
 
 ## Others
