@@ -1,6 +1,7 @@
 {
     "auth": {
         "login": "http://localhost:8000/v1/auth/login",
+        "logout": "http://localhost:8000/v1/auth/logout",
         "resetPassword": "http://localhost:8000/v1/auth/reset",
         "recoveryPassword": "http://localhost:8000/v1/auth/recoveryPassword"
     },

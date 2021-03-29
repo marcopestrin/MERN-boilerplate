@@ -4,6 +4,7 @@ import auth from "../controllers/authController";
 const router: express.Router = express.Router();
 
 router.post("/login", auth.login.bind(auth));
+router.post("/logout", auth.logout.bind(auth));
 router.post("/reset", auth.reset.bind(auth));
 router.post("/recoveryPassword", auth.recoveryPassword.bind(auth));
 

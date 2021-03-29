@@ -1,5 +1,6 @@
 import { getEndpointList, request } from "./helpers";
-export const login = async({payload}) => {
+
+export const login = async({ payload }) => {
 
     const { auth } = await getEndpointList();
     
@@ -13,7 +14,7 @@ export const login = async({payload}) => {
     });
 };
 
-export const registration = async({payload}) => {
+export const registration = async({ payload }) => {
 
     const { user } = await getEndpointList();
     const { username, password, email } = payload;
@@ -29,7 +30,7 @@ export const registration = async({payload}) => {
     });
 };
 
-export const resetPassword = async({payload}) => {
+export const resetPassword = async({ payload }) => {
 
     const { auth } = await getEndpointList();
     const { email } = payload;
@@ -41,4 +42,16 @@ export const resetPassword = async({payload}) => {
             email
         }
     });
+}
+
+export const logout = async(refreshToken) => {
+    const { auth } = await getEndpointList();
+    
+    return await request({
+        url: auth.logout,
+        method: "POST",
+        payload: {
+            refreshToken
+        }
+    })
 }

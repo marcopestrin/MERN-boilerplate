@@ -1,7 +1,7 @@
 import { put } from "redux-saga/effects";
 
 import * as actions from "./actions";
-import { login, registration, resetPassword } from "./requests/auth";
+import { login, registration, resetPassword, logout } from "./requests/auth";
 import { getUsersList } from "./requests/users";
 
 export function* getUsersListRequest() {
@@ -62,11 +62,14 @@ export function* registrationRequest(payload) {
 
 export function* logoutRequest() {
     try {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        yield put({
-            type: actions.LOGOUT_SUCCESS
-        })
+        const res = yield logout(localStorage.getItem("refreshToken"));
+        if (res.success) {
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            yield put({
+                type: actions.LOGOUT_SUCCESS
+            })
+        }
     } catch (error) {
         yield put({
             type: actions.LOGOUT_FAILURE,

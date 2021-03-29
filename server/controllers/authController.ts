@@ -70,6 +70,22 @@ class Auth {
         }
     }
 
+    async logout(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { refreshToken } = req.body;
+            schema.findOneAndUpdate({ refreshToken }, { $set: { refreshToken: "" } })
+            .exec(async(error: object, result: any) => {
+                if (error) throw error;
+                res.status(200).json({
+                    success: true
+                });
+            })
+
+        } catch (error){
+            next(error);
+        }
+    }
+
     async login(req: Request, res: Response, next: NextFunction) {
         try {
             const { username, password } = req.body;
