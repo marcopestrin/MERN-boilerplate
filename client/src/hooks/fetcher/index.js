@@ -1,4 +1,3 @@
-import { useCallback, useState } from "react";
 import axios from "axios";
 import UrlPattern from "url-pattern";
 import qs from "qs";
@@ -22,13 +21,12 @@ async function getEndpointList() {
     return await response.json();
 };
 
+const fetcher = ({ url, method }) => {
 
-function useFetcher({ url, method }) {
+    let error = {};
+    let data = {};
 
-    const [ data, setData ] = useState();
-    const [ error, setError ] = useState();
-
-    const createAxiosGateway = useCallback((options) => {
+    const createAxiosGateway = (options) => {
         const { addBaseUrl } = options;
         try {
             const CORSHeaders = {
@@ -69,11 +67,12 @@ function useFetcher({ url, method }) {
                             const { requestToken } = getEndpointList();
                             await fetch({
                                 method: "POST",
-                                url: requestToken,
-                                setData: false
+                                url: requestToken
                             })
-                        } catch (error) {
-                            // redirect to login
+                        } catch (err) {
+                            error = {
+                                ...err
+                            };
                         }
                     }
                     return fetchToken;
@@ -81,11 +80,13 @@ function useFetcher({ url, method }) {
                 return axiosGateway;
             })
         } catch (err) {
-            setError(err);
+            error = {
+                ...err
+            };
         }
-    }, []);
+    };
 
-    const createUrl = useCallback((axiosOptions) => {
+    const createUrl = (axiosOptions) => {
         const { url, urlParams, query } = axiosOptions;
         let uri = url;
         let queryString = "";
@@ -103,9 +104,9 @@ function useFetcher({ url, method }) {
         }
     
         return uri + queryString;
-    }, []);
+    };
 
-    const fetch = useCallback(async(options) => {
+    const fetch = async(options) => {
         /*
             query
             urlPrams,
@@ -119,11 +120,15 @@ function useFetcher({ url, method }) {
                 ...options,
                 url,
             });
-            setData(result.data);
+            data = {
+                ...result.data
+            };
         } catch (err) {
-            setError(err)
+            error = {
+                ...err
+            };
         }
-    }, []);
+    };
 
     return {
         data,
@@ -132,4 +137,4 @@ function useFetcher({ url, method }) {
     }
 }
 
-export default useFetcher
+export default fetcher
