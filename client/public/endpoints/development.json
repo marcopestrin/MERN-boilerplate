@@ -3,7 +3,8 @@
         "login": "http://localhost:8000/v1/auth/login",
         "logout": "http://localhost:8000/v1/auth/logout",
         "resetPassword": "http://localhost:8000/v1/auth/reset",
-        "recoveryPassword": "http://localhost:8000/v1/auth/recoveryPassword"
+        "recoveryPassword": "http://localhost:8000/v1/auth/recoveryPassword",
+        "requestNewToken": "http://localhost:8000/v1/auth/requestNewToken"
     },
     "user": {
         "registration": "http://localhost:8000/v1/user/create",

@@ -36,12 +36,14 @@ const fetcher = ({ url, method }) => {
                 "Access-Control-Allow-Credentials": "true",
             };
             const headers = {
-                accept: "application/json",
+                "accept": "application/json",
+                "accessToken": localStorage.getItem("accessToken"),
+                "refreshToken": localStorage.getItem("refreshToken"),
                 "Content-Type": "application/json",
                 ...CORSHeaders,
             };
             const axiosGateway = axios.create({
-                baseURL: addBaseUrl ? process.env.REACT_APP_API_URL : null,
+                baseURL: "",
                 timeout: 30000,
                 json: true,
                 headers,
@@ -54,31 +56,43 @@ const fetcher = ({ url, method }) => {
             axiosGateway.defaults.headers.get = headers;
             axiosGateway.defaults.headers.delete = headers;
             axiosGateway.defaults.withCredentials = true;
-        
+
+            axiosGateway.interceptors.request.use(
+                (response) => {
+                    response.meta = response.meta || {};
+                    response.meta.requestStartedAt = new Date().getTime();
+                    return response;
+                },
+                (error) => {
+                    console.log("error", error);
+                }
+            );
             axiosGateway.interceptors.response.use(
                 (response) => {
-                  return response;
+                    return response;
                 },
-                (err) => {
-                  const commonErrors = [ 401, 403, 404 ];
-                  if (commonErrors.includes(err?.response?.status)) {
-                    const fetchToken = async() => {
-                        try {
-                            const { requestToken } = getEndpointList();
-                            await fetch({
-                                method: "POST",
-                                url: requestToken
-                            })
-                        } catch (err) {
-                            error = {
-                                ...err
-                            };
+                async (err) => {
+                    const commonErrors = [ 401, 403, 404 ];
+                    if (commonErrors.includes(err?.response?.status)) {
+                        const fetchToken = async() => {
+                            try {
+                                const { auth } = await getEndpointList();
+                                await fetch({
+                                    method: "POST",
+                                    url: auth.requestNewToken
+                                })
+                            } catch (err) {
+                                error = {
+                                    ...err
+                                };
+                            }
                         }
+                        return await fetchToken();
                     }
-                    return fetchToken;
+                    return "eeee"
                 }
-                return axiosGateway;
-            })
+            )
+            return axiosGateway
         } catch (err) {
             error = {
                 ...err
@@ -107,12 +121,6 @@ const fetcher = ({ url, method }) => {
     };
 
     const fetch = async(options) => {
-        /*
-            query
-            urlPrams,
-            url
-            addBaseUrl
-        */
         const axiosGateway = createAxiosGateway(options);
         let url = createUrl(options);
         try {
@@ -129,11 +137,16 @@ const fetcher = ({ url, method }) => {
             };
         }
     };
+    fetch({
+        query: "",
+        urlPrams: "",
+        url,
+        addBaseUrl: ""
+    });
 
     return {
         data,
         error,
-        fetch
     }
 }
 

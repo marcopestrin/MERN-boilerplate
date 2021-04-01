@@ -86,6 +86,58 @@ class Auth {
         }
     }
 
+    async getUserByRefreshToken(refreshToken: string) {
+        try {
+            const fieldsToReturn: string = "id username password -_id";
+            return await schema.find({ refreshToken }, fieldsToReturn)
+            .exec((error: object, result: any) => {
+                if (error) throw error;
+                return {
+                    success: true,
+                    error: null,
+                    user: result
+                }
+            })
+        } catch (error) {
+            return {
+                success: false,
+                user: {},
+                error
+            }
+        }
+    }
+
+    async requestNewToken(req: Request, res: Response, next: NextFunction) {
+        try {
+
+            const refreshToken: any = req.headers.accesstoken;
+
+            if (refreshToken) {
+                const result = await this.getUserByRefreshToken(refreshToken);
+                if (result.success) {
+                    const { password, username } = result.user;
+                    if (password && username) {
+                        const { accessToken }: Tokens = this.generateTokens(username, password);
+                        res.status(200).json({
+                            success: true,
+                            accessToken
+                        })
+                    }
+                    throw "user data not found";
+                }
+                const { error } = result;
+                throw error
+            }
+            throw "need a refreshtoken";
+
+            
+        } catch (error) {
+            console.log("error", error);
+            next(error)
+        }
+    }
+
+
     async login(req: Request, res: Response, next: NextFunction) {
         try {
             const { username, password } = req.body;
