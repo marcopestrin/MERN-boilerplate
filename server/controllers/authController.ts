@@ -88,16 +88,15 @@ class Auth {
 
     async getUserByRefreshToken(refreshToken: string) {
         try {
-            const fieldsToReturn: string = "id username password -_id";
-            return await schema.find({ refreshToken }, fieldsToReturn)
-            .exec((error: object, result: any) => {
+            const user = await schema.findOne({ refreshToken }, (error: object, result: any) => {
                 if (error) throw error;
-                return {
-                    success: true,
-                    error: null,
-                    user: result
-                }
+                return result
             })
+            return {
+                success: true,
+                error: null,
+                user
+            }
         } catch (error) {
             return {
                 success: false,
@@ -107,21 +106,21 @@ class Auth {
         }
     }
 
+
     async requestNewToken(req: Request, res: Response, next: NextFunction) {
         try {
-
-            const refreshToken: any = req.headers.accesstoken;
-
+            const refreshToken: any = req.headers.refreshtoken;
             if (refreshToken) {
-                const result = await this.getUserByRefreshToken(refreshToken);
+                const result: any = await this.getUserByRefreshToken(refreshToken);
                 if (result.success) {
                     const { password, username } = result.user;
                     if (password && username) {
-                        const { accessToken }: Tokens = this.generateTokens(username, password);
+                        const { accessToken }: Tokens = this.generateTokens(username, encryptPassword(password));
                         res.status(200).json({
                             success: true,
                             accessToken
                         })
+                        return
                     }
                     throw "user data not found";
                 }
@@ -146,7 +145,7 @@ class Auth {
             if (validInput) {
                 const validCredentials:boolean = await this.checkCredentials(username, password);
                 if (validCredentials) {
-                    const { accessToken, refreshToken }: Tokens = this.generateTokens(username, password);
+                    const { accessToken, refreshToken }: Tokens = this.generateTokens(username, encryptPassword(password));
 
                     if (await this.saveRefreshToken(refreshToken, next)) {
 

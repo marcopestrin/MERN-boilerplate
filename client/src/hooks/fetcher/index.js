@@ -77,10 +77,14 @@ const fetcher = ({ url, method }) => {
                         const fetchToken = async() => {
                             try {
                                 const { auth } = await getEndpointList();
-                                await fetch({
+                                const res = await fetch({
                                     method: "POST",
                                     url: auth.requestNewToken
                                 })
+                                if (res.status === 200) {
+                                    const result = await res.json();
+                                    localStorage.setItem("accessToken", result.accessToken);
+                                }
                             } catch (err) {
                                 error = {
                                     ...err
@@ -120,7 +124,7 @@ const fetcher = ({ url, method }) => {
         return uri + queryString;
     };
 
-    const fetch = async(options) => {
+    const fetchRequest = async(options) => {
         const axiosGateway = createAxiosGateway(options);
         let url = createUrl(options);
         try {
@@ -137,7 +141,7 @@ const fetcher = ({ url, method }) => {
             };
         }
     };
-    fetch({
+    fetchRequest({
         query: "",
         urlPrams: "",
         url,
