@@ -43,7 +43,6 @@ const fetcher = ({ url, method }) => {
     const createAxiosGateway = (options) => {
         const { url, method } = options;
         
-        console.log("options", options);
         try {
 
             const axiosGateway = axios.create({
