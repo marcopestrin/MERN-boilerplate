@@ -21,30 +21,30 @@ async function getEndpointList() {
     return await response.json();
 };
 
+const getHeaders = () => {
+    return {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Accept, Set-Cookie",
+        "Access-Control-Allow-Methods": "GET, PUT, POST, DELETE, PATCH, OPTIONS",
+        "Access-Control-Allow-Credentials": "true",
+        "accept": "application/json",
+        "accessToken": localStorage.getItem("accessToken"),
+        "refreshToken": localStorage.getItem("refreshToken"),
+        "Content-Type": "application/json",
+    }
+}
+
 const fetcher = ({ url, method }) => {
 
     let error = {};
     let data = {};
 
-    const CORSHeaders = {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Accept, Set-Cookie",
-        "Access-Control-Allow-Methods": "GET, PUT, POST, DELETE, PATCH, OPTIONS",
-        "Access-Control-Allow-Credentials": "true",
-    };
-    const headers = {
-        "accept": "application/json",
-        "accessToken": localStorage.getItem("accessToken"),
-        "refreshToken": localStorage.getItem("refreshToken"),
-        "Content-Type": "application/json",
-        ...CORSHeaders,
-    };
 
     const createAxiosGateway = (options) => {
         const { url, method } = options;
         
         try {
-
+            const headers = getHeaders();
             const axiosGateway = axios.create({
                 baseURL: url,
                 timeout: 30000,
@@ -75,10 +75,19 @@ const fetcher = ({ url, method }) => {
                     return response;
                 },
                 async (err) => {
-                    if ([ 401, 403, 404 ].includes(err?.response?.status)) {
-                        await fetchToken();
+                    try {
+                        if ([ 401, 403, 404 ].includes(err?.response?.status)) {
+                            const accessToken = await fetchToken();
+                            return fetch(url, {
+                                method,
+                                headers: getHeaders()
+                            })
+                        }
+                    } catch (error) {
+                        console.error(error)
+                        return error
                     }
-                    console.error(err);
+  
                 }
             )
             return axiosGateway;
@@ -94,9 +103,8 @@ const fetcher = ({ url, method }) => {
             const { auth } = await getEndpointList();
             const result = await fetch(auth.requestNewToken, {
                 method: "POST",
-                headers
+                headers: getHeaders()
             })
-            debugger;
             const { accessToken } = await result.json();
             localStorage.setItem("accessToken", accessToken);
             return accessToken;
