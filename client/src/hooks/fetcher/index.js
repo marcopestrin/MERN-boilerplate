@@ -1,6 +1,4 @@
 import axios from "axios";
-import UrlPattern from "url-pattern";
-import qs from "qs";
 
 async function getEndpointList() {
     let apiURL;
@@ -34,7 +32,7 @@ const getHeaders = () => {
     }
 }
 
-const fetcher = ({ url, method }) => {
+const fetcher = async({ url, method }) => {
 
     let error = {};
     let data = {};
@@ -67,21 +65,24 @@ const fetcher = ({ url, method }) => {
                     return response;
                 },
                 (err) => {
+                    error = true;
                     console.error(err);
                 }
             );
             axiosGateway.interceptors.response.use(
                 (response) => {
-                    return response;
+                    return response.data;
                 },
                 async (err) => {
                     try {
                         if ([ 401, 403, 404 ].includes(err?.response?.status)) {
+                            error = true;
                             const accessToken = await fetchToken();
-                            return fetch(url, {
+                            const res = await fetch(url, {
                                 method,
                                 headers: getHeaders()
                             })
+                            return await res.json();
                         }
                     } catch (error) {
                         console.error(error)
@@ -122,19 +123,20 @@ const fetcher = ({ url, method }) => {
                 ...options,
             });
             data = {
-                ...result.data
+                ...result
             };
+            error = false;
         } catch (err) {
             error = {
                 ...err
             };
         }
     };
-    fetchRequest({
+    await fetchRequest({
         method: "GET",
         url
     });
-
+    
     return {
         data,
         error,

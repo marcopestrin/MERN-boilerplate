@@ -5,10 +5,16 @@ export const getUsersList = async() => {
 
     try {
         const { user } = await getEndpointList();
-        fetcher({
+        const { data, error } = await fetcher({
             url: user.getAllUsers,
             method: "GET"
         })
+        //console.error(error);
+        //console.log(data);
+        if (error) {
+            throw error
+        }
+        return data;
 
         // return await fetch({
         //     url: user.getAllUsers,
@@ -20,6 +26,7 @@ export const getUsersList = async() => {
         //     method: "GET"
         // });
     } catch (error) {
-        console.log(error)
+        console.error(error);
+        return error;
     }
 }
