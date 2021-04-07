@@ -88,34 +88,33 @@ const fetcher = async({ url, method }) => {
                     return response;
                 },
                 (err) => {
-                    error = true;
+                    error = {
+                        ...err
+                    }
                     console.error(err);
                 }
             );
             axiosGateway.interceptors.response.use(
                 (response) => {
-                    return response.data;
+                    return response.data
                 },
                 async (err) => {
                     try {
                         if ([ 401, 403, 404 ].includes(err?.response?.status)) {
-                            error = true;
-                            const result = await fetchToken();
                             debugger;
+                            const result = await fetchToken();
                             if (result.success) {
                                 const res = await fetch(url, {
                                     method,
                                     headers: getHeaders()
                                 })
-                                return {
-                                    success: true,
-                                    ...await res.json()
-                                }
+                                return await res.json();
                             }
-                            return {
-                                success: false
-                            }
+                            // da gestire
+                            return err
                         }
+                        // da gestire
+                        return err
                     } catch (err) {
                         console.error(err);
                     }
@@ -124,7 +123,9 @@ const fetcher = async({ url, method }) => {
             )
             return axiosGateway;
         } catch (err) {
-            error = err;
+            error = {
+                ...err
+            };
         }
     };
 
@@ -135,11 +136,12 @@ const fetcher = async({ url, method }) => {
                 method: "POST",
                 headers: getHeaders()
             })
+            debugger
             if (result.status === 200) {
                 const { accessToken } = await result.json();
                 localStorage.setItem("accessToken", accessToken);
                 return {
-                    sucess: true
+                    success: true
                 }
             }
             error = 'Impossible to get a new token. Might be wrong refresh-token';
@@ -157,14 +159,14 @@ const fetcher = async({ url, method }) => {
             let result = await axiosGateway({
                 ...options,
             });
-            if (result.success) {
-                data = {
-                    ...result
-                };
-                return
+            debugger
+            data = {
+                ...result
             }
         } catch (err) {
-            error = err;
+            error = {
+                ...err
+            }
         }
     };
 
@@ -172,6 +174,7 @@ const fetcher = async({ url, method }) => {
         method,
         url
     });
+    debugger
     return {
         data,
         error,

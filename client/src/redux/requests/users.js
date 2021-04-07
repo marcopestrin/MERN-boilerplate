@@ -8,10 +8,8 @@ export const getUsersList = async() => {
             url: user.getAllUsers,
             method: "GET"
         })
-        if (error) {
-            throw error
-        }
-        return data;
+        // gestitire error
+        return data
     } catch (error) {
         console.error(error);
         return error;
