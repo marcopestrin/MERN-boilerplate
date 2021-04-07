@@ -101,7 +101,6 @@ const fetcher = async({ url, method }) => {
                 async (err) => {
                     try {
                         if ([ 401, 403, 404 ].includes(err?.response?.status)) {
-                            debugger;
                             const result = await fetchToken();
                             if (result.success) {
                                 const res = await fetch(url, {
@@ -136,7 +135,6 @@ const fetcher = async({ url, method }) => {
                 method: "POST",
                 headers: getHeaders()
             })
-            debugger
             if (result.status === 200) {
                 const { accessToken } = await result.json();
                 localStorage.setItem("accessToken", accessToken);
@@ -159,7 +157,6 @@ const fetcher = async({ url, method }) => {
             let result = await axiosGateway({
                 ...options,
             });
-            debugger
             data = {
                 ...result
             }
@@ -174,7 +171,6 @@ const fetcher = async({ url, method }) => {
         method,
         url
     });
-    debugger
     return {
         data,
         error,
