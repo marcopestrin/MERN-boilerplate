@@ -1,3 +1,5 @@
+import axios from "axios";
+
 export async function getEndpointList() {
     let apiURL;
 
@@ -17,6 +19,18 @@ export async function getEndpointList() {
     return await response.json();
 };
 
+const getHeaders = () => {
+    return {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Accept, Set-Cookie",
+        "Access-Control-Allow-Methods": "GET, PUT, POST, DELETE, PATCH, OPTIONS",
+        "Access-Control-Allow-Credentials": "true",
+        "accept": "application/json",
+        "accessToken": localStorage.getItem("accessToken"),
+        "refreshToken": localStorage.getItem("refreshToken"),
+        "Content-Type": "application/json",
+    }
+}
 
 export async function request({
     url,
@@ -27,11 +41,7 @@ export async function request({
         const response = await fetch(url, {
             method,
             headers:  {
-                "refreshToken": localStorage.getItem("refreshToken"),
-                "accessToken": localStorage.getItem("accessToken"),
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Credentials": "true",
-                "Access-Control-Allow-Origin": "http://localhost:8000",
+                ...getHeaders()
             },
             body: JSON.stringify(payload)
         });
@@ -43,3 +53,129 @@ export async function request({
         console.log(error);
     }
 }
+
+
+const fetcher = async({ url, method }) => {
+
+    let error = {};
+    let data = {};
+
+
+    const createAxiosGateway = (options) => {
+        const { url, method } = options;
+        
+        try {
+            const headers = getHeaders();
+            const axiosGateway = axios.create({
+                baseURL: url,
+                timeout: 30000,
+                json: true,
+                method,
+                headers,
+                withCredentials: true,
+            });
+            axiosGateway.defaults.headers.common = headers;
+            axiosGateway.defaults.headers.patch = headers;
+            axiosGateway.defaults.headers.post = headers;
+            axiosGateway.defaults.headers.put = headers;
+            axiosGateway.defaults.headers.get = headers;
+            axiosGateway.defaults.headers.delete = headers;
+            axiosGateway.defaults.withCredentials = true;
+            axiosGateway.interceptors.request.use(
+                (response) => {
+                    response.meta = response.meta || {};
+                    response.meta.requestStartedAt = new Date().getTime();
+                    return response;
+                },
+                (err) => {
+                    error = true;
+                    console.error(err);
+                }
+            );
+            axiosGateway.interceptors.response.use(
+                (response) => {
+                    return response.data;
+                },
+                async (err) => {
+                    try {
+                        if ([ 401, 403, 404 ].includes(err?.response?.status)) {
+                            error = true;
+                            const result = await fetchToken();
+                            debugger;
+                            if (result.success) {
+                                const res = await fetch(url, {
+                                    method,
+                                    headers: getHeaders()
+                                })
+                                return {
+                                    success: true,
+                                    ...await res.json()
+                                }
+                            }
+                            return {
+                                success: false
+                            }
+                        }
+                    } catch (err) {
+                        console.error(err);
+                    }
+  
+                }
+            )
+            return axiosGateway;
+        } catch (err) {
+            error = err;
+        }
+    };
+
+    const fetchToken = async() => {
+        try {
+            const { auth } = await getEndpointList();
+            const result = await fetch(auth.requestNewToken, {
+                method: "POST",
+                headers: getHeaders()
+            })
+            if (result.status === 200) {
+                const { accessToken } = await result.json();
+                localStorage.setItem("accessToken", accessToken);
+                return {
+                    sucess: true
+                }
+            }
+            error = 'Impossible to get a new token. Might be wrong refresh-token';
+            return {
+                success: false
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    const fetchRequest = async(options) => {
+        const axiosGateway = createAxiosGateway(options);
+        try {
+            let result = await axiosGateway({
+                ...options,
+            });
+            if (result.success) {
+                data = {
+                    ...result
+                };
+                return
+            }
+        } catch (err) {
+            error = err;
+        }
+    };
+
+    await fetchRequest({
+        method,
+        url
+    });
+    return {
+        data,
+        error,
+    }
+}
+
+export default fetcher

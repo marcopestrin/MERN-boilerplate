@@ -1,5 +1,4 @@
-import { getEndpointList, request } from "./helpers";
-import fetcher from "../../hooks/fetcher";
+import fetcher, { getEndpointList } from "./helpers";
 
 export const getUsersList = async() => {
 
@@ -9,22 +8,10 @@ export const getUsersList = async() => {
             url: user.getAllUsers,
             method: "GET"
         })
-        //console.error(error);
-        //console.log(data);
         if (error) {
             throw error
         }
         return data;
-
-        // return await fetch({
-        //     url: user.getAllUsers,
-        //     method: "GET"
-        // })
-
-        // return await request({
-        //     url: user.getAllUsers,
-        //     method: "GET"
-        // });
     } catch (error) {
         console.error(error);
         return error;
