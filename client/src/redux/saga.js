@@ -7,11 +7,13 @@ import { getUsersList } from "./requests/users";
 export function* getUsersListRequest() {
     try {
         const res = yield getUsersList();
-        if (res) {
+        if (res.success) {
             yield put({
                 type: actions.GET_USERS_LIST_SUCCESS,
-                payload: res
+                payload: res.data
             })
+        } else {
+            throw res.error
         }
     } catch (error) {
         yield put({

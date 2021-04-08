@@ -10,7 +10,9 @@ export default function users(prevState = {}, action){
                 ...clonedState,
                 list: {
                     ...payload
-                }
+                },
+                loginRedirect: false
+
             };
             break;
                           
@@ -18,6 +20,7 @@ export default function users(prevState = {}, action){
             clonedState = {
                 ...clonedState,
                 error: payload.error,
+                loginRedirect: true
             };
             break;
 

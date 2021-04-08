@@ -54,12 +54,10 @@ export async function request({
     }
 }
 
-
 const fetcher = async({ url, method }) => {
 
-    let error = {};
+    let error = null;
     let data = {};
-
 
     const createAxiosGateway = (options) => {
         const { url, method } = options;
@@ -74,24 +72,11 @@ const fetcher = async({ url, method }) => {
                 headers,
                 withCredentials: true,
             });
-            axiosGateway.defaults.headers.common = headers;
-            axiosGateway.defaults.headers.patch = headers;
-            axiosGateway.defaults.headers.post = headers;
-            axiosGateway.defaults.headers.put = headers;
-            axiosGateway.defaults.headers.get = headers;
-            axiosGateway.defaults.headers.delete = headers;
-            axiosGateway.defaults.withCredentials = true;
             axiosGateway.interceptors.request.use(
                 (response) => {
                     response.meta = response.meta || {};
                     response.meta.requestStartedAt = new Date().getTime();
                     return response;
-                },
-                (err) => {
-                    error = {
-                        ...err
-                    }
-                    console.error(err);
                 }
             );
             axiosGateway.interceptors.response.use(
@@ -110,7 +95,7 @@ const fetcher = async({ url, method }) => {
                                 return await res.json();
                             }
                             // da gestire
-                            return err
+                            throw err.response;
                         }
                         // da gestire
                         return err
@@ -157,6 +142,9 @@ const fetcher = async({ url, method }) => {
             let result = await axiosGateway({
                 ...options,
             });
+            if (result === undefined) {
+                return;
+            }
             data = {
                 ...result
             }

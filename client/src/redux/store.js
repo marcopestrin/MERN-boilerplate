@@ -32,9 +32,13 @@ export const configureStore = () => {
       logged: false,
       loginRedirect: false,
       logoutRedirect: false,
+    },
+    user: {
+      list: {},
+      loginRedirect: false
     }
   };
-
+  
   const reducers = combineReducers({
     auth,
     users,
@@ -53,7 +57,6 @@ export const configureStore = () => {
       initialState,
       compose(applyMiddleware(middlewareSaga))
     );
-
   }
 
   middlewareSaga.run(rootSaga);
