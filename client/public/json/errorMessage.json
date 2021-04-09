@@ -1,0 +1,3 @@
+{
+    "invalidRefreshToken": "Impossible to get a new token. Might be wrong refresh-token"
+}
