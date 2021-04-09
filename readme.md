@@ -45,10 +45,12 @@ npm run dev / npm run start
 - Export data in another format (might be CSV)
 - Avoid crashing whenever there is an error
 
-## Changelog by weeks
-- 1/2: Authentication system + CRUD API on User Model
-- 3/4: First deploy by Heroky + Creating Frontend (login/signUp/logout)
-- 5:
+## Changelog by month
+| Month | Description |
+| --- | --- |
+| March 2021 | <ul> <li>Authentication system </li><li> CRUD API on User Mode </li><li> First Deploy on Heroky </li><li> Creating frontend (login/signup/logout) </ul>|
+| April 2021 | <ul> <li>Handle function http request</li> |
+
 
 ## Others
 This project are made in my free time. Currently under construction by myself.
