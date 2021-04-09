@@ -1,23 +1,21 @@
 import axios from "axios";
 
+require('dotenv').config()
+
 export async function getEndpointList() {
-    let apiURL;
-
-    switch (process.env.NODE_ENV) {
-        case "development":
-            apiURL = `${process.env.PUBLIC_URL}/endpoints/development.json`;
-            break;
-        case "production":
-            apiURL = `${process.env.PUBLIC_URL}/endpoints/production.json`;
-            break;
-        default:
-            apiURL = `${process.env.PUBLIC_URL}/endpoints/local.json`;
-            break;
-    };
-
-    const response = await fetch(apiURL);
+    const url = `${process.env.PUBLIC_URL}/json/endpoints.json`;
+    const response = await fetch(url);
     return await response.json();
 };
+
+async function getErrorMessage() {
+    const url = `${process.env.PUBLIC_URL}/json/errorMessage.json`;
+    const response = await fetch(url);
+    return await response.json();
+}
+
+const baseURL = process.env.REACT_APP_BASE_URL_SERVER;
+const errorMessage = getErrorMessage();
 
 const getHeaders = () => {
     return {
@@ -38,7 +36,7 @@ export async function request({
     payload
 }) {
     try {
-        const response = await fetch(url, {
+        const response = await fetch(`${baseURL}${url}`, {
             method,
             headers:  {
                 ...getHeaders()
@@ -50,7 +48,7 @@ export async function request({
         }
         return response.json();
     } catch (error){
-        console.log(error);
+        console.error(error);
     }
 }
 
@@ -65,42 +63,37 @@ const fetcher = async({ url, method }) => {
         try {
             const headers = getHeaders();
             const axiosGateway = axios.create({
-                baseURL: url,
+                baseURL,
                 timeout: 30000,
                 json: true,
                 method,
                 headers,
                 withCredentials: true,
             });
-            axiosGateway.interceptors.request.use(
-                (response) => {
-                    response.meta = response.meta || {};
-                    response.meta.requestStartedAt = new Date().getTime();
-                    return response;
-                }
-            );
             axiosGateway.interceptors.response.use(
-                (response) => {
-                    return response.data
-                },
+                (response) => response.data,
                 async (err) => {
                     try {
-                        if ([ 401, 403, 404 ].includes(err?.response?.status)) {
+                        if ([ 401 ].includes(err?.response?.status)) {
+                            // autorizzazione al backend errata
                             const result = await fetchToken();
                             if (result.success) {
-                                const res = await fetch(url, {
+                                const res = await fetch(`${baseURL}${url}`, {
                                     method,
                                     headers: getHeaders()
                                 })
                                 return await res.json();
                             }
-                            // da gestire
-                            throw err.response;
                         }
-                        // da gestire
-                        return err
+                        if ([ 500 ].includes(err?.response?.status)) {
+                            // errore del server
+                            throw err.response
+                        }
                     } catch (err) {
                         console.error(err);
+                        error = {
+                            ...err
+                        }
                     }
   
                 }
@@ -116,7 +109,8 @@ const fetcher = async({ url, method }) => {
     const fetchToken = async() => {
         try {
             const { auth } = await getEndpointList();
-            const result = await fetch(auth.requestNewToken, {
+            const url = `${baseURL}${auth.requestNewToken}`
+            const result = await fetch(url, {
                 method: "POST",
                 headers: getHeaders()
             })
@@ -127,12 +121,15 @@ const fetcher = async({ url, method }) => {
                     success: true
                 }
             }
-            error = 'Impossible to get a new token. Might be wrong refresh-token';
+            error = errorMessage.invalidRefreshToken;
             return {
                 success: false
             }
         } catch (err) {
             console.error(err);
+            return {
+                success: false
+            }
         }
     }
 

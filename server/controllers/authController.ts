@@ -13,13 +13,17 @@ class Auth {
             username,
             password
         };
-        const options: object = {
-            expiresIn: process.env.ACCESS_TOKEN_LIFE, //1d
+        const optionsAccessToken: object = {
+            expiresIn: process.env.ACCESS_TOKEN_LIFE, //50s
+            algorithm: 'HS256'
+        };
+        const optionsRefreshToken: object = {
+            expiresIn: process.env.REFRESH_TOKEN_LIFE, //50d
             algorithm: 'HS256'
         };
         return {
-            accessToken: jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, options).toString(),
-            refreshToken: jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, options).toString()
+            accessToken: jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, optionsAccessToken).toString(),
+            refreshToken: jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, optionsRefreshToken).toString()
         };
     };
 
