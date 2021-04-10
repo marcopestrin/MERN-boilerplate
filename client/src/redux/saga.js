@@ -66,8 +66,6 @@ export function* logoutRequest() {
     try {
         const res = yield logout(localStorage.getItem("refreshToken"));
         if (res.success) {
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
             yield put({
                 type: actions.LOGOUT_SUCCESS
             })

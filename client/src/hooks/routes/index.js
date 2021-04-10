@@ -31,15 +31,18 @@ export const PrivateRoute = ({
 export const PublicRoute = ({
     component: Component,
     ...rest
-}) => (
-    <Route
-        { ...rest }
-        render={props => {
-            return (
-                isAuthenticate()
-                ? <Redirect to="/dashboard" />
-                : <Component {...props} />
-            )
-        }}
-    />
-)
+}) => {
+    return (
+        <Route
+            { ...rest }
+            render={props => {
+                return (
+                    isAuthenticate()
+                    ? <Redirect to="/dashboard" />
+                    : <Component {...props} />
+                )
+            }}
+        />
+    )
+}
+

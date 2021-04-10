@@ -5,8 +5,7 @@ const initialState = {
         logoutRedirect: false,
     },
     user: {
-        list: {},
-        loginRedirect: false
+        list: {}
     }
 };
 

@@ -15,7 +15,6 @@ async function getErrorMessage() {
 }
 
 const baseURL = process.env.REACT_APP_BASE_URL_SERVER;
-const errorMessage = getErrorMessage();
 
 const getHeaders = () => {
     return {
@@ -56,6 +55,8 @@ const fetcher = async({ url, method }) => {
 
     let error = null;
     let data = {};
+    const errorMessage = await getErrorMessage();
+
 
     const createAxiosGateway = (options) => {
         const { url, method } = options;
@@ -84,6 +85,7 @@ const fetcher = async({ url, method }) => {
                                 })
                                 return await res.json();
                             }
+                            throw result;
                         }
                         if ([ 500 ].includes(err?.response?.status)) {
                             // errore del server

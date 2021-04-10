@@ -35,7 +35,8 @@ export default function auth(prevState = {}, action){
                 logged: true
             };
             break;
-
+    
+        case actions.GET_USERS_LIST_FAILURE:
         case actions.LOGOUT_SUCCESS:
             clonedState = {
                 ...clonedState,
@@ -43,6 +44,8 @@ export default function auth(prevState = {}, action){
                 logoutRedirect: true,
                 logged: false
             };
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
             break;
               
         case actions.LOGOUT_FAILURE:
