@@ -1,11 +1,7 @@
 import { createServer } from "./server";
-import { logSettings } from "./const";
-import Logger from "@ptkdev/logger"
 import cluster from "cluster";
 import os from "os";
 
-const optionsLogger: object = logSettings;
-const logger = new Logger(optionsLogger);
 
 async function startCluster(): Promise<void> {
     if (cluster.isMaster){
@@ -25,15 +21,14 @@ async function startCluster(): Promise<void> {
 
 async function start(): Promise<void> {
     try {
-        //logger.info('start application');
         if (process.env.CLUSTER?.toLowerCase() === "true") {
             startCluster();
         } else {
-            logger.info('Start single');
+            console.log('Start single');
             startSingle();
         }
     } catch (e) {
-        logger.error(JSON.stringify(e));
+        console.error(JSON.stringify(e));
     }
 };
 

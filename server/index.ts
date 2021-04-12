@@ -15,7 +15,6 @@ import headersResponseMiddlewares from "./middlewares/headers";
 
 require('dotenv').config();
 
-
 function connectDatabase() {
     if (isProduction ) {
         connect(`${urlDatabaseProduction}`, {
@@ -50,6 +49,7 @@ export function createServer(): void {
     // process.on('uncaughtException', function (error) {
     //     console.log(error.stack);
     //  });
+    
 };
 
 

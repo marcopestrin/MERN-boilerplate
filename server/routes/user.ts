@@ -1,15 +1,8 @@
 import express from "express";
 import passport from "passport";
 import user from "../controllers/userController";
-//import auth from "../controllers/auth";
 
 const router: express.Router = express.Router();
-
-// const middleware = async(req: Request, res: Response, next: NextFunction) => {
-// 	const result = await auth.verifyToken(req, res, next);
-// 	const validate = await auth.validateBody(req, res, next);
-// 	next();
-// };
 
 const passportJWT = passport.authenticate('jwt', { session: false });
 
