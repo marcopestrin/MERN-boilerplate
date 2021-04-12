@@ -6,6 +6,7 @@ import schema from "../models/user";
 import { encryptPassword, generateRecoveryToken, sendEmail } from "./functions";
 import { Update, Tokens, MailOptions } from "./interfaces";
 
+const message = require("./message.json");
 class Auth {
 
     generateTokens(username: string, password: string){
@@ -66,7 +67,7 @@ class Auth {
         try {
             const token = req.cookies.accessToken || '';
         if (!token) {
-            res.status(401).json('You need to Login');
+            res.status(401).json(message.tokenNotSet);
         }
         return await jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);          
         } catch (error) {
@@ -126,14 +127,12 @@ class Auth {
                         })
                         return
                     }
-                    throw "user data not found";
+                    throw message.userNotFound;
                 }
                 const { error } = result;
                 throw error
             }
-            throw "need a refreshtoken";
-
-            
+            throw message.needRefreshToken;      
         } catch (error) {
             console.log("error", error);
             next(error)
@@ -163,16 +162,16 @@ class Auth {
                             success: true
                         });
                     } else {
-                        res.status(500).json('generic error');
+                        res.status(500).json(message.genericError);
                     }
   
                 } else {
                     console.error("Login request error: wrong credentials");
-                    res.status(401).json('wrong credentials');
+                    res.status(401).json(message.wrongCredentials);
                 }
             } else {
                 console.error("Login request error: wrong input");
-                res.status(400).json("wrong input");
+                res.status(400).json(message.wrongInput);
             }
         } catch (error) {
             next(error);
@@ -206,7 +205,7 @@ class Auth {
             } else {
                 console.error("Recovery password error: password not valid");
                 res.status(403).json({
-                    error: 'password not valid'
+                    error: message.invalidPassword
                 });
             }
 

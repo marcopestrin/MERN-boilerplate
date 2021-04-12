@@ -3,6 +3,8 @@ import crypto from "crypto";
 import schema from "../models/user";
 import { encryptPassword, generateActiveCode, sendEmail } from "./functions";
 import { MailOptions } from "./interfaces";
+
+const message = require("./message.json");
 class User {
 
     confirmEmail(req: Request, res: Response, next: NextFunction) {
@@ -22,10 +24,10 @@ class User {
                 if (result.ok) {
                     if (result.nModified){
                         console.log("Confirm email: all good!")
-                        res.status(200).send('all good!! user activated');
+                        res.status(200).send(message.userActivated);
                     } else {
                         console.log("Confirm email: user already activated!")
-                        res.status(200).send('good');
+                        res.status(200).send(message.good);
                     }
                 }
                 throw result
@@ -62,7 +64,7 @@ class User {
                         console.error("Create new user: user already exist");
                         res.status(422).json({
                             success: false,
-                            message: 'User already exist!'
+                            message: message.userAlreadyExist
                         });
                     }
                     throw err;

@@ -1,0 +1,12 @@
+{
+    "tokenNotSet": "You need to Login",
+    "userNotFound": "user data not found",
+    "needRefreshToken": "need a refreshtoken",
+    "genericError": "Generic Error",
+    "wrongCredentials": "wrong credentials",
+    "wrongInput": "wrong input",
+    "invalidPassword": "password not valid",
+    "userAlreadyExist": "user alrady exist!",
+    "userActivated": "all good!! user activated",
+    "good": "good"
+}
