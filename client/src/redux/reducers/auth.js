@@ -34,6 +34,8 @@ export default function auth(prevState = {}, action){
                 logoutRedirect: false,
                 logged: true
             };
+            localStorage.setItem('refreshToken', payload.refreshToken);
+            localStorage.setItem('accessToken', payload.accessToken);
             break;
     
         case actions.GET_USERS_LIST_FAILURE:

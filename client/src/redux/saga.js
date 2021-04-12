@@ -29,10 +29,12 @@ export function* loginRequest(payload) {
         const res = yield login(payload);
         const { refreshToken, accessToken, success } = res;
         if (success) {
-            localStorage.setItem('refreshToken', refreshToken);
-            localStorage.setItem('accessToken', accessToken);
             yield put({
                 type: actions.LOGIN_SUCCESS,
+                payload: {
+                    refreshToken,
+                    accessToken
+                }
             })
         } else {
             throw res;
