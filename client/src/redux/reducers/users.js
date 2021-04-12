@@ -8,9 +8,7 @@ export default function users(prevState = {}, action){
         case actions.GET_USERS_LIST_SUCCESS:
             clonedState = {
                 ...clonedState,
-                list: {
-                    ...payload
-                },
+                list: payload,
                 loginRedirect: false
 
             };

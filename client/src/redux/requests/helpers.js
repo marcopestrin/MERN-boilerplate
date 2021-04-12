@@ -144,9 +144,7 @@ const fetcher = async({ url, method }) => {
             if (result === undefined) {
                 return;
             }
-            data = {
-                ...result
-            }
+            data = result;
         } catch (err) {
             error = {
                 ...err

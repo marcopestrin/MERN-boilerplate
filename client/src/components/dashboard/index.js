@@ -1,11 +1,14 @@
+import React, { memo, useEffect } from "react"
 
-import Logout from "../logout";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { GET_USERS_LIST_REQUEST } from "../../redux/actions";
-import { useEffect } from "react";
+import Logout from "../logout";
+import UserTable from "../userTable";
+import { selectorUsers } from "../../redux/selectors"
 
 const Dashboard = () => {
     const dispatch = useDispatch();
+    const { list } = useSelector(selectorUsers);
 
     const getAllUsers = () => {
         dispatch({
@@ -13,15 +16,16 @@ const Dashboard = () => {
         });
     };
 
-    useEffect(getAllUsers, [getAllUsers])
+    useEffect(getAllUsers, []);
 
     return (
         <>
-            <p>example</p>
-            <p>qui dentrooo</p>
+            <UserTable
+                users={list}
+            />
             <Logout />
         </>
     )
 }
 
-export default Dashboard;
+export default memo(Dashboard);
