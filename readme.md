@@ -24,6 +24,10 @@ MAILER_USER=
 MAILER_PASSWORD=
 PUBLIC_URL=
 ```
+set .env file in /client with this template:
+```bash
+REACT_APP_BASE_URL_SERVER=
+```
 run to CLI:
 ```bash
 npm install
@@ -48,7 +52,7 @@ npm run dev / npm run start
 ## Changelog by month
 | Month | Description |
 | --- | --- |
-| March 2021 | <ul> <li>Authentication system </li><li> CRUD API on User Mode </li><li> First Deploy on Heroky </li><li> Creating frontend (login/signup/logout) </ul>|
+| March 2021 | <ul> <li>Authentication system </li><li> CRUD API on User Mode </li><li> First Deploy on Heroku </li><li> Creating frontend (login/signup/logout) </ul>|
 | April 2021 | <ul> <li>Handle function http request</li> |
 
 
