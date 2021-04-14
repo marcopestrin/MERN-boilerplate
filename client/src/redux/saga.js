@@ -27,14 +27,10 @@ export function* getUsersListRequest() {
 export function* loginRequest(payload) {
     try {
         const res = yield login(payload);
-        const { refreshToken, accessToken, success } = res;
-        if (success) {
+        if (res.success) {
             yield put({
                 type: actions.LOGIN_SUCCESS,
-                payload: {
-                    refreshToken,
-                    accessToken
-                }
+                payload: res
             })
         } else {
             throw res;

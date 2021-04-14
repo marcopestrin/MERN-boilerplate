@@ -2,7 +2,7 @@ import { Response, Request, NextFunction } from "express";
 import crypto from "crypto";
 import schema from "../models/user";
 import { encryptPassword, generateActiveCode, sendEmail } from "./functions";
-import { MailOptions } from "./interfaces";
+import { MailOptions } from "../interfaces";
 
 const message = require("./message.json");
 class User {

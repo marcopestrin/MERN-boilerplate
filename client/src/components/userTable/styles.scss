@@ -1,0 +1,17 @@
+$darkBlue: #1976d2;
+$darkError: #d32f2f;
+$darkSuccess: #388e3c;
+.iconTrue {
+    color:$darkSuccess;
+}
+.iconFalse {
+    color: $darkError;
+}
+.optionCell {
+    float:right;
+    .icon {
+        margin: 5px;
+        cursor: pointer;
+        color: $darkBlue;
+    }
+}

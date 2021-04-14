@@ -34,8 +34,12 @@ export default function auth(prevState = {}, action){
                 logoutRedirect: false,
                 logged: true
             };
-            localStorage.setItem('refreshToken', payload.refreshToken);
-            localStorage.setItem('accessToken', payload.accessToken);
+            const { userActive, refreshToken, accessToken, userRole } = payload;
+            const role = userRole === 1 ? "ADMIN" : "USER";
+            localStorage.setItem('role', role);
+            localStorage.setItem('active', userActive);
+            localStorage.setItem('refreshToken', refreshToken);
+            localStorage.setItem('accessToken', accessToken);
             break;
     
         case actions.GET_USERS_LIST_FAILURE:
@@ -46,6 +50,8 @@ export default function auth(prevState = {}, action){
                 logoutRedirect: true,
                 logged: false
             };
+            localStorage.removeItem("role");
+            localStorage.removeItem("active");
             localStorage.removeItem("accessToken");
             localStorage.removeItem("refreshToken");
             break;

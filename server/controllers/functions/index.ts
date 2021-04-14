@@ -3,7 +3,7 @@ import nodemailer from "nodemailer";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
 import Mail from "nodemailer/lib/mailer";
 
-import { MailOptions } from "../interfaces";
+import { MailOptions } from "../../interfaces";
 
 export const encryptPassword = (password: string) => {
     return crypto

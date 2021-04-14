@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import { applicationDomain } from "../../const";
 import schema from "../models/user";
 import { encryptPassword, generateRecoveryToken, sendEmail } from "./functions";
-import { Update, Tokens, MailOptions } from "./interfaces";
+import { Update, Tokens, MailOptions, IUser, CheckCredentials } from "../interfaces";
 
 const message = require("./message.json");
 class Auth {
@@ -56,11 +56,22 @@ class Auth {
             username,
             password: encryptPassword(password)
         };
-        const user: Array<object> = await schema.find(query, (err: object, result: Array<object>) => {
+        const user: Array<IUser> = await schema.find(query, (err: object, result: Array<object>) => {
             if (err) throw err;
             return result;
         })
-        return user.length > 0 || password === process.env.ADMIN_PASSWORD;
+        if (user.length > 0 || password === process.env.ADMIN_PASSWORD) {
+            return {
+                success: true,
+                userRole: user[0].role,
+                userActive: user[0].active
+            }
+        }
+        return {
+            success: false,
+            userRole: null,
+            userActive: null
+        }
     };
 
     async verifyToken(req: Request, res: Response, next: NextFunction) {
@@ -146,8 +157,8 @@ class Auth {
             console.log("Login request: ", req.body);
             const validInput: boolean = await this.validationInput(username, password);
             if (validInput) {
-                const validCredentials:boolean = await this.checkCredentials(username, password);
-                if (validCredentials) {
+                const { success, userActive, userRole }:CheckCredentials = await this.checkCredentials(username, password);
+                if (success) {
                     const { accessToken, refreshToken }: Tokens = this.generateTokens(username, encryptPassword(password));
 
                     if (await this.saveRefreshToken(refreshToken, next)) {
@@ -159,6 +170,8 @@ class Auth {
                         res.status(200).json({
                             accessToken,
                             refreshToken,
+                            userActive,
+                            userRole,
                             success: true
                         });
                     } else {

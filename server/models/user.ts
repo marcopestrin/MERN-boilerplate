@@ -1,16 +1,5 @@
-import mongoose, { Document, Schema } from "mongoose";
-
-interface IUser extends Document {
-    username: String,
-    password: String,
-    email: String,
-    id: String,
-    active: Boolean,
-    timeRegistration: Date,
-    resetToken: String,
-    activeCode: String,
-    role: Number
-}
+import mongoose, { Schema } from "mongoose";
+import { IUser } from "../interfaces";
 
 const UserSchema: Schema = new Schema({
     username: { type: String, required: true },
