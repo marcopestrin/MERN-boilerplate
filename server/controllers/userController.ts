@@ -1,15 +1,33 @@
 import { Response, Request, NextFunction } from "express";
-import crypto from "crypto";
 import schema from "../models/user";
-import { encryptPassword, generateActiveCode, sendEmail } from "./functions";
+import { encryptPassword, generateActiveCode, sendEmail, generateUserId } from "./functions";
 import { MailOptions } from "../interfaces";
 
 const message = require("./message.json");
 class User {
 
+    /**
+     * @swagger
+     * /v1/user/confirmEmail/{email}/{activeCode}:
+     *   get:
+     *      summary: Validate the user
+     *      tags: [User]
+     * 
+     *      parameters:
+     *      - in: path
+     *        name: email
+     *        required: true
+     *      - in: path
+     *        name: activeCode
+     *        required: true
+     * 
+     *      responses:
+     *        200:
+     *          description: User confirmed
+     *                  
+     */
     confirmEmail(req: Request, res: Response, next: NextFunction) {
         try {
-            console.log("Confirm email request", req.params)
             const query: object = {
                 activeCode: req.params.activeCode,
                 email: req.params.email
@@ -23,31 +41,68 @@ class User {
                 if (err) throw err;
                 if (result.ok) {
                     if (result.nModified){
-                        console.log("Confirm email: all good!")
                         res.status(200).send(message.userActivated);
                     } else {
-                        console.log("Confirm email: user already activated!")
                         res.status(200).send(message.good);
                     }
                 }
                 throw result
             })
         } catch (error) {
-            console.error("Confirm email:", error);
             next(error);
         }
     };
 
-    generateUserId(email: string) {
-        return crypto
-        .createHash("sha256")
-        .update(email)
-        .digest("hex")
-    }
-
+    /**
+     * @swagger
+     * /v1/user/create:
+     *   post:
+     *      summary: Create a new identity
+     *      tags: [User]
+     * 
+     *      parameters:
+     *      - in: body
+     *        name: password
+     *        required: true
+     *      - in: body
+     *        name: username
+     *        required: true
+     *      - in: body
+     *        name: email
+     *        required: true
+     * 
+     *      responses:
+     *        422:
+     *          description: User already exist
+     *          content:
+     *            application/json:
+     *              schema:
+     *                type: object
+     *                properties:
+     *                  success:
+     *                    type: boolean
+     *                    example: false
+     *                  messaage:
+     *                    type: string
+     *        500:
+     *          description: email not sended
+     *        200:
+     *          description: User confirmed
+     *          content:
+     *            application/json:
+     *              schema:
+     *                type: object
+     *                properties:
+     *                  email:
+     *                    type: string
+     *                  username:
+     *                    type: string
+     *                  success:
+     *                    type: boolean
+     *                  
+     */
     createNewUser(req: Request, res: Response, next: NextFunction) {
         try {
-            console.log("Create new user:", req.body);
             const { password, username, email } = req.body;
             const activeCode: string = generateActiveCode(password)
 
@@ -56,12 +111,11 @@ class User {
                 activeCode,
                 username,
                 email,
-                id: this.generateUserId(email)
+                id: generateUserId(email)
             };
             schema.create(payload, async(err: any, result: any) => {
                 if (err) {
                     if (11000 === err.code && err.name === 'MongoError') {
-                        console.error("Create new user: user already exist");
                         res.status(422).json({
                             success: false,
                             message: message.userAlreadyExist
@@ -71,7 +125,6 @@ class User {
                 }
                 const isSended = await this.sendRegistrationEmail(email, activeCode);
                 if (isSended) {
-                    console.log("Create new user: all good");
                     res.status(200).json({
                         success: true,
                         email: result.email,
@@ -87,9 +140,24 @@ class User {
         }
     };
 
+    /**
+     * @swagger
+     * /v1/user/getAllUser:
+     *   get:
+     *      summary: Return the list of all users
+     *      tags: [User]
+     * 
+     *      responses:
+     *        200:
+     *          description: Return an array of users
+     *          content:
+     *            application/json:
+     *              schema:
+     *                type: array      
+     *                item: object            
+     */
     getAllUsers(req: Request, res: Response, next: NextFunction) {
         try {
-            console.log("Get all users request");
             schema.find({}, (err: object, result: object) => {
                 if (err) throw err;
                 res.status(200).json(result);
@@ -99,16 +167,43 @@ class User {
         }
     };
 
+    /**
+     * @swagger
+     * /v1/user/getUserById:
+     *   get:
+     *      summary: Return a specific user
+     *      tags: [User]
+     * 
+     *      parameters:
+     *      - in: query
+     *        name: id
+     *        required: true 
+     * 
+     *      responses:
+     *        200:
+     *          description: Generated new access token
+     *          content:
+     *            application/json:
+     *              schema:
+     *                type: object      
+     *                properties:
+     *                  email:
+     *                    type: string    
+     *                  username:
+     *                    type: string    
+     *                  password:
+     *                    type: string    
+     *                  id:
+     *                    type: string       
+     */
     getUserById(req: Request, res: Response, next: NextFunction) {
         try {
-            console.log("Get user by id request", req.query);
             const { id } = req.query;
             const fieldsToReturn: string = "username password id email -_id";
             const query: object = { id };
             schema.find(query, fieldsToReturn)
             .exec((err: object, result: object) => {
                 if (err) throw err;
-                console.log("Get user by id: success", result);
                 res.status(200).json(result);
             });
         } catch (error) {
@@ -116,9 +211,39 @@ class User {
         }
     };
 
+    /**
+     * @swagger
+     * /v1/user/active:
+     *   put:
+     *      summary: Active user
+     *      tags: [User]
+     * 
+     *      parameters:
+     *      - in: query
+     *        name: id
+     *        required: true 
+     * 
+     *      responses:
+     *        200:
+     *          description: User activated  
+     * 
+     *  
+     * /v1/user/disable:
+     *   put:
+     *      summary: Disable user
+     *      tags: [User]
+     * 
+     *      parameters:
+     *      - in: query
+     *        name: id
+     *        required: true 
+     * 
+     *      responses:
+     *        200:
+     *          description: User disabled   
+     */
     toggleActiveUser(req: Request, res: Response, next: NextFunction) {
         try {
-            console.log("Toggle user request", req.query);
             let active: boolean;
             if (req.path === "/disable") {
                 active = false
@@ -136,23 +261,36 @@ class User {
             schema.updateOne(query, set)
             .exec((err: object, result:object) => {
                 if (err) throw err;
-                console.log("Toggle user success", result);
                 res.status(200).json(result);
             })
         } catch (error) {
             next(error);
         }
     };
-
+    
+    /**
+     * @swagger
+     * /v1/user/delete:
+     *   delete:
+     *      summary: Remove a specific user
+     *      tags: [User]
+     * 
+     *      parameters:
+     *      - in: query
+     *        name: id
+     *        required: true 
+     * 
+     *      responses:
+     *        200:
+     *          description: User Removed  
+     */
     deleteUser(req: Request, res: Response, next: NextFunction){
         try {
-            console.log("Delete user request", req.query);
             const { id } = req.query;
             const query: object = { id };
             schema.deleteOne(query)
             .exec((err: object, result: object) => {
                 if (err) throw err;
-                console.log("Delete user success", result);
                 res.status(200).json(result);
             });
         } catch (error) {
@@ -160,9 +298,33 @@ class User {
         }
     }
 
+    /**
+     * @swagger
+     * /v1/user/update:
+     *   post:
+     *      summary: Change informations profile of user
+     *      tags: [User]
+     * 
+     *      parameters:
+     *      - in: query
+     *        name: id
+     *        required: true 
+     *      - in: body
+     *        name: username
+     *        required: true 
+     *      - in: body
+     *        name: password
+     *        required: true 
+     *      - in: body
+     *        name: email
+     *        required: true 
+     * 
+     *      responses:
+     *        200:
+     *          description: User Updated
+     */
     updateUser(req: Request, res: Response, next: NextFunction) {
         try {
-            console.log("Update user request", req.body);
             const { username, password, email } = req.body;
             const { id } = req.query;
             const query: object = { id };
@@ -174,7 +336,6 @@ class User {
             schema.updateOne(query, set)
             .exec((err: object, result:object) => {
                 if (err) throw err;
-                console.log("Update user success", result);
                 res.status(200).json(result);
             })
         } catch (error) {

@@ -51,3 +51,10 @@ export const sendEmail = (mailOptions: MailOptions) => {
         })
     })
 }
+
+export const generateUserId = (email: string) => {
+    return crypto
+    .createHash("sha256")
+    .update(email)
+    .digest("hex")
+}
