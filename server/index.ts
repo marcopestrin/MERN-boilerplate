@@ -3,13 +3,11 @@ import http, { Server } from "http";
 import { connect } from 'mongoose';
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
-import swaggerUi from "swagger-ui-express";
-
 import { port, host, isProduction, urlDatabaseDevelopment, urlDatabaseProduction } from "../const";
 import initializeRoutes from "./initializeRoutes";
 import initializeCors from "./initializeCors";
+import initializeSwagger from "./initializeSwagger";
 import { applyPassportStrategy } from "./passportStrategy";
-import swaggerDocument from "../swagger.json";
 import errorMiddlewares from "./middlewares/error";
 import headersResponseMiddlewares from "./middlewares/headers";
 
@@ -35,12 +33,12 @@ export function createServer(): void {
     app.use(bodyParser.json({ limit: "10mb" }));
     app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
     app.use(cookieParser());
-    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
     connectDatabase();
     applyPassportStrategy();
     initializeRoutes(router);
     initializeCors(app);
+    initializeSwagger(app);
     app.use(router);
     const server: Server = http.createServer(app);
     errorMiddlewares(app);
