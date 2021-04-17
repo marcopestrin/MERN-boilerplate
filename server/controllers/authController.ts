@@ -3,7 +3,7 @@ import { Response, Request, NextFunction } from "express";
 import { applicationDomain } from "../../const";
 import schema from "../models/user";
 import { encryptPassword, generateRecoveryToken, sendEmail } from "./functions";
-import { Tokens, MailOptions, IUser, CheckCredentials } from "../interfaces";
+import { Tokens, MailOptions, IUser, CheckCredentials, RequestData } from "../interfaces";
 import { generateTokens, getUserByRefreshToken, saveRefreshToken } from "./functions/token";
 import { validationInput, isValidPassword } from "./functions/validation";
 
@@ -73,9 +73,9 @@ class Auth {
         try {
             const refreshToken: any = req.headers.refreshtoken;
             if (refreshToken) {
-                const result: any = await getUserByRefreshToken(refreshToken);
-                if (result.success) {
-                    const { password, username } = result.user;
+                const { success, data, error }: RequestData = await getUserByRefreshToken(refreshToken);
+                if (success) {
+                    const { password, username } = data;
                     if (password && username) {
                         const { accessToken }: Tokens = generateTokens(username, encryptPassword(password));
                         res.status(200).json({
@@ -86,7 +86,6 @@ class Auth {
                     }
                     throw message.userNotFound;
                 }
-                const { error } = result;
                 throw error
             }
             throw message.needRefreshToken;      

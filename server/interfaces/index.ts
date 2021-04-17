@@ -36,3 +36,9 @@ export interface CheckCredentials {
     userActive: Boolean | null,
     success: Boolean
 }
+
+export interface RequestData {
+    success: Boolean,
+    data: Object | IUser | null,
+    error: any
+}

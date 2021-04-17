@@ -46,12 +46,12 @@ export const getUserByRefreshToken = async(refreshToken: string) => {
         return {
             success: true,
             error: null,
-            user
+            data: user
         }
     } catch (error) {
         return {
             success: false,
-            user: {},
+            data: {},
             error
         }
     }
