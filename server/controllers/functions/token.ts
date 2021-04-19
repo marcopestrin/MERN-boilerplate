@@ -2,7 +2,7 @@ import { Response, Request, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
 import schema from "../../models/user";
-import { Update } from "../../interfaces";
+import { Update, RequestData } from "../../interfaces";
 
 const message = require("../message.json");
 
@@ -47,13 +47,13 @@ export const getUserByRefreshToken = async(refreshToken: string) => {
             success: true,
             error: null,
             data: user
-        }
+        } as RequestData
     } catch (error) {
         return {
             success: false,
-            data: {},
+            data: null,
             error
-        }
+        } as RequestData
     }
 }
 

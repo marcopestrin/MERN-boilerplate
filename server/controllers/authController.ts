@@ -74,7 +74,7 @@ class Auth {
             const refreshToken: any = req.headers.refreshtoken;
             if (refreshToken) {
                 const { success, data, error }: RequestData = await getUserByRefreshToken(refreshToken);
-                if (success) {
+                if (success && data !== null) {
                     const { password, username } = data;
                     if (password && username) {
                         const { accessToken }: Tokens = generateTokens(username, encryptPassword(password));

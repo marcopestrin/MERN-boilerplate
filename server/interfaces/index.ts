@@ -9,36 +9,36 @@ export interface MailOptions {
 };
 
 export interface Tokens {
-    accessToken: String,
-    refreshToken: String
+    accessToken: string,
+    refreshToken: string
 };
 
 export interface Update {
-    ok: Number,
-    n: Number,
-    nModified: Number
+    ok: number,
+    n: number,
+    nModified: number
 }
 
 export interface IUser extends Document {
-    username: String,
-    password: String,
-    email: String,
-    id: String,
-    active: Boolean,
+    username: string,
+    password: string,
+    email: string,
+    id: string,
+    active: boolean,
     timeRegistration: Date,
-    resetToken: String,
-    activeCode: String,
-    role: Number
+    resetToken: string,
+    activeCode: string,
+    role: number
 }
 
 export interface CheckCredentials {
-    userRole: Number | null,
-    userActive: Boolean | null,
-    success: Boolean
+    userRole: number | null,
+    userActive: boolean | null,
+    success: boolean
 }
 
-export interface RequestData {
-    success: Boolean,
-    data: Object | IUser | null,
-    error: any
+export interface RequestData { 
+    success: boolean;
+    data: IUser | null;
+    error: any;
 }
