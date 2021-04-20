@@ -1,4 +1,4 @@
-import * as actions from "../actions";
+import * as actions from "@redux/actions";
 
 export default function auth(prevState = {}, action){
     let clonedState = JSON.parse(JSON.stringify(prevState));

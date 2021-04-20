@@ -3,13 +3,13 @@ import { Container, Grid, } from "@material-ui/core";
 import { BrowserRouter, Redirect } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-import Login from "./views/login";
-import SignUp from "./views/signup";
-import ResetPassword from "./views/resetPassword";
+import Login from "@views/login";
+import SignUp from "@views/signup";
+import ResetPassword from "@views/resetPassword";
 import "./styles.scss";
 import { PrivateRoute, PublicRoute } from "./hooks/routes";
-import Dashboard from "./components/dashboard";
-import { selectorAuth } from "./redux/selectors";
+import Dashboard from "@components/dashboard";
+import { selectorAuth } from "@redux/selectors";
 
 const ForceRedirect = () => {
     const { loginRedirect, logoutRedirect } = useSelector(selectorAuth);

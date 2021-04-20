@@ -2,10 +2,10 @@ import React, { memo, useEffect } from "react"
 import { Typography } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 
-import { GET_USERS_LIST_REQUEST } from "../../redux/actions";
-import { selectorUsers } from "../../redux/selectors"
-import Logout from "../logout";
-import UserTable from "../userTable";
+import { GET_USERS_LIST_REQUEST } from "@redux/actions";
+import { selectorUsers } from "@redux/selectors"
+import Logout from "@components/logout";
+import UserTable from "@components/userTable";
 
 const Dashboard = () => {
     const dispatch = useDispatch();

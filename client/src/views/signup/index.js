@@ -3,7 +3,7 @@ import { FormControl, TextField, Typography, Grid, Button } from '@material-ui/c
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
-import { REGISTRATION_REQUEST } from "../../redux/actions";
+import { REGISTRATION_REQUEST } from "@redux/actions";
 import "./styles.scss";
 const SignUp = () => {
 

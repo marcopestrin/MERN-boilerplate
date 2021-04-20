@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { FormControl, TextField, Grid, Button } from '@material-ui/core';
 import "./styles.scss";
 
-import { RESET_PASSWORD_REQUEST } from "../../redux/actions";
+import { RESET_PASSWORD_REQUEST } from "@redux/actions";
 
 const ResetPassword = () => {
 
