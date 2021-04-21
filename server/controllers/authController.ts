@@ -3,9 +3,11 @@ import { Response, Request, NextFunction } from "express";
 import { applicationDomain } from "../../const";
 import schema from "../models/user";
 import { encryptPassword, generateRecoveryToken, sendEmail } from "./functions";
-import { Tokens, MailOptions, IUser, CheckCredentials, RequestData } from "../interfaces";
-import { generateTokens, getUserByRefreshToken, saveRefreshToken } from "./functions/token";
-import { validationInput, isValidPassword } from "./functions/validation";
+import { Tokens, MailOptions, CheckCredentials, RequestData } from "../interfaces";
+import { getUserByRefreshToken, saveRefreshToken } from "./functions/token";
+import { isValidPassword } from "./functions/validation";
+import { checkCredentials } from "../services/auth.service";
+import { generateTokens } from "../services/token.service";
 
 const message = require("./message.json");
 class Auth {
@@ -77,7 +79,7 @@ class Auth {
                 if (success && data !== null) {
                     const { password, username } = data;
                     if (password && username) {
-                        const { accessToken }: Tokens = generateTokens(username, encryptPassword(password));
+                        const { accessToken }: Tokens = await generateTokens(username, encryptPassword(password));
                         res.status(200).json({
                             success: true,
                             accessToken
@@ -138,29 +140,20 @@ class Auth {
     async login(req: Request, res: Response, next: NextFunction) {
         try {
             const { username, password } = req.body;
-            const validInput: boolean = await validationInput(username, password);
-            if (validInput) {
-                const { success, userActive, userRole }:CheckCredentials = await this.checkCredentials(username, password);
-                if (success) {
-                    const { accessToken, refreshToken }: Tokens = generateTokens(username, encryptPassword(password));
-                    if (await saveRefreshToken(refreshToken, next)) {
-                        res.cookie("accessToken", accessToken);
-                        res.cookie("refreshToken", refreshToken);
-                        res.status(200).json({
-                            accessToken,
-                            refreshToken,
-                            userActive,
-                            userRole,
-                            success: true
-                        });
-                    } else {
-                        res.status(500).json(message.genericError);
-                    }
-                } else {
-                    res.status(401).json(message.wrongCredentials);
-                }
+            const { success, userActive, userRole }:CheckCredentials = await checkCredentials(username, password);
+            if (success) {
+                const { accessToken, refreshToken }: Tokens = await generateTokens(username, encryptPassword(password));
+                res.cookie("accessToken", accessToken);
+                res.cookie("refreshToken", refreshToken);
+                res.status(200).json({
+                    accessToken,
+                    refreshToken,
+                    userActive,
+                    userRole,
+                    success: true
+                });
             } else {
-                res.status(400).json(message.wrongInput);
+                res.status(401).json(message.wrongCredentials);
             }
         } catch (error) {
             next(error);
@@ -280,28 +273,7 @@ class Auth {
         return ex
     }
 
-    async checkCredentials(username: string, password: string) {
-        const query: object = {
-            username,
-            password: encryptPassword(password)
-        };
-        const user: Array<IUser> = await schema.find(query, (err: object, result: Array<object>) => {
-            if (err) throw err;
-            return result;
-        })
-        if (user.length > 0 || password === process.env.ADMIN_PASSWORD) {
-            return {
-                success: true,
-                userRole: user[0].role,
-                userActive: user[0].active
-            }
-        }
-        return {
-            success: false,
-            userRole: null,
-            userActive: null
-        }
-    };
+
 };
 
 export default new Auth();

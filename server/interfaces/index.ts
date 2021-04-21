@@ -31,6 +31,13 @@ export interface IUser extends Document {
     role: number
 }
 
+export interface IToken extends Document {
+    token: string,
+    username: string,
+    type: string,
+    expirs: Date
+}
+
 export interface CheckCredentials {
     userRole: number | null,
     userActive: boolean | null,
@@ -40,5 +47,5 @@ export interface CheckCredentials {
 export interface RequestData { 
     success: boolean;
     data: IUser | null;
-    error: any;
+    error?: any;
 }
