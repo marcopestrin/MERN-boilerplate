@@ -1,9 +1,10 @@
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 import moment from "moment";
-import { Tokens } from "../interfaces";
+import { Tokens, IToken, IUser } from "../interfaces";
 import schema from "../models/token";
 import { secretKeyAccessToken, secretKeyRefreshToken, accessTokenLife, refreshTokenLife } from "../../const";
-
+import { getUserByName } from "./user.service";
 
 const generateToken = (payload:object, secret:string, life:string) => {
     const options: object = {
@@ -23,6 +24,37 @@ const saveToken = async(token:string, username:string, expires:any, type:string)
     return document;
 }
 
+export const verifyToken = async(token:string) => {
+    const refreshToken = jwt.verify(token, secretKeyRefreshToken);
+    const document = await schema.findOne({
+        token: refreshToken
+    });
+    if (!document) return;
+    return document as IToken;
+}
+
+export const deleteToken = async(token:string, type:string) => {
+    const document = await schema.findOne({ token, type });
+    if (!document) return;
+    await document.remove();
+}
+
+
+export const generateRecoveryToken = async(name:string) => {
+    const { username, password, id }:IUser = await getUserByName(name);
+    const recoveryToken = crypto
+        .createHash("md5")
+        .update(username.concat(password))
+        .digest("hex");
+    const expires: moment.Moment = moment()
+        .add("60", "m");
+    await saveToken(recoveryToken, username, expires, "recovery");
+    return {
+        recoveryToken,
+        id,
+        username
+    };
+}
 
 export const generateTokens = async(username:string, password:string) => {
     const payload: object = { username, password };

@@ -2,12 +2,14 @@ import { Response, Request, NextFunction } from "express";
 
 import { applicationDomain } from "../../const";
 import schema from "../models/user";
-import { encryptPassword, generateRecoveryToken, sendEmail } from "./functions";
-import { Tokens, MailOptions, CheckCredentials, RequestData } from "../interfaces";
-import { getUserByRefreshToken, saveRefreshToken } from "./functions/token";
+import { encryptPassword, sendEmail } from "./functions";
+import { Tokens, MailOptions, CheckCredentials, RequestData, IToken, IUser } from "../interfaces";
+import { getUserByRefreshToken, saveRefreshToken, } from "./functions/token";
 import { isValidPassword } from "./functions/validation";
 import { checkCredentials } from "../services/auth.service";
-import { generateTokens } from "../services/token.service";
+import { generateTokens, deleteToken, verifyToken, generateRecoveryToken } from "../services/token.service";
+import { getUserByName } from "../services/user.service";
+import { sendRecoveryEmail } from "../services/email.service";
 
 const message = require("./message.json");
 class Auth {
@@ -29,17 +31,12 @@ class Auth {
      *          description: Logged out
      *                  
      */
-    async logout(req: Request, res: Response, next: NextFunction) {
+    async logout(req:Request, res:Response, next:NextFunction) {
         try {
-            const { refreshToken } = req.body;
-            schema.findOneAndUpdate({ refreshToken }, { $set: { refreshToken: "" } })
-            .exec(async(error: object, result: any) => {
-                if (error) throw error;
-                res.status(200).json({
-                    success: true
-                });
-            })
-
+            await deleteToken(req.body.refreshToken, "refresh");
+            res.status(200).json({
+                success: true
+            });
         } catch (error){
             next(error);
         }
@@ -73,24 +70,28 @@ class Auth {
      */
     async requestNewToken(req: Request, res: Response, next: NextFunction) {
         try {
-            const refreshToken: any = req.headers.refreshtoken;
-            if (refreshToken) {
-                const { success, data, error }: RequestData = await getUserByRefreshToken(refreshToken);
-                if (success && data !== null) {
-                    const { password, username } = data;
-                    if (password && username) {
-                        const { accessToken }: Tokens = await generateTokens(username, encryptPassword(password));
-                        res.status(200).json({
-                            success: true,
-                            accessToken
-                        })
-                        return
-                    }
-                    throw message.userNotFound;
-                }
-                throw error
-            }
-            throw message.needRefreshToken;      
+            const { refreshtoken }: any = req.headers;
+            const tokenDocument = await verifyToken(refreshtoken.toString());
+            if (tokenDocument === undefined || tokenDocument === null) {
+                res.status(404).json({
+                    success: false
+                })
+                return
+            };
+            const user: IUser = await getUserByName(tokenDocument.username);
+            if (!user) {
+                res.status(404).json({
+                    success: false
+                })
+                return
+            };
+            const { accessToken, refreshToken }: Tokens = await generateTokens(tokenDocument.username, user.password);
+            await tokenDocument.remove();
+            res.status(200).json({
+                success: true,
+                accessToken,
+                refreshToken
+            })    
         } catch (error) {
             next(error)
         }
@@ -153,7 +154,10 @@ class Auth {
                     success: true
                 });
             } else {
-                res.status(401).json(message.wrongCredentials);
+                res.status(401).json({
+                    success: false,
+                    message: message.wrongCredentials
+                });
             }
         } catch (error) {
             next(error);
@@ -236,43 +240,17 @@ class Auth {
     async reset(req: Request, res: Response, next: NextFunction) {
         try {
             const { email } = req.body;
-            const resetToken: string = generateRecoveryToken();
-
-            schema.findOneAndUpdate({ email }, { $set: { resetToken } })
-            .exec(async(error: object, result: any) => {
-                if (error) throw error;
-                if (result) {
-                    const emailResult: any = await this.sendRecoveryEmail(resetToken, email, result);
-                    if (emailResult.accepted) {
-                        // ATTENZIONE: non ritornare il token!!!!
-                        res.status(200).json({
-                            valid: 'ok',
-                            id: result.id
-                        });
-                    }
-                    throw emailResult
-                }
-            })
+            const { recoveryToken, id, username } = await generateRecoveryToken(email);
+            const emailResult: any = await sendRecoveryEmail(recoveryToken, email, id, username);
+            if (emailResult.accepted) {
+                res.status(200).json({ success: true, id });
+                return
+            }
+            throw emailResult;
         } catch (error) {
             next(error);
         }
     }
-
-    async sendRecoveryEmail(resetToken: string, email: string, result: any) {
-        const url: string = `http://${process.env.HOST_APPLICATION}:${process.env.PORT}/reset?id=${result.id}&resetToken=${resetToken}&username=${result.username}}`;
-
-        const mailOptions: MailOptions = {
-            from: `${applicationDomain} - recovery password`,
-            to: email,
-            subject: "Recovery Password",
-            text: "Hello world?",
-            html: `this is the token: <b>${resetToken}</b>; this is the id: ${result.id}. Click <a target='_blank' href='${url}'>here</a>`
-        };
-
-        const ex: any = await sendEmail(mailOptions);
-        return ex
-    }
-
 
 };
 

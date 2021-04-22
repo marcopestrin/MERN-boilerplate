@@ -12,13 +12,6 @@ export const encryptPassword = (password: string) => {
     .digest("hex")
 };
 
-export const generateRecoveryToken = () => {
-    // da valutare se prendere in input qualche dato per renderlo "univoco"
-    return crypto
-    .randomBytes(32)
-    .toString("hex")
-};
-
 export const generateActiveCode = (password: string) => {
     // può essere vulnerabile questa tecnica!!! da rivedere in futuro
     return crypto
