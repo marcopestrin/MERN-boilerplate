@@ -1,15 +1,21 @@
 import { Response, Request, NextFunction } from "express";
-
-import { applicationDomain } from "../../const";
-import schema from "../models/user";
-import { encryptPassword, sendEmail } from "./functions";
-import { Tokens, MailOptions, CheckCredentials, RequestData, IToken, IUser } from "../interfaces";
-import { getUserByRefreshToken, saveRefreshToken, } from "./functions/token";
-import { isValidPassword } from "./functions/validation";
-import { checkCredentials } from "../services/auth.service";
-import { generateTokens, deleteToken, verifyToken, generateRecoveryToken } from "../services/token.service";
-import { getUserByName } from "../services/user.service";
+import {
+    Tokens,
+    CheckCredentials,
+    IUser,
+    Update
+} from "../interfaces";
+import {
+    generateTokens,
+    deleteToken,
+    verifyToken,
+    generateRecoveryToken,
+    getUsernameByResetToken
+} from "../services/token.service";
+import { getUserByName, updateUser } from "../services/user.service";
 import { sendRecoveryEmail } from "../services/email.service";
+import { checkCredentials } from "../services/auth.service";
+import { encryptPassword } from "../services/helper.service";
 
 const message = require("./message.json");
 class Auth {
@@ -173,9 +179,6 @@ class Auth {
      * 
      *      parameters:
      *      - in: body
-     *        name: id
-     *        required: true
-     *      - in: body
      *        name: password
      *        required: true
      *      - in: body
@@ -185,36 +188,33 @@ class Auth {
      *      responses:
      *        200:
      *          description: Password changed
-     *        403:
-     *          description: Invalid password
+     *        400:
+     *          description: Impossibile to update password
      *                  
      */
     async recoveryPassword(req: Request, res: Response, next: NextFunction) {
         try {
-            const { id, password, resetToken } = req.body;
-            const passwordValid: boolean = isValidPassword(password);
-            const query: object = {
-                resetToken,
-                id
-            };
-            // il token deve essere eliminato
-            const set: object = {
-                $set: { resetToken: '' },
-                password: encryptPassword(password)
-            };
 
-            if (passwordValid) {
-                schema.updateOne(query, set)
-                .exec((err: object, result:object) => {
-                    if (err) throw err;
-                    // all good!!
-                    res.status(200).json(result);
-                })
-            } else {
-                res.status(403).json({
-                    error: message.invalidPassword
-                });
+            const { password, resetToken } = req.body;
+            const username = await getUsernameByResetToken(resetToken);
+            if (!username) throw "Wrong token";
+            const userDocument: IUser = await getUserByName(username);
+            if (!userDocument) throw "User not found";
+            const payload: object = {
+                ...userDocument,
+                password: encryptPassword(password)
             }
+            const { nModified }: Update = updateUser(payload, { username })
+            if (nModified > 0) {
+                await deleteToken(resetToken, "reset");
+                res.status(200).json({
+                    success: true
+                });
+                return;
+            }
+            res.status(400).json({
+                success: false
+            });
         } catch (error) {
             next(error);
         }

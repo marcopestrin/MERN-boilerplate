@@ -1,32 +1,12 @@
-import crypto from "crypto";
 import { IUser } from "../interfaces/index"
 import schema from "../models/user";
+import { encryptPassword } from "./helper.service";
 
+export const logout = () => {}
+export const requestNewToken = () => {}
+export const verifyEmail = () => {}
 
-export const logout = () => {
-
-}
-
-export const requestNewToken = () => {
-
-}
-
-export const resetPasswordRequest = () => {
-
-}
-
-export const verifyEmail = () => {
-
-}
-
-const encryptPassword = (password: string) => {
-    return crypto
-    .createHash("md5")
-    .update(password)
-    .digest("hex")
-}
-
-export const checkCredentials = async(username: string, password: string) => {
+export const checkCredentials = async(username:string, password:string) => {
     const query: object = {
         username,
         password: encryptPassword(password)

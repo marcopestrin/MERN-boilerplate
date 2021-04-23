@@ -39,7 +39,6 @@ export const deleteToken = async(token:string, type:string) => {
     await document.remove();
 }
 
-
 export const generateRecoveryToken = async(name:string) => {
     const { username, password, id }:IUser = await getUserByName(name);
     const recoveryToken = crypto
@@ -64,3 +63,9 @@ export const generateTokens = async(username:string, password:string) => {
     await saveToken(refreshToken, username, refreshTokenExpires, "refresh");
     return { accessToken, refreshToken } as Tokens;
 };
+
+export const getUsernameByResetToken = async(token:string) => {
+    const document:IToken | null = await schema.findOne({ token, type: "reset" });
+    if (!document) return;
+    return document.username
+}
