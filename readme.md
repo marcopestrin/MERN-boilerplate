@@ -53,7 +53,7 @@ npm run dev / npm run start
 | Month | Description |
 | --- | --- |
 | March 2021 | <ul> <li>Authentication system </li><li> CRUD API on User Mode </li><li> First Deploy on Heroku </li><li> Creating frontend (login/signup/logout) </ul>|
-| April 2021 | <ul> <li>Handle function http request</li><li>Frontend alias import</li><li>Splitted controller-services backend</li> |
+| April 2021 | <ul> <li>Handle function http request</li><li>Frontend alias import</li><li>Split controller-services backend</li> |
 
 ## Others
 This project are made in my free time. Currently under construction by myself.
