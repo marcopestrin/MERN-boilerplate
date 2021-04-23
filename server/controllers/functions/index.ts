@@ -5,19 +5,11 @@ import Mail from "nodemailer/lib/mailer";
 
 import { MailOptions } from "../../interfaces";
 
-export const encryptPassword = (password: string) => {
+export const encryptPassword = (password:string) => {
     return crypto
     .createHash("md5")
     .update(password)
-    .digest("hex")
-};
-
-export const generateActiveCode = (password: string) => {
-    // può essere vulnerabile questa tecnica!!! da rivedere in futuro
-    return crypto
-    .createHash("sha256")
-    .update(password)
-    .digest("hex")
+    .digest("hex") as string
 };
 
 export const getTransporterEmail = () => {
@@ -32,7 +24,7 @@ export const getTransporterEmail = () => {
     });
 };
 
-export const sendEmail = (mailOptions: MailOptions) => {
+export const sendEmail = (mailOptions:MailOptions) => {
     const transporter: Mail = getTransporterEmail();
     
     return new Promise((resolve) => {
@@ -45,9 +37,9 @@ export const sendEmail = (mailOptions: MailOptions) => {
     })
 }
 
-export const generateUserId = (email: string) => {
+export const generateUserId = (email:string) => {
     return crypto
     .createHash("sha256")
     .update(email)
-    .digest("hex")
+    .digest("hex") as string
 }

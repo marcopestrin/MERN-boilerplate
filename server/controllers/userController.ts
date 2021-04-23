@@ -1,7 +1,10 @@
 import { Response, Request, NextFunction } from "express";
 import schema from "../models/user";
-import { encryptPassword, generateActiveCode, sendEmail, generateUserId } from "./functions";
-import { MailOptions } from "../interfaces";
+import { generateUserId } from "./functions";
+import { IUser } from "../interfaces";
+import { getUserList, getUserById, createUser } from "../services/user.service";
+import { encryptPassword, generateActiveCode } from "../services/helper.service";
+import { sendRegistrationEmail } from "../services/email.service";
 
 const message = require("./message.json");
 class User {
@@ -101,40 +104,38 @@ class User {
      *                    type: boolean
      *                  
      */
-    createNewUser(req: Request, res: Response, next: NextFunction) {
+    async createNewUser(req: Request, res: Response, next: NextFunction) {
         try {
-            const { password, username, email } = req.body;
-            const activeCode: string = generateActiveCode(password)
+            const password:string = req.body;
+            const username:string = req.body;
+            const email:string = req.body;
+            const activeCode:string = generateActiveCode(password, email);
 
-            const payload: object = {
-                password: encryptPassword(password),
-                activeCode,
+            const payload:IUser = {
                 username,
+                password: encryptPassword(password),
                 email,
-                id: generateUserId(email)
+                id: generateUserId(email),
+                activeCode
             };
-            schema.create(payload, async(err: any, result: any) => {
-                if (err) {
-                    if (11000 === err.code && err.name === 'MongoError') {
-                        res.status(422).json({
-                            success: false,
-                            message: message.userAlreadyExist
-                        });
-                    }
-                    throw err;
-                }
-                const isSended = await this.sendRegistrationEmail(email, activeCode);
-                if (isSended) {
-                    res.status(200).json({
-                        success: true,
-                        email: result.email,
-                        username: result.username
-                    });
-                } else {
-                    res.status(500).json('errore da gestire');
-                }
+            const result:IUser | null = await createUser(payload);
+            if (!result) {
+                res.status(400).json({
+                    success: false
+                });
+                return
+            }
+            const isSended = sendRegistrationEmail(email, activeCode);
+            if (!isSended) {
+                res.status(400).json({
+                    success: false
+                });
+                return
+            }
+            res.status(200).json({
+                success: true,
+                data: result
             });
-
         } catch (error) {
             next(error);
         }
@@ -156,12 +157,13 @@ class User {
      *                type: array      
      *                item: object            
      */
-    getAllUsers(req: Request, res: Response, next: NextFunction) {
+    async getAllUsers(req: Request, res: Response, next: NextFunction) {
         try {
-            schema.find({}, (err: object, result: object) => {
-                if (err) throw err;
-                res.status(200).json(result);
-            })
+            const data: Array<object> = await getUserList();
+            res.status(200).json({
+                success: true,
+                data
+            });
         } catch (error) {
             next(error);
         }
@@ -196,15 +198,12 @@ class User {
      *                  id:
      *                    type: string       
      */
-    getUserById(req: Request, res: Response, next: NextFunction) {
+    async getUserById(req: Request, res: Response, next: NextFunction) {
         try {
-            const { id } = req.query;
-            const fieldsToReturn: string = "username password id email -_id";
-            const query: object = { id };
-            schema.find(query, fieldsToReturn)
-            .exec((err: object, result: object) => {
-                if (err) throw err;
-                res.status(200).json(result);
+            const data: IUser = await getUserById(req.query.id);
+            res.status(200).json({
+                success: true,
+                data
             });
         } catch (error) {
             next(error);
@@ -342,18 +341,6 @@ class User {
             next(error);
         }
     }
-
-    sendRegistrationEmail (email: string, activeCode: string) {
-        const url: string = `http://${process.env.HOST_APPLICATION}:${process.env.PORT}/v1/user/confirmEmail/${email}/${activeCode}`;
-        const mailOptions: MailOptions = {
-            from: `${process.env.applicationDomain}`,
-            to: email,
-            subject: "Confirm Email",
-            text: "Hello world?",
-            html: `Click <a target='_blank' href='${url}'>here</a> to activate the account`
-        };
-        return sendEmail(mailOptions);
-    };
 
 };
 

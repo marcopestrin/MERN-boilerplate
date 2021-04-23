@@ -29,7 +29,6 @@ const sendEmail = (mailOptions: MailOptions) => {
     })
 }
 export const sendRecoveryEmail = async(token, email, id, username) => {
-    console.log(token, email, id, username);
 
     const url: string = `http://${process.env.HOST_APPLICATION}:${process.env.PORT}/reset?id=${id}&resetToken=${token}&username=${username}}`;
 
@@ -44,3 +43,16 @@ export const sendRecoveryEmail = async(token, email, id, username) => {
 
     return await sendEmail(mailOptions);
 }
+
+export const sendRegistrationEmail = async(email, activeCode) => {
+    const url: string = `http://${process.env.HOST_APPLICATION}:${process.env.PORT}/v1/user/confirmEmail/${email}/${activeCode}`;
+    const mailOptions: MailOptions = {
+        from: `${process.env.applicationDomain}`,
+        to: email,
+        subject: "Confirm Email",
+        text: "Hello world?",
+        html: `Click <a target='_blank' href='${url}'>here</a> to activate the account`
+    };
+    return await sendEmail(mailOptions); 
+}
+

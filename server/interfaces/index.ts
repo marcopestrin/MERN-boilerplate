@@ -23,12 +23,12 @@ export interface IUser extends Document {
     username: string,
     password: string,
     email: string,
-    id: string,
-    active: boolean,
-    timeRegistration: Date,
-    resetToken: string,
+    id?: string,
     activeCode: string,
-    role: number
+    active?: boolean,
+    timeRegistration?: Date,
+    resetToken?: string,
+    role?: number
 }
 
 export interface IToken extends Document {
