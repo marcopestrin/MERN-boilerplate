@@ -12,3 +12,10 @@ export const generateActiveCode = (password:string, email:string) => {
     .update(password.concat(email))
     .digest("hex") as string
 };
+
+export const generateUserId = (email:string) => {
+    return crypto
+    .createHash("sha256")
+    .update(email)
+    .digest("hex") as string
+}

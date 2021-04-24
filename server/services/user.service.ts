@@ -23,6 +23,14 @@ export const updateUser = async(payload:object, query:object) => {
     }) as Update;
 }
 
+export const checkActiveCode = async(activeCode:string) => {
+    return await schema.findOne({ activeCode }) as IUser;
+}
+
+export const removeUserById = async(id:string) => {
+    return await schema.deleteOne({ id })
+}
+
 export const createUser = async(payload:IUser) => {
     const user = getUserByEmail(payload.email);
     if (!user) {

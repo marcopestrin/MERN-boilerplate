@@ -1,9 +1,18 @@
 import { Response, Request, NextFunction } from "express";
-import schema from "../models/user";
-import { generateUserId } from "./functions";
-import { IUser } from "../interfaces";
-import { getUserList, getUserById, createUser } from "../services/user.service";
-import { encryptPassword, generateActiveCode } from "../services/helper.service";
+import { IUser, Update } from "../interfaces";
+import { 
+    getUserList,
+    getUserById,
+    createUser,
+    updateUser,
+    checkActiveCode,
+    removeUserById
+} from "../services/user.service";
+import {
+    encryptPassword,
+    generateActiveCode,
+    generateUserId
+} from "../services/helper.service";
 import { sendRegistrationEmail } from "../services/email.service";
 
 const message = require("./message.json");
@@ -18,9 +27,6 @@ class User {
      * 
      *      parameters:
      *      - in: path
-     *        name: email
-     *        required: true
-     *      - in: path
      *        name: activeCode
      *        required: true
      * 
@@ -29,28 +35,27 @@ class User {
      *          description: User confirmed
      *                  
      */
-    confirmEmail(req: Request, res: Response, next: NextFunction) {
+    async confirmEmail(req: Request, res: Response, next: NextFunction) {
         try {
-            const query: object = {
-                activeCode: req.params.activeCode,
-                email: req.params.email
-            };
-            const set: object = { $set: {
-                activeCode: '',
-                active: true
-            }};
-            schema.updateOne(query, set)
-            .exec((err: object, result: any) => {
-                if (err) throw err;
-                if (result.ok) {
-                    if (result.nModified){
-                        res.status(200).send(message.userActivated);
-                    } else {
-                        res.status(200).send(message.good);
-                    }
-                }
-                throw result
-            })
+            const { activeCode }: string = req.params;
+            const user: IUser = await checkActiveCode(activeCode);
+            if (!user) return;
+            const payload = {
+                ...user,
+                active: true,
+                activeCode: ""
+            }
+            const result: Update = await updateUser(payload, { activeCode });
+            if (result.ok) {
+                res.status(200).json({
+                    success: true,
+                    message: message.userActivated
+                });
+                return;
+            }
+            res.status(400).json({
+                success: false
+            });
         } catch (error) {
             next(error);
         }
@@ -241,27 +246,26 @@ class User {
      *        200:
      *          description: User disabled   
      */
-    toggleActiveUser(req: Request, res: Response, next: NextFunction) {
+    async toggleActiveUser(req: Request, res: Response, next: NextFunction) {
         try {
-            let active: boolean;
-            if (req.path === "/disable") {
-                active = false
-            } else if (req.path === "/active") {
-                active = true
-            } else {
-                throw new Error('path not found')
+
+            const { id } = req.query.id;
+            const user:IUser = await getUserById(id);
+            const payload = {
+                ...user,
+                active: req.path === "/active"
+            };
+            const result: Update = await updateUser(payload, { id })
+            if (result.ok) {
+                res.status(200).json({
+                    success: true
+                });
+                return;
             }
-            const query: object = {
-                id: req.query.id
-            };
-            const set: object = { $set:
-                { active }
-            };
-            schema.updateOne(query, set)
-            .exec((err: object, result:object) => {
-                if (err) throw err;
-                res.status(200).json(result);
-            })
+            res.status(400).json({
+                success: false
+            });
+
         } catch (error) {
             next(error);
         }
@@ -283,14 +287,12 @@ class User {
      *        200:
      *          description: User Removed  
      */
-    deleteUser(req: Request, res: Response, next: NextFunction){
+    async deleteUser(req: Request, res: Response, next: NextFunction){
         try {
             const { id } = req.query;
-            const query: object = { id };
-            schema.deleteOne(query)
-            .exec((err: object, result: object) => {
-                if (err) throw err;
-                res.status(200).json(result);
+            await removeUserById(id);
+            res.status(200).json({
+                success:true
             });
         } catch (error) {
             next(error);
@@ -322,21 +324,20 @@ class User {
      *        200:
      *          description: User Updated
      */
-    updateUser(req: Request, res: Response, next: NextFunction) {
+    async updateUser(req: Request, res: Response, next: NextFunction) {
         try {
-            const { username, password, email } = req.body;
             const { id } = req.query;
-            const query: object = { id };
-            const set: object = { $set: {
-                username,
-                password,
-                email
-            } }
-            schema.updateOne(query, set)
-            .exec((err: object, result:object) => {
-                if (err) throw err;
-                res.status(200).json(result);
-            })
+            const { payload } = req.body;
+            const result: Update = await updateUser(payload, { id });
+            if (result.ok) {
+                res.status(200).json({
+                    success: true
+                });
+                return
+            }
+            res.status(400).json({
+                success: false
+            });
         } catch (error) {
             next(error);
         }
