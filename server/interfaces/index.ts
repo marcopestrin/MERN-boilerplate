@@ -31,6 +31,13 @@ export interface IUser extends Document {
     role?: number
 }
 
+export interface CreateUserInput {
+    username: string,
+    password: string,
+    email: string,
+    id: string,
+    activeCode: string
+}
 export interface IToken extends Document {
     token: string,
     username: string,

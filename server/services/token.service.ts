@@ -26,8 +26,9 @@ const saveToken = async(token:string, username:string, expires:any, type:string)
 
 export const verifyToken = async(token:string) => {
     const refreshToken = jwt.verify(token, secretKeyRefreshToken);
+    if (!refreshToken) return;
     const document = await schema.findOne({
-        token: refreshToken
+        token
     });
     if (!document) return;
     return document as IToken;

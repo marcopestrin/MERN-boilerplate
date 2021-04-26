@@ -1,4 +1,4 @@
-import { IUser } from "../interfaces/index"
+import { IUser, CheckCredentials } from "../interfaces/index"
 import schema from "../models/user";
 import { encryptPassword } from "./helper.service";
 
@@ -20,11 +20,11 @@ export const checkCredentials = async(username:string, password:string) => {
             success: true,
             userRole: user[0].role,
             userActive: user[0].active
-        }
+        } as CheckCredentials;
     }
     return {
         success: false,
         userRole: null,
         userActive: null
-    }
+    } as CheckCredentials;
 }

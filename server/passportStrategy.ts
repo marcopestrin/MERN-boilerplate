@@ -6,19 +6,19 @@ const JwtStrategy = require('passport-jwt').Strategy;
 export const applyPassportStrategy = () => {
 
     const cookieExtractor = (req) => {
-        let token = null;
+        let token = "";
         if (req && req.cookies) {
             token = req.cookies['accessToken'];
         }
-        return token;
+        return token as string;
     }
 
     const tokensExtractor = (req) => {
-        let token = null;
+        let token = "";
         if (req && req.headers) {
             token = req.headers.accesstoken
         }
-        return token;
+        return token as string;
     }
 
     const options: object = {
@@ -35,7 +35,6 @@ export const applyPassportStrategy = () => {
                 schema.findOne(query, (err, user) => {
                     if (err) throw err;
                     if (user) {
-                        // all good!
                         return done(null, {
                             email: user.email,
                         });

@@ -1,5 +1,9 @@
 import { Response, Request, NextFunction } from "express";
-import { IUser, Update } from "../interfaces";
+import {
+    IUser,
+    Update,
+    CreateUserInput
+} from "../interfaces";
 import { 
     getUserList,
     getUserById,
@@ -20,7 +24,7 @@ class User {
 
     /**
      * @swagger
-     * /v1/user/confirmEmail/{email}/{activeCode}:
+     * /v1/user/confirmEmail/{activeCode}:
      *   get:
      *      summary: Validate the user
      *      tags: [User]
@@ -37,7 +41,7 @@ class User {
      */
     async confirmEmail(req: Request, res: Response, next: NextFunction) {
         try {
-            const { activeCode }: string = req.params;
+            const activeCode = req.params.activeCode as string;
             const user: IUser = await checkActiveCode(activeCode);
             if (!user) return;
             const payload = {
@@ -111,12 +115,12 @@ class User {
      */
     async createNewUser(req: Request, res: Response, next: NextFunction) {
         try {
-            const password:string = req.body;
-            const username:string = req.body;
-            const email:string = req.body;
+            const password = req.body.password as string;
+            const username = req.body.username as string;
+            const email = req.body.email as string;
             const activeCode:string = generateActiveCode(password, email);
 
-            const payload:IUser = {
+            const payload:CreateUserInput = {
                 username,
                 password: encryptPassword(password),
                 email,
@@ -138,8 +142,7 @@ class User {
                 return
             }
             res.status(200).json({
-                success: true,
-                data: result
+                success: true
             });
         } catch (error) {
             next(error);
@@ -205,7 +208,8 @@ class User {
      */
     async getUserById(req: Request, res: Response, next: NextFunction) {
         try {
-            const data: IUser = await getUserById(req.query.id);
+            const id = req.query.id as string;
+            const data: IUser = await getUserById(id);
             res.status(200).json({
                 success: true,
                 data
@@ -249,7 +253,7 @@ class User {
     async toggleActiveUser(req: Request, res: Response, next: NextFunction) {
         try {
 
-            const { id } = req.query.id;
+            const id = req.query.id as string;
             const user:IUser = await getUserById(id);
             const payload = {
                 ...user,
@@ -289,7 +293,7 @@ class User {
      */
     async deleteUser(req: Request, res: Response, next: NextFunction){
         try {
-            const { id } = req.query;
+            const id = req.query.id as string;
             await removeUserById(id);
             res.status(200).json({
                 success:true
@@ -326,8 +330,8 @@ class User {
      */
     async updateUser(req: Request, res: Response, next: NextFunction) {
         try {
-            const { id } = req.query;
-            const { payload } = req.body;
+            const id = req.query.id as string;
+            const payload = req.body.payload;
             const result: Update = await updateUser(payload, { id });
             if (result.ok) {
                 res.status(200).json({

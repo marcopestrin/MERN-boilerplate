@@ -76,7 +76,7 @@ class Auth {
      */
     async requestNewToken(req: Request, res: Response, next: NextFunction) {
         try {
-            const { refreshtoken }: any = req.headers;
+            const refreshtoken = req.headers.refreshtoken as string;
             const tokenDocument = await verifyToken(refreshtoken.toString());
             if (tokenDocument === undefined || tokenDocument === null) {
                 res.status(404).json({
@@ -204,7 +204,7 @@ class Auth {
                 ...userDocument,
                 password: encryptPassword(password)
             }
-            const { nModified }: Update = updateUser(payload, { username })
+            const { nModified }: Update = await updateUser(payload, { username })
             if (nModified > 0) {
                 await deleteToken(resetToken, "reset");
                 res.status(200).json({
