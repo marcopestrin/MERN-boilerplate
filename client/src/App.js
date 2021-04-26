@@ -23,7 +23,6 @@ const ForceRedirect = () => {
 }
 
 const App = () => {
-    
     return (
         <Container maxWidth="md" className="wrapper-container">
             <Grid container spacing={2}>
