@@ -141,10 +141,9 @@ const fetcher = async({ url, method }) => {
             let result = await axiosGateway({
                 ...options,
             });
-            if (result === undefined) {
-                return;
+            if (result.success) {
+                data = result.data;
             }
-            data = result;
         } catch (err) {
             error = {
                 ...err

@@ -1,5 +1,6 @@
 import passport from "passport";
 import schema from "./models/user";
+import { secretKeyAccessToken } from "../const";
 
 const JwtStrategy = require('passport-jwt').Strategy;
 
@@ -24,7 +25,7 @@ export const applyPassportStrategy = () => {
     const options: object = {
         //jwtFromRequest: cookieExtractor,
         jwtFromRequest: tokensExtractor,
-        secretOrKey: process.env.ACCESS_TOKEN_SECRET,
+        secretOrKey: secretKeyAccessToken,
         passReqToCallback: true
     };
 
