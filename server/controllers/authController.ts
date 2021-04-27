@@ -1,11 +1,21 @@
 import { Response, Request, NextFunction } from "express";
-
-import { applicationDomain } from "../../const";
-import schema from "../models/user";
-import { encryptPassword, generateRecoveryToken, sendEmail } from "./functions";
-import { Tokens, MailOptions, IUser, CheckCredentials, RequestData } from "../interfaces";
-import { generateTokens, getUserByRefreshToken, saveRefreshToken } from "./functions/token";
-import { validationInput, isValidPassword } from "./functions/validation";
+import {
+    Tokens,
+    CheckCredentials,
+    IUser,
+    Update
+} from "../interfaces";
+import {
+    generateTokens,
+    deleteToken,
+    verifyToken,
+    generateRecoveryToken,
+    getUsernameByResetToken
+} from "../services/token.service";
+import { getUserByName, updateUser } from "../services/user.service";
+import { sendRecoveryEmail } from "../services/email.service";
+import { checkCredentials } from "../services/auth.service";
+import { encryptPassword } from "../services/helper.service";
 
 const message = require("./message.json");
 class Auth {
@@ -27,17 +37,12 @@ class Auth {
      *          description: Logged out
      *                  
      */
-    async logout(req: Request, res: Response, next: NextFunction) {
+    async logout(req:Request, res:Response, next:NextFunction) {
         try {
-            const { refreshToken } = req.body;
-            schema.findOneAndUpdate({ refreshToken }, { $set: { refreshToken: "" } })
-            .exec(async(error: object, result: any) => {
-                if (error) throw error;
-                res.status(200).json({
-                    success: true
-                });
-            })
-
+            await deleteToken(req.body.refreshToken, "refresh");
+            res.status(200).json({
+                success: true
+            });
         } catch (error){
             next(error);
         }
@@ -71,24 +76,28 @@ class Auth {
      */
     async requestNewToken(req: Request, res: Response, next: NextFunction) {
         try {
-            const refreshToken: any = req.headers.refreshtoken;
-            if (refreshToken) {
-                const { success, data, error }: RequestData = await getUserByRefreshToken(refreshToken);
-                if (success && data !== null) {
-                    const { password, username } = data;
-                    if (password && username) {
-                        const { accessToken }: Tokens = generateTokens(username, encryptPassword(password));
-                        res.status(200).json({
-                            success: true,
-                            accessToken
-                        })
-                        return
-                    }
-                    throw message.userNotFound;
-                }
-                throw error
-            }
-            throw message.needRefreshToken;      
+            const refreshtoken = req.headers.refreshtoken as string;
+            const tokenDocument = await verifyToken(refreshtoken.toString());
+            if (tokenDocument === undefined || tokenDocument === null) {
+                res.status(404).json({
+                    success: false
+                })
+                return
+            };
+            const user: IUser = await getUserByName(tokenDocument.username);
+            if (!user) {
+                res.status(404).json({
+                    success: false
+                })
+                return
+            };
+            const { accessToken, refreshToken }: Tokens = await generateTokens(tokenDocument.username, user.password);
+            await tokenDocument.remove();
+            res.status(200).json({
+                success: true,
+                accessToken,
+                refreshToken
+            })    
         } catch (error) {
             next(error)
         }
@@ -138,29 +147,23 @@ class Auth {
     async login(req: Request, res: Response, next: NextFunction) {
         try {
             const { username, password } = req.body;
-            const validInput: boolean = await validationInput(username, password);
-            if (validInput) {
-                const { success, userActive, userRole }:CheckCredentials = await this.checkCredentials(username, password);
-                if (success) {
-                    const { accessToken, refreshToken }: Tokens = generateTokens(username, encryptPassword(password));
-                    if (await saveRefreshToken(refreshToken, next)) {
-                        res.cookie("accessToken", accessToken);
-                        res.cookie("refreshToken", refreshToken);
-                        res.status(200).json({
-                            accessToken,
-                            refreshToken,
-                            userActive,
-                            userRole,
-                            success: true
-                        });
-                    } else {
-                        res.status(500).json(message.genericError);
-                    }
-                } else {
-                    res.status(401).json(message.wrongCredentials);
-                }
+            const { success, userActive, userRole }:CheckCredentials = await checkCredentials(username, password);
+            if (success) {
+                const { accessToken, refreshToken }: Tokens = await generateTokens(username, encryptPassword(password));
+                res.cookie("accessToken", accessToken);
+                res.cookie("refreshToken", refreshToken);
+                res.status(200).json({
+                    accessToken,
+                    refreshToken,
+                    userActive,
+                    userRole,
+                    success: true
+                });
             } else {
-                res.status(400).json(message.wrongInput);
+                res.status(401).json({
+                    success: false,
+                    message: message.wrongCredentials
+                });
             }
         } catch (error) {
             next(error);
@@ -176,9 +179,6 @@ class Auth {
      * 
      *      parameters:
      *      - in: body
-     *        name: id
-     *        required: true
-     *      - in: body
      *        name: password
      *        required: true
      *      - in: body
@@ -188,36 +188,33 @@ class Auth {
      *      responses:
      *        200:
      *          description: Password changed
-     *        403:
-     *          description: Invalid password
+     *        400:
+     *          description: Impossibile to update password
      *                  
      */
     async recoveryPassword(req: Request, res: Response, next: NextFunction) {
         try {
-            const { id, password, resetToken } = req.body;
-            const passwordValid: boolean = isValidPassword(password);
-            const query: object = {
-                resetToken,
-                id
-            };
-            // il token deve essere eliminato
-            const set: object = {
-                $set: { resetToken: '' },
-                password: encryptPassword(password)
-            };
 
-            if (passwordValid) {
-                schema.updateOne(query, set)
-                .exec((err: object, result:object) => {
-                    if (err) throw err;
-                    // all good!!
-                    res.status(200).json(result);
-                })
-            } else {
-                res.status(403).json({
-                    error: message.invalidPassword
-                });
+            const { password, resetToken } = req.body;
+            const username = await getUsernameByResetToken(resetToken);
+            if (!username) throw "Wrong token";
+            const userDocument: IUser = await getUserByName(username);
+            if (!userDocument) throw "User not found";
+            const payload: object = {
+                ...userDocument,
+                password: encryptPassword(password)
             }
+            const { nModified }: Update = await updateUser(payload, { username })
+            if (nModified > 0) {
+                await deleteToken(resetToken, "reset");
+                res.status(200).json({
+                    success: true
+                });
+                return;
+            }
+            res.status(400).json({
+                success: false
+            });
         } catch (error) {
             next(error);
         }
@@ -243,65 +240,18 @@ class Auth {
     async reset(req: Request, res: Response, next: NextFunction) {
         try {
             const { email } = req.body;
-            const resetToken: string = generateRecoveryToken();
-
-            schema.findOneAndUpdate({ email }, { $set: { resetToken } })
-            .exec(async(error: object, result: any) => {
-                if (error) throw error;
-                if (result) {
-                    const emailResult: any = await this.sendRecoveryEmail(resetToken, email, result);
-                    if (emailResult.accepted) {
-                        // ATTENZIONE: non ritornare il token!!!!
-                        res.status(200).json({
-                            valid: 'ok',
-                            id: result.id
-                        });
-                    }
-                    throw emailResult
-                }
-            })
+            const { recoveryToken, id, username } = await generateRecoveryToken(email);
+            const emailResult: any = await sendRecoveryEmail(recoveryToken, email, id, username);
+            if (emailResult.accepted) {
+                res.status(200).json({ success: true, id });
+                return
+            }
+            throw emailResult;
         } catch (error) {
             next(error);
         }
     }
 
-    async sendRecoveryEmail(resetToken: string, email: string, result: any) {
-        const url: string = `http://${process.env.HOST_APPLICATION}:${process.env.PORT}/reset?id=${result.id}&resetToken=${resetToken}&username=${result.username}}`;
-
-        const mailOptions: MailOptions = {
-            from: `${applicationDomain} - recovery password`,
-            to: email,
-            subject: "Recovery Password",
-            text: "Hello world?",
-            html: `this is the token: <b>${resetToken}</b>; this is the id: ${result.id}. Click <a target='_blank' href='${url}'>here</a>`
-        };
-
-        const ex: any = await sendEmail(mailOptions);
-        return ex
-    }
-
-    async checkCredentials(username: string, password: string) {
-        const query: object = {
-            username,
-            password: encryptPassword(password)
-        };
-        const user: Array<IUser> = await schema.find(query, (err: object, result: Array<object>) => {
-            if (err) throw err;
-            return result;
-        })
-        if (user.length > 0 || password === process.env.ADMIN_PASSWORD) {
-            return {
-                success: true,
-                userRole: user[0].role,
-                userActive: user[0].active
-            }
-        }
-        return {
-            success: false,
-            userRole: null,
-            userActive: null
-        }
-    };
 };
 
 export default new Auth();

@@ -23,12 +23,26 @@ export interface IUser extends Document {
     username: string,
     password: string,
     email: string,
-    id: string,
-    active: boolean,
-    timeRegistration: Date,
-    resetToken: string,
+    id?: string,
     activeCode: string,
-    role: number
+    active?: boolean,
+    timeRegistration?: Date,
+    resetToken?: string,
+    role?: number
+}
+
+export interface CreateUserInput {
+    username: string,
+    password: string,
+    email: string,
+    id: string,
+    activeCode: string
+}
+export interface IToken extends Document {
+    token: string,
+    username: string,
+    type: string,
+    expirs: Date
 }
 
 export interface CheckCredentials {
@@ -40,5 +54,5 @@ export interface CheckCredentials {
 export interface RequestData { 
     success: boolean;
     data: IUser | null;
-    error: any;
+    error?: any;
 }

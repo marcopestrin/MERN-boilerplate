@@ -16,5 +16,5 @@ router.delete("/delete", passportJWT, user.deleteUser);
 
 router.get("/getAllUsers", passportJWT, user.getAllUsers);
 router.get("/getUserById", passportJWT, user.getUserById);
-router.get("/confirmEmail/:email/:activeCode", user.confirmEmail.bind(user));
+router.get("/confirmEmail/:activeCode", user.confirmEmail.bind(user));
 module.exports = router;

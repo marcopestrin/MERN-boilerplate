@@ -1,22 +1,35 @@
 import { Response, Request, NextFunction } from "express";
-import schema from "../models/user";
-import { encryptPassword, generateActiveCode, sendEmail, generateUserId } from "./functions";
-import { MailOptions } from "../interfaces";
+import {
+    IUser,
+    Update,
+    CreateUserInput
+} from "../interfaces";
+import { 
+    getUserList,
+    getUserById,
+    createUser,
+    updateUser,
+    checkActiveCode,
+    removeUserById
+} from "../services/user.service";
+import {
+    encryptPassword,
+    generateActiveCode,
+    generateUserId
+} from "../services/helper.service";
+import { sendRegistrationEmail } from "../services/email.service";
 
 const message = require("./message.json");
 class User {
 
     /**
      * @swagger
-     * /v1/user/confirmEmail/{email}/{activeCode}:
+     * /v1/user/confirmEmail/{activeCode}:
      *   get:
      *      summary: Validate the user
      *      tags: [User]
      * 
      *      parameters:
-     *      - in: path
-     *        name: email
-     *        required: true
      *      - in: path
      *        name: activeCode
      *        required: true
@@ -26,28 +39,27 @@ class User {
      *          description: User confirmed
      *                  
      */
-    confirmEmail(req: Request, res: Response, next: NextFunction) {
+    async confirmEmail(req: Request, res: Response, next: NextFunction) {
         try {
-            const query: object = {
-                activeCode: req.params.activeCode,
-                email: req.params.email
-            };
-            const set: object = { $set: {
-                activeCode: '',
-                active: true
-            }};
-            schema.updateOne(query, set)
-            .exec((err: object, result: any) => {
-                if (err) throw err;
-                if (result.ok) {
-                    if (result.nModified){
-                        res.status(200).send(message.userActivated);
-                    } else {
-                        res.status(200).send(message.good);
-                    }
-                }
-                throw result
-            })
+            const activeCode = req.params.activeCode as string;
+            const user: IUser = await checkActiveCode(activeCode);
+            if (!user) return;
+            const payload = {
+                ...user,
+                active: true,
+                activeCode: ""
+            }
+            const result: Update = await updateUser(payload, { activeCode });
+            if (result.ok) {
+                res.status(200).json({
+                    success: true,
+                    message: message.userActivated
+                });
+                return;
+            }
+            res.status(400).json({
+                success: false
+            });
         } catch (error) {
             next(error);
         }
@@ -101,40 +113,37 @@ class User {
      *                    type: boolean
      *                  
      */
-    createNewUser(req: Request, res: Response, next: NextFunction) {
+    async createNewUser(req: Request, res: Response, next: NextFunction) {
         try {
-            const { password, username, email } = req.body;
-            const activeCode: string = generateActiveCode(password)
+            const password = req.body.password as string;
+            const username = req.body.username as string;
+            const email = req.body.email as string;
+            const activeCode:string = generateActiveCode(password, email);
 
-            const payload: object = {
-                password: encryptPassword(password),
-                activeCode,
+            const payload:CreateUserInput = {
                 username,
+                password: encryptPassword(password),
                 email,
-                id: generateUserId(email)
+                id: generateUserId(email),
+                activeCode
             };
-            schema.create(payload, async(err: any, result: any) => {
-                if (err) {
-                    if (11000 === err.code && err.name === 'MongoError') {
-                        res.status(422).json({
-                            success: false,
-                            message: message.userAlreadyExist
-                        });
-                    }
-                    throw err;
-                }
-                const isSended = await this.sendRegistrationEmail(email, activeCode);
-                if (isSended) {
-                    res.status(200).json({
-                        success: true,
-                        email: result.email,
-                        username: result.username
-                    });
-                } else {
-                    res.status(500).json('errore da gestire');
-                }
+            const result:IUser | null = await createUser(payload);
+            if (!result) {
+                res.status(400).json({
+                    success: false
+                });
+                return
+            }
+            const isSended = sendRegistrationEmail(email, activeCode);
+            if (!isSended) {
+                res.status(400).json({
+                    success: false
+                });
+                return
+            }
+            res.status(200).json({
+                success: true
             });
-
         } catch (error) {
             next(error);
         }
@@ -156,12 +165,13 @@ class User {
      *                type: array      
      *                item: object            
      */
-    getAllUsers(req: Request, res: Response, next: NextFunction) {
+    async getAllUsers(req: Request, res: Response, next: NextFunction) {
         try {
-            schema.find({}, (err: object, result: object) => {
-                if (err) throw err;
-                res.status(200).json(result);
-            })
+            const data: Array<object> = await getUserList();
+            res.status(200).json({
+                success: true,
+                data
+            });
         } catch (error) {
             next(error);
         }
@@ -196,15 +206,13 @@ class User {
      *                  id:
      *                    type: string       
      */
-    getUserById(req: Request, res: Response, next: NextFunction) {
+    async getUserById(req: Request, res: Response, next: NextFunction) {
         try {
-            const { id } = req.query;
-            const fieldsToReturn: string = "username password id email -_id";
-            const query: object = { id };
-            schema.find(query, fieldsToReturn)
-            .exec((err: object, result: object) => {
-                if (err) throw err;
-                res.status(200).json(result);
+            const id = req.query.id as string;
+            const data: IUser = await getUserById(id);
+            res.status(200).json({
+                success: true,
+                data
             });
         } catch (error) {
             next(error);
@@ -242,27 +250,26 @@ class User {
      *        200:
      *          description: User disabled   
      */
-    toggleActiveUser(req: Request, res: Response, next: NextFunction) {
+    async toggleActiveUser(req: Request, res: Response, next: NextFunction) {
         try {
-            let active: boolean;
-            if (req.path === "/disable") {
-                active = false
-            } else if (req.path === "/active") {
-                active = true
-            } else {
-                throw new Error('path not found')
+
+            const id = req.query.id as string;
+            const user:IUser = await getUserById(id);
+            const payload = {
+                ...user,
+                active: req.path === "/active"
+            };
+            const result: Update = await updateUser(payload, { id })
+            if (result.ok) {
+                res.status(200).json({
+                    success: true
+                });
+                return;
             }
-            const query: object = {
-                id: req.query.id
-            };
-            const set: object = { $set:
-                { active }
-            };
-            schema.updateOne(query, set)
-            .exec((err: object, result:object) => {
-                if (err) throw err;
-                res.status(200).json(result);
-            })
+            res.status(400).json({
+                success: false
+            });
+
         } catch (error) {
             next(error);
         }
@@ -284,14 +291,12 @@ class User {
      *        200:
      *          description: User Removed  
      */
-    deleteUser(req: Request, res: Response, next: NextFunction){
+    async deleteUser(req: Request, res: Response, next: NextFunction){
         try {
-            const { id } = req.query;
-            const query: object = { id };
-            schema.deleteOne(query)
-            .exec((err: object, result: object) => {
-                if (err) throw err;
-                res.status(200).json(result);
+            const id = req.query.id as string;
+            await removeUserById(id);
+            res.status(200).json({
+                success:true
             });
         } catch (error) {
             next(error);
@@ -323,37 +328,24 @@ class User {
      *        200:
      *          description: User Updated
      */
-    updateUser(req: Request, res: Response, next: NextFunction) {
+    async updateUser(req: Request, res: Response, next: NextFunction) {
         try {
-            const { username, password, email } = req.body;
-            const { id } = req.query;
-            const query: object = { id };
-            const set: object = { $set: {
-                username,
-                password,
-                email
-            } }
-            schema.updateOne(query, set)
-            .exec((err: object, result:object) => {
-                if (err) throw err;
-                res.status(200).json(result);
-            })
+            const id = req.query.id as string;
+            const payload = req.body.payload;
+            const result: Update = await updateUser(payload, { id });
+            if (result.ok) {
+                res.status(200).json({
+                    success: true
+                });
+                return;
+            }
+            res.status(400).json({
+                success: false
+            });
         } catch (error) {
             next(error);
         }
     }
-
-    sendRegistrationEmail (email: string, activeCode: string) {
-        const url: string = `http://${process.env.HOST_APPLICATION}:${process.env.PORT}/v1/user/confirmEmail/${email}/${activeCode}`;
-        const mailOptions: MailOptions = {
-            from: `${process.env.applicationDomain}`,
-            to: email,
-            subject: "Confirm Email",
-            text: "Hello world?",
-            html: `Click <a target='_blank' href='${url}'>here</a> to activate the account`
-        };
-        return sendEmail(mailOptions);
-    };
 
 };
 
