@@ -15,7 +15,8 @@ import {
 import {
     encryptPassword,
     generateActiveCode,
-    generateUserId
+    generateUserId,
+    getContentByDocument
 } from "../services/helper.service";
 import { sendRegistrationEmail } from "../services/email.service";
 
@@ -252,14 +253,20 @@ class User {
      */
     async toggleActiveUser(req:Request, res:Response, next:NextFunction) {
         try {
-
             const id = req.query.id as string;
             const user:IUser = await getUserById(id);
+            if (user === null) {
+                res.status(400).json({
+                    success: false
+                });
+                return;
+            }
             const payload = {
-                ...user,
+                ...getContentByDocument(user),
                 active: req.path === "/active"
             };
-            const result: Update = await updateUser(payload, { id })
+            // non devo passare il document ma il contenuto del docuemnt
+            const result: Update = await updateUser(payload, { id });
             if (result.ok) {
                 res.status(200).json({
                     success: true
@@ -269,7 +276,6 @@ class User {
             res.status(400).json({
                 success: false
             });
-
         } catch (error) {
             next(error);
         }
