@@ -265,7 +265,6 @@ class User {
                 ...getContentByDocument(user),
                 active: req.path === "/active"
             };
-            // non devo passare il document ma il contenuto del docuemnt
             const result: Update = await updateUser(payload, { id });
             if (result.ok) {
                 res.status(200).json({
