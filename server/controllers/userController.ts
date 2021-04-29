@@ -250,7 +250,7 @@ class User {
      *        200:
      *          description: User disabled   
      */
-    async toggleActiveUser(req: Request, res: Response, next: NextFunction) {
+    async toggleActiveUser(req:Request, res:Response, next:NextFunction) {
         try {
 
             const id = req.query.id as string;
@@ -291,10 +291,11 @@ class User {
      *        200:
      *          description: User Removed  
      */
-    async deleteUser(req: Request, res: Response, next: NextFunction){
+    async deleteUser(req:Request, res:Response, next:NextFunction){
         try {
             const id = req.query.id as string;
             await removeUserById(id);
+            // da rimuovere anche tutti i token associati a quell'utente
             res.status(200).json({
                 success:true
             });
@@ -328,7 +329,7 @@ class User {
      *        200:
      *          description: User Updated
      */
-    async updateUser(req: Request, res: Response, next: NextFunction) {
+    async updateUser(req:Request, res:Response, next:NextFunction) {
         try {
             const id = req.query.id as string;
             const payload = req.body.payload;

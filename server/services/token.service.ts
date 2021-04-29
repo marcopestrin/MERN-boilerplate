@@ -15,13 +15,12 @@ const generateToken = (payload:object, secret:string, life:string) => {
 }
 
 const saveToken = async(token:string, username:string, expires:any, type:string) => {
-    const document = await schema.create({
+    await schema.create({
         token,
         username,
         expires: expires.toDate(),
         type
     })
-    return document;
 }
 
 export const verifyToken = async(token:string) => {
