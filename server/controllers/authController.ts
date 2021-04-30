@@ -74,7 +74,7 @@ class Auth {
      *                    type: boolean
      *                  
      */
-    async requestNewToken(req: Request, res: Response, next: NextFunction) {
+    async requestNewToken(req:Request, res:Response, next:NextFunction) {
         try {
             const refreshtoken = req.headers.refreshtoken as string;
             const tokenDocument = await verifyToken(refreshtoken.toString());
@@ -91,7 +91,7 @@ class Auth {
                 })
                 return
             };
-            const { accessToken, refreshToken }: Tokens = await generateTokens(tokenDocument.username, user.password);
+            const { accessToken, refreshToken }:Tokens = await generateTokens(tokenDocument.username, user.password);
             await tokenDocument.remove();
             res.status(200).json({
                 success: true,
@@ -144,12 +144,12 @@ class Auth {
      *          description: Wrong credentials
      *                  
      */
-    async login(req: Request, res: Response, next: NextFunction) {
+    async login(req:Request, res:Response, next:NextFunction) {
         try {
             const { username, password } = req.body;
             const { success, userActive, userRole }:CheckCredentials = await checkCredentials(username, password);
             if (success) {
-                const { accessToken, refreshToken }: Tokens = await generateTokens(username, encryptPassword(password));
+                const { accessToken, refreshToken }:Tokens = await generateTokens(username, encryptPassword(password));
                 res.cookie("accessToken", accessToken);
                 res.cookie("refreshToken", refreshToken);
                 res.status(200).json({
@@ -192,19 +192,19 @@ class Auth {
      *          description: Impossibile to update password
      *                  
      */
-    async recoveryPassword(req: Request, res: Response, next: NextFunction) {
+    async recoveryPassword(req:Request, res:Response, next:NextFunction) {
         try {
 
             const { password, resetToken } = req.body;
             const username = await getUsernameByResetToken(resetToken);
             if (!username) throw "Wrong token";
-            const userDocument: IUser = await getUserByName(username);
+            const userDocument:IUser = await getUserByName(username);
             if (!userDocument) throw "User not found";
-            const payload: object = {
+            const payload:object = {
                 ...userDocument,
                 password: encryptPassword(password)
             }
-            const { nModified }: Update = await updateUser(payload, { username })
+            const { nModified }:Update = await updateUser(payload, { username })
             if (nModified > 0) {
                 await deleteToken(resetToken, "reset");
                 res.status(200).json({
@@ -237,7 +237,7 @@ class Auth {
      *          description: Email sended
      *                  
      */
-    async reset(req: Request, res: Response, next: NextFunction) {
+    async reset(req:Request, res:Response, next:NextFunction) {
         try {
             const { email } = req.body;
             const { recoveryToken, id, username } = await generateRecoveryToken(email);

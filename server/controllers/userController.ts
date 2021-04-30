@@ -40,17 +40,17 @@ class User {
      *          description: User confirmed
      *                  
      */
-    async confirmEmail(req: Request, res: Response, next: NextFunction) {
+    async confirmEmail(req:Request, res:Response, next:NextFunction) {
         try {
             const activeCode = req.params.activeCode as string;
-            const user: IUser = await checkActiveCode(activeCode);
+            const user:IUser = await checkActiveCode(activeCode);
             if (!user) return;
             const payload = {
                 ...user,
                 active: true,
                 activeCode: ""
             }
-            const result: Update = await updateUser(payload, { activeCode });
+            const result:Update = await updateUser(payload, { activeCode });
             if (result.ok) {
                 res.status(200).json({
                     success: true,
@@ -114,7 +114,7 @@ class User {
      *                    type: boolean
      *                  
      */
-    async createNewUser(req: Request, res: Response, next: NextFunction) {
+    async createNewUser(req:Request, res:Response, next:NextFunction) {
         try {
             const password = req.body.password as string;
             const username = req.body.username as string;
@@ -166,7 +166,7 @@ class User {
      *                type: array      
      *                item: object            
      */
-    async getAllUsers(req: Request, res: Response, next: NextFunction) {
+    async getAllUsers(req:Request, res:Response, next:NextFunction) {
         try {
             const data: Array<object> = await getUserList();
             res.status(200).json({
@@ -207,10 +207,10 @@ class User {
      *                  id:
      *                    type: string       
      */
-    async getUserById(req: Request, res: Response, next: NextFunction) {
+    async getUserById(req:Request, res:Response, next:NextFunction) {
         try {
             const id = req.query.id as string;
-            const data: IUser = await getUserById(id);
+            const data:IUser = await getUserById(id);
             res.status(200).json({
                 success: true,
                 data
@@ -265,7 +265,7 @@ class User {
                 ...getContentByDocument(user),
                 active: req.path === "/active"
             };
-            const result: Update = await updateUser(payload, { id });
+            const result:Update = await updateUser(payload, { id });
             if (result.ok) {
                 res.status(200).json({
                     success: true
@@ -338,7 +338,7 @@ class User {
         try {
             const id = req.query.id as string;
             const payload = req.body.payload;
-            const result: Update = await updateUser(payload, { id });
+            const result:Update = await updateUser(payload, { id });
             if (result.ok) {
                 res.status(200).json({
                     success: true

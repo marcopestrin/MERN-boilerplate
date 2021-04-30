@@ -2,10 +2,10 @@ import { Express, Response, Request, NextFunction } from "express";
 
 export default function headersResponseMiddlewares(app: Express): void {
 	app.use((
-        err: any,
-        req: Request,
-        res: Response,
-        next: NextFunction
+        err:any,
+        req:Request,
+        res:Response,
+        next:NextFunction
     ): void => {
         res.header("Access-Control-Allow-Origin", "*"); //no cors
         res.header(
