@@ -1,20 +1,24 @@
 import express from "express";
 import passport from "passport";
 import user from "../controllers/userController";
+import validate from "../middlewares/validate";
+import schema from "../validations/user";
 
 const router: express.Router = express.Router();
 
 const passportJWT = passport.authenticate('jwt', { session: false });
 
-router.post("/update", passportJWT, user.updateUser);
-router.post("/create", user.createNewUser.bind(user));
+router
+.post("/update", validate(schema.updateUser), passportJWT, user.updateUser)
+.post("/create", validate(schema.createNewUser), user.createNewUser.bind(user))
 
-router.put("/active", passportJWT, user.toggleActiveUser);
-router.put("/disable", passportJWT, user.toggleActiveUser);
+.put("/active", validate(schema.toggleActiveUser), passportJWT, user.toggleActiveUser)
+.put("/disable", validate(schema.toggleActiveUser), passportJWT, user.toggleActiveUser)
 
-router.delete("/delete", passportJWT, user.deleteUser);
+.delete("/delete", validate(schema.deleteUser), passportJWT, user.deleteUser)
 
-router.get("/getAllUsers", passportJWT, user.getAllUsers);
-router.get("/getUserById", passportJWT, user.getUserById);
-router.get("/confirmEmail/:activeCode", user.confirmEmail.bind(user));
+.get("/getAllUsers", passportJWT, user.getAllUsers)
+.get("/getUserById", validate(schema.getUserById), passportJWT, user.getUserById)
+.get("/confirmEmail/:activeCode", validate(schema.confirmEmail), user.confirmEmail.bind(user))
+
 module.exports = router;

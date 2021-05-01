@@ -337,7 +337,7 @@ class User {
     async updateUser(req:Request, res:Response, next:NextFunction) {
         try {
             const id = req.query.id as string;
-            const payload = req.body.payload;
+            const payload = req.body;
             const result:Update = await updateUser(payload, { id });
             if (result.ok) {
                 res.status(200).json({

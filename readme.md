@@ -43,6 +43,7 @@ npm run dev / npm run start
 - Detailed and generic management of HTTP call status codes
 - Personal data managed through environment variables
 - CRUD pattern on model (Create, Read, Update, Delete)
+- Input validated by a generic validator
 
 ## Next Steps
 - Improve log management system
@@ -53,7 +54,7 @@ npm run dev / npm run start
 | Month | Description |
 | --- | --- |
 | March 2021 | <ul> <li>Authentication system </li><li> CRUD API on User Mode </li><li> First Deploy on Heroku </li><li> Creating frontend (login/signup/logout) </ul>|
-| April 2021 | <ul> <li>Handle function http request</li><li>Frontend alias import</li><li>Split controller-services backend</li> |
+| April 2021 | <ul> <li>Handle function http request</li><li>Frontend alias import</li><li>Split controller-services backend</li><li>Created custom token collection in DB</li><li>Added Joi Validator for endpoint input</li>|
 
 ## Others
 This project are made in my free time. Currently under construction by myself.
