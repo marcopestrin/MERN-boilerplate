@@ -46,7 +46,7 @@ class User {
             const user:IUser = await checkActiveCode(activeCode);
             if (!user) return;
             const payload = {
-                ...user,
+                ...getContentByDocument(user),
                 active: true,
                 activeCode: ""
             }
@@ -133,9 +133,9 @@ class User {
                 res.status(400).json({
                     success: false
                 });
-                return
+                return;
             }
-            const isSended = sendRegistrationEmail(email, activeCode);
+            const isSended = await sendRegistrationEmail(email, activeCode);
             if (!isSended) {
                 res.status(400).json({
                     success: false

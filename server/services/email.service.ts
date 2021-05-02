@@ -16,9 +16,8 @@ const getTransporterEmail = () => {
     });
 };
 
-const sendEmail = (mailOptions: MailOptions) => {
-    const transporter: Mail = getTransporterEmail();
-    
+const sendEmail = (mailOptions:MailOptions) => {
+    const transporter:Mail = getTransporterEmail();
     return new Promise((resolve) => {
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
@@ -29,25 +28,21 @@ const sendEmail = (mailOptions: MailOptions) => {
     })
 }
 export const sendRecoveryEmail = async(token, email, id, username) => {
-
-    const url: string = `http://${process.env.HOST_APPLICATION}:${process.env.PORT}/reset?id=${id}&resetToken=${token}&username=${username}}`;
-
-    const mailOptions: MailOptions = {
+    const url:string = `http://${process.env.HOST_APPLICATION}:${process.env.PORT}/reset?id=${id}&resetToken=${token}&username=${username}}`;
+    const mailOptions:MailOptions = {
         from: `${applicationDomain} - recovery password`,
         to: email,
         subject: "Recovery Password",
         text: "Hello world?",
         html: `this is the token: <b>${token}</b>; this is the id: ${id}. Click <a target='_blank' href='${url}'>here</a>`
     };
-
-
     return await sendEmail(mailOptions);
 }
 
 export const sendRegistrationEmail = async(email, activeCode) => {
-    const url: string = `http://${process.env.HOST_APPLICATION}:${process.env.PORT}/v1/user/confirmEmail/${email}/${activeCode}`;
-    const mailOptions: MailOptions = {
-        from: `${process.env.applicationDomain}`,
+    const url:string = `http://${process.env.HOST_APPLICATION}:${process.env.PORT}/v1/user/confirmEmail/${activeCode}`;
+    const mailOptions:MailOptions = {
+        from: `${applicationDomain}`,
         to: email,
         subject: "Confirm Email",
         text: "Hello world?",
