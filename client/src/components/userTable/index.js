@@ -24,27 +24,33 @@ const UserTable = ({
 
     const [ disableUserModal, setDisableUserModal ] = useState(false);
     const [ editUserModal, setEditUserModal ] = useState(false);
+    const [ userRef, setUserRef ] = useState({});
 
     const disableUser = () => {
         setDisableUserModal(true);
     };
-    const editUser = () => {
+    
+    const editUser = (user) => {
+        setUserRef(user);
         setEditUserModal(true);
     };
 
     const closeModal = () => {
         setDisableUserModal(false);
         setEditUserModal(false);
+        setUserRef({});
     };
 
     const confirmDisable = () => {
         console.log("disable!");
         setDisableUserModal(false);
+        closeModal();
     }
 
-    const confirmEdit = () => {
-        console.log("edit!");
+    const confirmEdit = (payload) => {
+        console.log("edit!", payload);
         setEditUserModal(false);
+        closeModal();
     }
 
     return (
@@ -63,13 +69,8 @@ const UserTable = ({
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            { users.map(({
-                                email,
-                                active,
-                                role,
-                                username,
-                                timeRegistration
-                            }, index) => {
+                            { users.map((user, index) => {
+                                const { email, active, role, username, timeRegistration } = user;
                                 return (
                                     <TableRow key={index}>
                                         <TableCell>{ username }</TableCell>
@@ -88,7 +89,7 @@ const UserTable = ({
                                             </Tooltip>
                                             <Tooltip title="Modifica Utente">
                                                 <Edit
-                                                    onClick={editUser}
+                                                    onClick={() => editUser(user)}
                                                     className="icon"
                                                 />
                                             </Tooltip>
@@ -103,10 +104,10 @@ const UserTable = ({
                         open={disableUserModal}
                         handleClose={closeModal}
                     />
-
                     <EditUser
                         confirmEdit={confirmEdit}
                         open={editUserModal}
+                        data={userRef}
                         handleClose={closeModal}
                     />
                 </>
