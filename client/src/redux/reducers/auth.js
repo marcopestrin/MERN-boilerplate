@@ -34,12 +34,13 @@ export default function auth(prevState = {}, action){
                 logoutRedirect: false,
                 logged: true
             };
-            const { userActive, refreshToken, accessToken, userRole } = payload;
+            const { userActive, refreshToken, accessToken, userRole, userId } = payload;
             const role = userRole === 1 ? "ADMIN" : "USER";
             localStorage.setItem('role', role);
             localStorage.setItem('active', userActive);
             localStorage.setItem('refreshToken', refreshToken);
             localStorage.setItem('accessToken', accessToken);
+            localStorage.setItem('userId', userId);
             break;
     
         case actions.GET_USERS_LIST_FAILURE:
@@ -54,6 +55,7 @@ export default function auth(prevState = {}, action){
             localStorage.removeItem("active");
             localStorage.removeItem("accessToken");
             localStorage.removeItem("refreshToken");
+            localStorage.removeItem("userId");
             break;
               
         case actions.LOGOUT_FAILURE:

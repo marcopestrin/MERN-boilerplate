@@ -5,14 +5,16 @@ import {
     REGISTRATION_REQUEST,
     LOGOUT_REQUEST,
     RESET_PASSWORD_REQUEST,
-    GET_USERS_LIST_REQUEST
+    GET_USERS_LIST_REQUEST,
+    EDIT_USER_REQUEST
   } from "./actions";
   import {
     loginRequest,
     registrationRequest,
     logoutRequest,
     resetPasswordRequest,
-    getUsersListRequest
+    getUsersListRequest,
+    editUserRequest
   } from "./saga";
 
 function* rootSaga() {
@@ -21,5 +23,6 @@ function* rootSaga() {
     yield takeLatest(REGISTRATION_REQUEST, registrationRequest);
     yield takeLatest(RESET_PASSWORD_REQUEST, resetPasswordRequest);
     yield takeLatest(GET_USERS_LIST_REQUEST, getUsersListRequest);
+    yield takeLatest(EDIT_USER_REQUEST, editUserRequest);
 }
 export default rootSaga

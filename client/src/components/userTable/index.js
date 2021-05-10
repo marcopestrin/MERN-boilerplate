@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import {
     Table,
     TableBody,
@@ -17,14 +18,19 @@ import {
 import "./styles.scss";
 import DisableUser from "./disableUser";
 import EditUser from "./editUser";
+import { EDIT_USER_REQUEST } from "@redux/actions"
 
-const UserTable = ({
-    users
-}) => {
+const UserTable = ({ users }) => {
 
     const [ disableUserModal, setDisableUserModal ] = useState(false);
     const [ editUserModal, setEditUserModal ] = useState(false);
     const [ userRef, setUserRef ] = useState({});
+
+    const dispatch = useDispatch();
+
+    const role = localStorage.getItem("role");
+    const userId = localStorage.getItem("userId");
+    const isAdmin = role === "ADMIN";
 
     const disableUser = () => {
         setDisableUserModal(true);
@@ -42,13 +48,19 @@ const UserTable = ({
     };
 
     const confirmDisable = () => {
-        console.log("disable!");
         setDisableUserModal(false);
         closeModal();
     }
 
     const confirmEdit = (payload) => {
-        console.log("edit!", payload);
+        dispatch({
+            type: EDIT_USER_REQUEST,
+            payload: {
+                ...payload,
+                userId
+            }
+            
+        });
         setEditUserModal(false);
         closeModal();
     }
@@ -70,7 +82,7 @@ const UserTable = ({
                         </TableHead>
                         <TableBody>
                             { users.map((user, index) => {
-                                const { email, active, role, username, timeRegistration } = user;
+                                const { email, active, role, username, timeRegistration, id } = user;
                                 return (
                                     <TableRow key={index}>
                                         <TableCell>{ username }</TableCell>
@@ -81,18 +93,22 @@ const UserTable = ({
                                         </TableCell>
                                         <TableCell>{ timeRegistration }</TableCell>
                                         <TableCell className="optionCell">
-                                            <Tooltip title="Disabilita Utente">
-                                                <ExploreOff
-                                                    onClick={disableUser}
-                                                    className="icon"
-                                                />
-                                            </Tooltip>
-                                            <Tooltip title="Modifica Utente">
-                                                <Edit
-                                                    onClick={() => editUser(user)}
-                                                    className="icon"
-                                                />
-                                            </Tooltip>
+                                            { isAdmin &&
+                                                <Tooltip title="Disabilita Utente">
+                                                    <ExploreOff
+                                                        onClick={disableUser}
+                                                        className="icon"
+                                                    />
+                                                </Tooltip>
+                                            }
+                                            {(isAdmin || (userId === id)) &&
+                                                <Tooltip title="Modifica Utente">
+                                                    <Edit
+                                                        onClick={() => editUser(user)}
+                                                        className="icon"
+                                                    />
+                                                </Tooltip>
+                                            }
                                         </TableCell>
                                     </TableRow>
                                 )
@@ -107,6 +123,7 @@ const UserTable = ({
                     <EditUser
                         confirmEdit={confirmEdit}
                         open={editUserModal}
+                        root={isAdmin}
                         data={userRef}
                         handleClose={closeModal}
                     />

@@ -15,7 +15,8 @@ const EditUser = ({
     open,
     handleClose,
     confirmEdit,
-    data
+    data,
+    root
 }) => {
 
     const [ changePasswordEnabled, setChangePasswordEnabled ] = useState(false);
@@ -24,15 +25,14 @@ const EditUser = ({
     const [ repeatPassword, setRepeatPassword ] = useState("");
     const [ username, setUsername ] = useState("");
     const [ email, setEmail ] = useState("");
-    const [ isAdmin, setIsAdmin ] = useState(false);
-
+    const [ admin, setAdmin ] = useState(false);
 
     const save = () => {
         const payload = {
             email,
             username,
-            isAdmin,
-            password
+            admin,
+            ...(password !== "" ? { password } : {})
         };
         confirmEdit(payload);
     }
@@ -46,7 +46,7 @@ const EditUser = ({
     };
 
     const switchRole = (event) => {
-        setIsAdmin(event.target.checked);
+        setAdmin(event.target.checked);
     };
 
     const changePassword = (event) => {
@@ -85,7 +85,7 @@ const EditUser = ({
             setUsername(data.username);
         }
         if (data.role) {
-            setIsAdmin(data.role === 1);
+            setAdmin(data.role === 1);
         }
     }
 
@@ -128,7 +128,8 @@ const EditUser = ({
                                         label="Permessi da amministratore"
                                         control={
                                             <Switch
-                                                checked={isAdmin}
+                                                checked={admin}
+                                                disabled={!root}
                                                 onChange={switchRole}
                                                 color="primary"
                                             />

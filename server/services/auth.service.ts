@@ -15,7 +15,8 @@ export const checkCredentials = async(username:string, password:string) => {
         return {
             success: true,
             userRole: user[0].role,
-            userActive: user[0].active
+            userActive: user[0].active,
+            userId: user[0].id
         } as CheckCredentials;
     }
     return {

@@ -147,7 +147,7 @@ class Auth {
     async login(req:Request, res:Response, next:NextFunction) {
         try {
             const { username, password } = req.body;
-            const { success, userActive, userRole }:CheckCredentials = await checkCredentials(username, password);
+            const { success, userActive, userRole, userId }:CheckCredentials = await checkCredentials(username, password);
             if (success) {
                 const { accessToken, refreshToken }:Tokens = await generateTokens(username, encryptPassword(password));
                 res.cookie("accessToken", accessToken);
@@ -157,6 +157,7 @@ class Auth {
                     refreshToken,
                     userActive,
                     userRole,
+                    userId,
                     success: true
                 });
             } else {

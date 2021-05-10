@@ -48,7 +48,8 @@ export interface IToken extends Document {
 export interface CheckCredentials {
     userRole: number | null,
     userActive: boolean | null,
-    success: boolean
+    success: boolean,
+    userId: string,
 }
 
 export interface RequestData { 

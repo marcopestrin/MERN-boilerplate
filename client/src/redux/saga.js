@@ -2,7 +2,7 @@ import { put } from "redux-saga/effects";
 
 import * as actions from "./actions";
 import { login, registration, resetPassword, logout } from "./requests/auth";
-import { getUsersList } from "./requests/users";
+import { getUsersList, editUser } from "./requests/users";
 
 export function* getUsersListRequest() {
     try {
@@ -89,3 +89,18 @@ export function* resetPasswordRequest(payload) {
         })
     }
 };
+
+export function* editUserRequest({payload}) {
+    try {
+        const res = yield editUser(payload);
+        if (res.success) {
+            yield put({
+                type: actions.EDIT_USER_SUCCESS
+            })
+        }
+    } catch(error) {
+        yield put({
+            type: actions.EDIT_USER_FAILURE
+        })
+    }
+}

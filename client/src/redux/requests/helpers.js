@@ -51,12 +51,11 @@ export async function request({
     }
 }
 
-const fetcher = async({ url, method }) => {
+const fetcher = async({ url, method, params, body }) => {
 
     let error = null;
     let data = {};
     const errorMessage = await getErrorMessage();
-
 
     const createAxiosGateway = (options) => {
         const { url, method } = options;
@@ -70,6 +69,7 @@ const fetcher = async({ url, method }) => {
                 method,
                 headers,
                 withCredentials: true,
+                params
             });
             axiosGateway.interceptors.response.use(
                 (response) => response.data,
@@ -153,7 +153,9 @@ const fetcher = async({ url, method }) => {
 
     await fetchRequest({
         method,
-        url
+        url,
+        params,
+        body
     });
     return {
         data,
