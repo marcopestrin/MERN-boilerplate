@@ -69,7 +69,8 @@ const fetcher = async({ url, method, params, body }) => {
                 method,
                 headers,
                 withCredentials: true,
-                params
+                params,
+                data: body ? body : {}
             });
             axiosGateway.interceptors.response.use(
                 (response) => response.data,
@@ -87,8 +88,7 @@ const fetcher = async({ url, method, params, body }) => {
                             }
                             throw result;
                         }
-                        if ([ 500 ].includes(err?.response?.status)) {
-                            // errore del server
+                        if ([ 500, 403 ].includes(err?.response?.status)) {
                             throw err.response
                         }
                     } catch (err) {

@@ -33,13 +33,13 @@ const deleteUser = {
 }
 
 const updateUser = {
-    query: Joi.object().keys({
-        id: Joi.string().required()
-    }),
     body: Joi.object().keys({
-        password: Joi.string().required(),
+        password: Joi.string(),
         username: Joi.string().required(),
         email: Joi.string().required()
+    }),
+    query: Joi.object().keys({
+        id: Joi.string().required()
     })
 }
 
