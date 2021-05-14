@@ -55,11 +55,7 @@ const UserTable = ({ users }) => {
     const confirmEdit = (payload) => {
         dispatch({
             type: EDIT_USER_REQUEST,
-            payload: {
-                ...payload,
-                userId
-            }
-            
+            payload
         });
         setEditUserModal(false);
         closeModal();

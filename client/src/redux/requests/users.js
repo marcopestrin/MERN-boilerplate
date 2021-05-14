@@ -40,7 +40,7 @@ export const editUser = async(payload) => {
     //     success: true
     // };
     http.post(user.update, payload, {
-        params: { id: payload.userId }
+        params: { id: payload.id }
     })
 
 }

@@ -37,7 +37,7 @@ const updateUser = {
         password: Joi.string(),
         username: Joi.string().required(),
         email: Joi.string().required()
-    }),
+    }).unknown(true),
     query: Joi.object().keys({
         id: Joi.string().required()
     })

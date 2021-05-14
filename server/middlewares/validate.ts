@@ -19,7 +19,8 @@ const validate = schema => (
 ) => {
     const validSchema = pick(schema, types);
     const object = pick(req, Object.keys(validSchema));
-    const { value, error } = Joi.compile(validSchema)
+    const { value, error } = Joi
+        .compile(validSchema)
         .prefs({
             errors: {
                 label: 'key'

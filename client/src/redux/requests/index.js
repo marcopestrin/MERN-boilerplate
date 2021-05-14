@@ -1,4 +1,3 @@
-
 import axios from 'axios'
 
 function getBaseURL () {
@@ -26,29 +25,29 @@ function getHeaders () {
         "accept": "application/json",
         "accessToken": getAccessToken(),
         "refreshToken": getRefreshToken(),
-        "Content-Type": "application/json",
-    }
+        "Content-Type": "application/json"
+    };
 }
 
 function parseError (messages) {
     if (messages) {
         if (messages instanceof Array) {
-            return Promise.reject({ messages: messages })
+            return Promise.reject({ messages: messages });
         } else {
-            return Promise.reject({ messages: [messages] })
+            return Promise.reject({ messages: [messages] });
         }
     } else {
-        return Promise.reject({ messages: [""] })
+        return Promise.reject({ messages: [""] });
     }
 }
 
 function parseBody (response) {
     if (response.status === 200) {    
-        return response.data.result
+        return response.data.result;
     } else {
-        return parseError(response.data.messages)
+        return parseError(response.data.messages);
     }
-}
+};
 
 async function getEndpointList() {
     const url = `${process.env.PUBLIC_URL}/json/endpoints.json`;
@@ -59,10 +58,12 @@ async function getEndpointList() {
 async function handleError(error) {
     try {
         if ([ 401 ].includes(error?.response?.status)) {
-            const result = await fetchToken();
-            if (result.success) {
-                instance.defaults.headers.common['accessToken'] = getAccessToken;
-                return instance;
+            const originalRequest = error.config;
+            const { success, accessToken } = await fetchToken();
+            if (success) {
+                setAccessToken(accessToken);
+                instance.defaults.headers.common['accessToken'] = accessToken;
+                return instance(originalRequest);
             }
             throw error.response;
         }
@@ -70,24 +71,28 @@ async function handleError(error) {
             throw error.response;
         }
     } catch (error) {
-        return Promise.reject(error)
+        return Promise.reject(error);
     }
 }
 
 function handleResponse (response) {
-    return parseBody(response)
+    return parseBody(response);
+}
+
+function handleRequest (request) {
+    request.headers = getHeaders();
+    return request;
 }
 
 async function fetchToken () {
     const { auth } = await getEndpointList();
-    const url = `${baseURL}${auth.requestNewToken}`
+    const url = `${baseURL}${auth.requestNewToken}`;
     const result = await fetch(url, {
         method: "POST",
         headers: getHeaders()
     });
     if (result.status === 200) {
         const { accessToken } = await result.json();
-        setAccessToken(accessToken);
         return {
             success: true,
             accessToken
@@ -98,14 +103,12 @@ async function fetchToken () {
     }
 }
 
-const baseURL = getBaseURL()
-
+const baseURL = getBaseURL();
 let instance = axios.create({
     baseURL,
-    json: true,
-    headers: getHeaders(),
+    json: true
 })
 
-instance.interceptors.response.use(handleResponse, handleError)
-
+instance.interceptors.request.use(handleRequest, parseError);
+instance.interceptors.response.use(handleResponse, handleError);
 export default instance;

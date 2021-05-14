@@ -32,6 +32,7 @@ const EditUser = ({
             email,
             username,
             admin,
+            id: data.id,
             ...(password !== "" ? { password } : {})
         };
         confirmEdit(payload);
@@ -92,7 +93,7 @@ const EditUser = ({
     useEffect(validationForm, [ changePasswordEnabled, username, email, validationPassword ]);
 
     useEffect(() => {
-        setPreloadData(data)
+        setPreloadData(data);
     }, [ data ]);
 
     return (

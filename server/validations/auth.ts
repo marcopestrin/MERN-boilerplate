@@ -8,8 +8,8 @@ const logout = {
 
 const requestNewToken = {
     headers: Joi.object().keys({
-        refreshToken: Joi.string().required()
-    })
+        refreshtoken: Joi.string().required()
+    }).unknown(true)
 }
 
 const login = {
