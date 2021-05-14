@@ -338,6 +338,9 @@ class User {
         try {
             const id = req.query.id as string;
             const payload = req.body;
+            if (payload.password) {
+                payload.password = encryptPassword(payload.password);
+            }
             const result:Update = await updateUser(payload, { id });
             if (result.ok) {
                 res.status(200).json({
