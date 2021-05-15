@@ -39,8 +39,12 @@ export const editUser = async(payload) => {
     //     data,
     //     success: true
     // };
-    http.post(user.update, payload, {
+    const data = await http.post(user.update, payload, {
         params: { id: payload.id }
     })
+    return {
+        data,
+        success: true
+    }
 
 }

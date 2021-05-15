@@ -41,14 +41,6 @@ function parseError (messages) {
     }
 }
 
-function parseBody (response) {
-    if (response.status === 200) {    
-        return response.data.result;
-    } else {
-        return parseError(response.data.messages);
-    }
-};
-
 async function getEndpointList() {
     const url = `${process.env.PUBLIC_URL}/json/endpoints.json`;
     const response = await fetch(url);
@@ -76,7 +68,7 @@ async function handleError(error) {
 }
 
 function handleResponse (response) {
-    return parseBody(response);
+    return response.data;
 }
 
 function handleRequest (request) {
@@ -100,14 +92,14 @@ async function fetchToken () {
     }
     return {
         success: false
-    }
+    };
 }
 
 const baseURL = getBaseURL();
 let instance = axios.create({
     baseURL,
     json: true
-})
+});
 
 instance.interceptors.request.use(handleRequest, parseError);
 instance.interceptors.response.use(handleResponse, handleError);
