@@ -97,6 +97,9 @@ export function* editUserRequest({payload}) {
             yield put({
                 type: actions.EDIT_USER_SUCCESS
             })
+            yield put({
+                type: actions.GET_USERS_LIST_REQUEST
+            })
         }
     } catch(error) {
         yield put({
