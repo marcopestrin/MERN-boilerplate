@@ -57,12 +57,16 @@ async function handleError(error) {
                 instance.defaults.headers.common['accessToken'] = accessToken;
                 return instance(originalRequest);
             }
-            throw error.response;
+            // example: when login credentials are wrong
+            return {
+                success: false
+            };
         }
         if ([ 500, 403 ].includes(error?.response?.status)) {
             throw error.response;
         }
-    } catch (error) {
+        // to handle other type of errors here
+     } catch (error) {
         return Promise.reject(error);
     }
 }

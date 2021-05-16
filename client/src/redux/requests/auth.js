@@ -1,16 +1,24 @@
 import { getEndpointList, request } from "./helpers";
+import http from "./index";
+
 
 export const login = async({ payload }) => {
 
     const { auth } = await getEndpointList();
-    return await request({
-        url: auth.login,
-        method: "POST",
-        payload: {
-            username: payload?.username,
-            password: payload?.password
+    const data = await http.post(auth.login, {
+        username: payload?.username,
+        password: payload?.password
+    })
+    if (data.success) {
+        return { 
+            data,
+            success: true
         }
-    });
+    }
+    return {
+        message: "Wrong credentials",
+        success: false
+    }
 };
 
 export const registration = async({ payload }) => {

@@ -3,13 +3,13 @@ import { Typography } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 
 import { GET_USERS_LIST_REQUEST } from "@redux/actions";
-import { selectorUsers } from "@redux/selectors"
+import { selectorUser } from "@redux/selectors"
 import Logout from "@components/logout";
 import UserTable from "@components/userTable";
 
 const Dashboard = () => {
     const dispatch = useDispatch();
-    const { list } = useSelector(selectorUsers);
+    const { list } = useSelector(selectorUser);
     const role = localStorage.getItem("role")
 
     const getAllUsers = () => {
