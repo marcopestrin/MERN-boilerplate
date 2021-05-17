@@ -58,9 +58,7 @@ async function handleError(error) {
                 return instance(originalRequest);
             }
             // example: when login credentials are wrong
-            return {
-                success: false
-            };
+            return instance;
         }
         if ([ 500, 403 ].includes(error?.response?.status)) {
             throw error.response;

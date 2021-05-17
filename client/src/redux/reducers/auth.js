@@ -12,6 +12,7 @@ export default function auth(prevState = {}, action){
                     ...payload
                 }
             };
+            delete clonedState.error;
             break;
                           
         case actions.REGISTRATION_FAILURE:
@@ -22,6 +23,7 @@ export default function auth(prevState = {}, action){
             break;
 
         case actions.RESET_PASSWORD_SUCCESS:
+            delete clonedState.error;
             break;
             
         case actions.RESET_PASSWORD_FAILURE:
@@ -56,6 +58,7 @@ export default function auth(prevState = {}, action){
             localStorage.removeItem("accessToken");
             localStorage.removeItem("refreshToken");
             localStorage.removeItem("userId");
+            delete clonedState.error;
             break;
               
         case actions.LOGOUT_FAILURE:

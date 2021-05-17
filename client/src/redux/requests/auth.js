@@ -12,11 +12,13 @@ export const login = async({ payload }) => {
     if (data.success) {
         return { 
             data,
-            success: true
+            success: true,
+            message: ""
         }
     }
     return {
         message: "Wrong credentials",
+        data: null,
         success: false
     }
 };

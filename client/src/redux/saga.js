@@ -30,7 +30,7 @@ export function* loginRequest(payload) {
         if (res.success) {
             yield put({
                 type: actions.LOGIN_SUCCESS,
-                payload: res
+                payload: res.data
             })
         } else {
             throw res.message;

@@ -23,7 +23,6 @@ const PopupError = () => {
             setOpen(false);
             setMessage([]);
         }
-        console.log("message", message);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ errors ]);
 

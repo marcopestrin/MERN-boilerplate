@@ -4,7 +4,7 @@ export const getListErrors = (state) => {
         errorList.push(state.auth.error);
     }
     if (Object.keys(state.users).includes("error")) {
-        errorList.push(state.user.error);
+        errorList.push(state.users.error);
     }
     return errorList;
 }

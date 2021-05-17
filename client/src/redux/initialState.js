@@ -4,7 +4,7 @@ const initialState = {
         loginRedirect: false,
         logoutRedirect: false,
     },
-    user: {
+    users: {
         list: {}
     }
 };

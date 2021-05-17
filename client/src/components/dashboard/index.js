@@ -3,14 +3,14 @@ import { Typography } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 
 import { GET_USERS_LIST_REQUEST } from "@redux/actions";
-import { selectorUser } from "@redux/selectors"
+import { selectorUsers } from "@redux/selectors"
 import Logout from "@components/logout";
 import UserTable from "@components/userTable";
 
 const Dashboard = () => {
     const dispatch = useDispatch();
-    const { list } = useSelector(selectorUser);
-    const role = localStorage.getItem("role")
+    const { list } = useSelector(selectorUsers);
+    const role = localStorage.getItem("role");
 
     const getAllUsers = () => {
         dispatch({
@@ -18,15 +18,19 @@ const Dashboard = () => {
         });
     };
 
+    const listAvailable = (list) => {
+        if (list === undefined || list === null || Object.keys(list).length === 0 || list.length < 1) {
+            return false;
+        }
+        return true;
+    }
+
     useEffect(getAllUsers, []);
 
     return (
         <>
             { role && <Typography variant="body2"> Sei loggato come { role } </Typography> }
-            <UserTable
-                users={list}
-            />
-            <Logout />
+            { listAvailable(list) && <> <UserTable users={list} /><Logout /> </> }
         </>
     )
 }
