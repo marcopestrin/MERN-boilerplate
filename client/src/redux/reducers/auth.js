@@ -5,11 +5,19 @@ export default function auth(prevState = {}, action){
     const { type, payload } = action;
     switch (type) {
 
+        case actions.REGISTRATION_REQUEST:
+            clonedState = {
+                ...clonedState,
+                newUser: null
+            }
+            break
+
         case actions.REGISTRATION_SUCCESS:
             clonedState = {
                 ...clonedState,
                 newUser: {
-                    ...payload
+                    //...payload
+                    success: true
                 }
             };
             delete clonedState.error;
@@ -18,6 +26,7 @@ export default function auth(prevState = {}, action){
         case actions.REGISTRATION_FAILURE:
             clonedState = {
                 ...clonedState,
+                newUser: null,
                 error: payload.error,
             };
             break;
@@ -34,7 +43,8 @@ export default function auth(prevState = {}, action){
                 ...clonedState,
                 loginRedirect: true,
                 logoutRedirect: false,
-                logged: true
+                logged: true,
+                newUser: null
             };
             const { userActive, refreshToken, accessToken, userRole, userId } = payload;
             const role = userRole === 1 ? "ADMIN" : "USER";

@@ -1,7 +1,6 @@
 import React from "react";
 import { Container, Grid } from "@material-ui/core";
-import { BrowserRouter, Redirect } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { BrowserRouter } from "react-router-dom";
 
 import Login from "@views/login";
 import SignUp from "@views/signup";
@@ -10,18 +9,7 @@ import "./styles.scss";
 import { PrivateRoute, PublicRoute } from "./hooks/routes";
 import Dashboard from "@components/dashboard";
 import PopupError from "@components/popupError";
-import { selectorAuth } from "@redux/selectors";
-
-const ForceRedirect = () => {
-    const { loginRedirect, logoutRedirect } = useSelector(selectorAuth);
-    if (logoutRedirect) {
-        return <Redirect to="/login" />
-    }
-    if (loginRedirect) {
-        return <Redirect to="/dashboard" />
-    }
-    return <></>
-};
+import ForceRedirect from "@components/forceRedirect";
 
 const App = () => {
     return (

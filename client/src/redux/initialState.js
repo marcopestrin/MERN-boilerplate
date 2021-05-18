@@ -3,6 +3,7 @@ const initialState = {
         logged: false,
         loginRedirect: false,
         logoutRedirect: false,
+        newUser: null
     },
     users: {
         list: {}
