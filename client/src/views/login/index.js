@@ -4,12 +4,15 @@ import { useDispatch } from "react-redux";
 import { FormControl, TextField, Typography, Grid, Button } from '@material-ui/core';
 
 import { LOGIN_REQUEST } from "@redux/actions";
+import validation from "@validator";
+import signUpSchema from "@validator/login";
 
 import "./styles.scss";
 const Login = () => {
 
     const [ username, setUsername ] = useState("");
     const [ password, setPassword ] = useState("");
+    const [ validForm, setValidForm ] = useState(false);
     const dispatch = useDispatch();
 
     const goToForgetPassword = () => {
@@ -30,6 +33,13 @@ const Login = () => {
         });
     };
 
+    const validateForm = () => {
+        const payload = { username, password };
+        const result = validation(signUpSchema, payload);
+        const valid = !result.error;
+        setValidForm(valid)
+    }
+
     return (
         <FormControl
             fullWidth
@@ -42,6 +52,7 @@ const Login = () => {
                         type="input"
                         color="primary"
                         fullWidth
+                        onKeyUp={validateForm}
                         value={username}
                         onChange={(event) => setUsername(event.target.value)}
                     />
@@ -52,6 +63,7 @@ const Login = () => {
                         type="password"
                         color="primary"
                         fullWidth
+                        onKeyUp={validateForm}
                         value={password}
                         onChange={(event) => setPassword(event.target.value)}
                     />
@@ -62,6 +74,7 @@ const Login = () => {
                         color="primary"
                         fullWidth
                         onClick={loginRequest}
+                        disabled={validForm === false}
                     >
                         Accedi alla piattaforma
                     </Button>

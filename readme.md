@@ -55,7 +55,8 @@ npm run dev / npm run start
 | --- | --- |
 | March 2021 | <ul> <li>Authentication system </li><li> CRUD API on User Mode </li><li> First Deploy on Heroku </li><li> Creating frontend (login/signup/logout) </ul>|
 | April 2021 | <ul> <li>Handle function http request</li><li>Frontend alias import</li><li>Split controller-services backend</li><li>Created custom token collection in DB</li><li>Added Joi Validator for endpoint input</li>|
-| May 2021 | <ul><li>Added interceptors to manage token renewal</li><li>Frontend: Ability to change the information of your user and other users if you are admin</li><li>Created public kanban board for frontend and backend</li></ul> |
+| May 2021 | <ul><li>Added interceptors to manage token renewal</li><li>Frontend: Ability to change the information of your user and other users if you are admin</li><li>Created public kanban board for frontend and backend</li></ul>|
+| June 2021 | <ul><li>Added Joi validator for log-in, sign-up and reset-password page</li></ul>|
 
 ## Others
 This project are made in my free time. Currently under construction by myself.

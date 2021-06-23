@@ -4,10 +4,13 @@ import { FormControl, TextField, Grid, Button } from '@material-ui/core';
 import "./styles.scss";
 
 import { RESET_PASSWORD_REQUEST } from "@redux/actions";
+import validation from "@validator";
+import resetPasswordSchema from "@validator/resetPassword";
 
 const ResetPassword = () => {
 
     const [ email, setEmail ] = useState("");
+    const [ validForm, setValidForm ] = useState(false);
 
     const dispatch = useDispatch();
 
@@ -20,6 +23,13 @@ const ResetPassword = () => {
         });
     };
 
+    const validateForm = () => {
+        const payload = { email };
+        const result = validation(resetPasswordSchema, payload);
+        const valid = !result.error;
+        setValidForm(valid)
+    }
+
     return (
         <FormControl
             fullWidth
@@ -30,6 +40,7 @@ const ResetPassword = () => {
                     <TextField
                         label="email"
                         type="input"
+                        onKeyUp={validateForm}
                         color="primary"
                         fullWidth
                         value={email}
@@ -41,6 +52,7 @@ const ResetPassword = () => {
                         variant="outlined"
                         color="primary"
                         fullWidth
+                        disabled={validForm === false}
                         onClick={resetPasswordRequest}
                     >
                         Recupera password
