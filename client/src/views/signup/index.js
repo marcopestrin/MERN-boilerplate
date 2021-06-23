@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
 import { REGISTRATION_REQUEST } from "@redux/actions";
-import { validation } from "@validator";
+import validation from "@validator";
 import signUpSchema from "@validator/signUp";
 
 import "./styles.scss";
