@@ -1,10 +1,15 @@
 export const getListErrors = (state) => {
     const errorList = [];
-    if (Object.keys(state.auth).includes("error")) {
-        errorList.push(state.auth.error);
+    const { auth, users } = state;
+    if (auth){
+        if (Object.keys(auth).includes("error")) {
+            errorList.push(auth.error);
+        }
     }
-    if (Object.keys(state.users).includes("error")) {
-        errorList.push(state.users.error);
+    if (users) {
+        if (Object.keys(users).includes("error")) {
+            errorList.push(users.error);
+        }
     }
     return errorList;
 }

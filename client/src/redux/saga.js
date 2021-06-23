@@ -33,7 +33,7 @@ export function* loginRequest(payload) {
                 payload: res.data
             })
         } else {
-            throw res.message;
+            throw res;
         }
     } catch (error) {
         yield put({

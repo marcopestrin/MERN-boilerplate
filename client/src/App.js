@@ -8,13 +8,13 @@ import ResetPassword from "@views/resetPassword";
 import "./styles.scss";
 import { PrivateRoute, PublicRoute } from "./hooks/routes";
 import Dashboard from "@components/dashboard";
-import PopupError from "@components/popupError";
+import PopupNotify from "@components/popupNotify";
 import ForceRedirect from "@components/forceRedirect";
 
 const App = () => {
     return (
         <>
-            <PopupError />
+            <PopupNotify />
             <Container maxWidth="md" className="wrapper-container">
                 <Grid container spacing={2}>
                     <BrowserRouter>

@@ -1,22 +1,38 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, memo } from "react";
 import { Snackbar } from "@material-ui/core";
 import MuiAlert from '@material-ui/lab/Alert';
 import { useSelector } from "react-redux";
 
-import { selectorErrors } from "@redux/selectors";
+import { selectorErrors, selectorAuth } from "@redux/selectors";
+import { getSeverity } from "./helpers";
 
-const PopupError = () => {
+const PopupNotify = () => {
 
     const [ open, setOpen ] = useState(false);
     const [ message, setMessage ] = useState([]);
     const errors = useSelector(selectorErrors);
+    const { newUser } = useSelector(selectorAuth);
+    const [ severity, setSeverity ] = useState("");
 
     const handleClose = () => setOpen(false);
 
-    const getMessages = () => message.map(message => message);
+    const getSeverityName = (color) => {
+        JSON.stringify(setSeverity(getSeverity(color)));
+    }
+
+    const getMessages = () => message.map(m => m.message);
+
+    useEffect(() => {
+        if (newUser?.success) {
+            getSeverityName(1);
+            setOpen(true);
+            setMessage("Utente creato");
+        }
+    }, [ newUser ]);
 
     useEffect(() => {
         if (Array.isArray(errors) && errors.length > 0) {
+            getSeverityName(2);
             setOpen(true);
             setMessage(errors);
         } else {
@@ -38,7 +54,7 @@ const PopupError = () => {
         >
             <MuiAlert
                 onClose={handleClose}
-                severity="error"
+                severity={severity}
             >
                 { getMessages()}
             </MuiAlert>
@@ -46,4 +62,4 @@ const PopupError = () => {
     )
 }
 
-export default PopupError;
+export default memo(PopupNotify);
