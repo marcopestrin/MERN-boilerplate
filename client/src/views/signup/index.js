@@ -4,6 +4,9 @@ import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
 import { REGISTRATION_REQUEST } from "@redux/actions";
+import { validation } from "@validator";
+import signUpSchema from "@validator/signUp";
+
 import "./styles.scss";
 const SignUp = () => {
 
@@ -11,11 +14,24 @@ const SignUp = () => {
     const [ password, setPassword ] = useState("");
     const [ repeatPassword, setRepeatPassword ] = useState("");
     const [ email, setEmail ] = useState("");
+    const [ validForm, setValidForm ] = useState(false);
     const dispatch = useDispatch();
 
     const goToLogin = () => {
 
     };
+
+    const validateForm = () => {
+        const payload = {
+            username,
+            password,
+            repeatPassword,
+            email
+        };
+        const result = validation(signUpSchema, payload);
+        const valid = !result.error;
+        setValidForm(valid)
+    }
 
     const signUpRequest = () => {
         dispatch({
@@ -38,6 +54,7 @@ const SignUp = () => {
                     <TextField
                         label="Email"
                         type="email"
+                        onKeyUp={validateForm}
                         color="primary"
                         fullWidth
                         value={email}
@@ -49,6 +66,7 @@ const SignUp = () => {
                         label="Username"
                         type="input"
                         color="primary"
+                        onKeyUp={validateForm}
                         fullWidth
                         value={username}
                         onChange={(event) => setUsername(event.target.value)}
@@ -59,6 +77,7 @@ const SignUp = () => {
                         label="Password"
                         type="password"
                         color="primary"
+                        onKeyUp={validateForm}
                         fullWidth
                         value={password}
                         onChange={(event) => setPassword(event.target.value)}
@@ -68,6 +87,7 @@ const SignUp = () => {
                     <TextField
                         label="Ridigita Password"
                         type="password"
+                        onKeyUp={validateForm}
                         color="primary"
                         fullWidth
                         value={repeatPassword}
@@ -80,6 +100,7 @@ const SignUp = () => {
                         color="primary"
                         fullWidth
                         onClick={signUpRequest}
+                        disabled={validForm === false}
                     >
                         Registra nuovo utente
                     </Button>
