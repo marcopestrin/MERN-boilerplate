@@ -140,7 +140,7 @@ class Auth {
      *          description: Server error
      *        400:
      *          description: Wrong input
-     *        401:
+     *        402:
      *          description: Wrong credentials
      *                  
      */
@@ -161,7 +161,7 @@ class Auth {
                     success: true
                 });
             } else {
-                res.status(401).json({
+                res.status(402).json({
                     success: false,
                     message: message.wrongCredentials
                 });

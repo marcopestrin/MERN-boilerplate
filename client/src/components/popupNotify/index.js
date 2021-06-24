@@ -3,48 +3,41 @@ import { Snackbar } from "@material-ui/core";
 import MuiAlert from '@material-ui/lab/Alert';
 import { useSelector } from "react-redux";
 
-import { selectorErrors, selectorAuth } from "@redux/selectors";
+import { selectorNotify } from "@redux/selectors";
 import { getSeverity } from "./helpers";
 
 const PopupNotify = () => {
 
     const [ open, setOpen ] = useState(false);
-    const [ message, setMessage ] = useState([]);
-    const errors = useSelector(selectorErrors);
-    const { newUser } = useSelector(selectorAuth);
-    const [ severity, setSeverity ] = useState("");
+    const [ textMessage, setTextMessage ] = useState(null);
+    const [ severity, setSeverity ] = useState(null);
+    const notify = useSelector(selectorNotify);
 
     const handleClose = () => setOpen(false);
 
-    const getSeverityName = (color) => {
-        JSON.stringify(setSeverity(getSeverity(color)));
+    const notifyClosed = () => {
+        setOpen(false);
+        setTextMessage(null);
+        setSeverity(null);
     }
 
-    const getMessages = () => message.map(m => m.message);
-
     useEffect(() => {
-        if (newUser?.success) {
-            getSeverityName(1);
+        if (Array.isArray(notify.info) && notify.info.length > 0) {
+            setTextMessage(notify.info.pop());
+            setSeverity(getSeverity(1));
             setOpen(true);
-            setMessage("Utente creato");
         }
-    }, [ newUser ]);
-
-    useEffect(() => {
-        if (Array.isArray(errors) && errors.length > 0) {
-            getSeverityName(2);
+        if (Array.isArray(notify.errors) && notify.errors.length > 0) {
+            setTextMessage(notify.errors.pop());
+            setSeverity(getSeverity(2));
             setOpen(true);
-            setMessage(errors);
-        } else {
-            setOpen(false);
-            setMessage([]);
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [ errors ]);
+    }, [ notify ])
 
     return (
         <Snackbar
             open={open}
+            onExited={notifyClosed}
             autoHideDuration={4000}
             onClose={handleClose}
             anchorOrigin={{
@@ -56,7 +49,7 @@ const PopupNotify = () => {
                 onClose={handleClose}
                 severity={severity}
             >
-                { getMessages()}
+                { textMessage }
             </MuiAlert>
         </Snackbar>
     )

@@ -1,15 +1,14 @@
 import { getEndpointList, request } from "./helpers";
 import http from "./index";
 
-
 export const login = async({ payload }) => {
 
     const { auth } = await getEndpointList();
     const data = await http.post(auth.login, {
         username: payload?.username,
         password: payload?.password
-    })
-    if (data.success) {
+    });
+    if (data && data.success) {
         return { 
             data,
             success: true,

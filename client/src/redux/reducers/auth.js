@@ -2,6 +2,8 @@ import * as actions from "@redux/actions";
 
 export default function auth(prevState = {}, action){
     let clonedState = JSON.parse(JSON.stringify(prevState));
+    const errorList = clonedState?.notify?.errors;
+    const infoList = clonedState?.notify?.info;
     const { type, payload } = action;
     switch (type) {
 
@@ -10,11 +12,16 @@ export default function auth(prevState = {}, action){
                 ...clonedState,
                 newUser: null
             }
-            break
+            break;
 
         case actions.REGISTRATION_SUCCESS:
+            infoList.push("User Created");
             clonedState = {
                 ...clonedState,
+                notify: {
+                    ...clonedState.notify,
+                    info: infoList
+                },
                 newUser: {
                     //...payload
                     success: true
@@ -24,15 +31,18 @@ export default function auth(prevState = {}, action){
             break;
                           
         case actions.REGISTRATION_FAILURE:
+            errorList.push(payload.error);
             clonedState = {
                 ...clonedState,
                 newUser: null,
-                error: payload.error,
+                notify: {
+                    ...clonedState.notify,
+                    error: errorList,
+                }
             };
             break;
 
         case actions.RESET_PASSWORD_SUCCESS:
-            delete clonedState.error;
             break;
             
         case actions.RESET_PASSWORD_FAILURE:
@@ -72,16 +82,24 @@ export default function auth(prevState = {}, action){
             break;
               
         case actions.LOGOUT_FAILURE:
+            errorList.push(payload.error);
             clonedState = {
                 logoutRedirect: false,
-                error: payload.error,
+                notify: {
+                    ...clonedState.notify,
+                    errors: errorList,
+                }
             };
             break;
                           
         case actions.LOGIN_FAILURE:
+            errorList.push(payload.error);
             clonedState = {
                 loginRedirect: false,
-                error: payload.error,
+                notify: {
+                    ...clonedState.notify,
+                    errors: errorList,
+                }
             };
             break;
 

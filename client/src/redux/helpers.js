@@ -1,15 +1,24 @@
 export const getListErrors = (state) => {
-    const errorList = [];
     const { auth, users } = state;
-    if (auth){
-        if (Object.keys(auth).includes("error")) {
-            errorList.push(auth.error);
-        }
+    const errorList = [];
+    if (auth && Object.keys(auth).includes("error")) {
+        errorList.push(auth.error);
     }
-    if (users) {
-        if (Object.keys(users).includes("error")) {
-            errorList.push(users.error);
-        }
+    if (users && Object.keys(users).includes("error")) {
+        errorList.push(users.error);
     }
     return errorList;
+}
+
+export const getNotifyMessage = ({ auth, users }) => {
+    return {
+        errors: [
+            ...auth?.notify?.errors,
+            ...users?.notify?.errors 
+        ],
+        info: [
+            ...auth?.notify?.info,
+            ...users?.notify?.info
+        ]
+    }
 }
