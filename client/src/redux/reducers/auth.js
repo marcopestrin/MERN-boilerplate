@@ -19,7 +19,7 @@ export default function auth(prevState = {}, action){
             clonedState = {
                 ...clonedState,
                 notify: {
-                    ...clonedState.notify,
+                    errors: [],
                     info: infoList
                 },
                 newUser: {
@@ -36,25 +36,39 @@ export default function auth(prevState = {}, action){
                 ...clonedState,
                 newUser: null,
                 notify: {
-                    ...clonedState.notify,
+                    info: [],
                     error: errorList,
                 }
             };
             break;
 
         case actions.RESET_PASSWORD_SUCCESS:
+            infoList.push("Check your box");
+            clonedState = {
+                ...clonedState,
+                notify: {
+                    errors: [],
+                    info: infoList
+                },
+
+            };
             break;
             
         case actions.RESET_PASSWORD_FAILURE:
             break;
 
         case actions.LOGIN_SUCCESS:
+            infoList.push("Login successful");
             clonedState = {
                 ...clonedState,
                 loginRedirect: true,
                 logoutRedirect: false,
                 logged: true,
-                newUser: null
+                newUser: null,
+                notify: {
+                    info: infoList,
+                    errors: []
+                }
             };
             const { userActive, refreshToken, accessToken, userRole, userId } = payload;
             const role = userRole === 1 ? "ADMIN" : "USER";
@@ -66,12 +80,19 @@ export default function auth(prevState = {}, action){
             break;
     
         case actions.GET_USERS_LIST_FAILURE:
+            break;
+
         case actions.LOGOUT_SUCCESS:
+            infoList.push("Logout successful");
             clonedState = {
                 ...clonedState,
                 loginRedirect: false,
                 logoutRedirect: true,
-                logged: false
+                logged: false,
+                notify: {
+                    info: infoList,
+                    errors: []
+                }
             };
             localStorage.removeItem("role");
             localStorage.removeItem("active");
@@ -86,8 +107,8 @@ export default function auth(prevState = {}, action){
             clonedState = {
                 logoutRedirect: false,
                 notify: {
-                    ...clonedState.notify,
                     errors: errorList,
+                    info: []
                 }
             };
             break;
@@ -97,8 +118,8 @@ export default function auth(prevState = {}, action){
             clonedState = {
                 loginRedirect: false,
                 notify: {
-                    ...clonedState.notify,
                     errors: errorList,
+                    info: []
                 }
             };
             break;
