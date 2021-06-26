@@ -4,19 +4,13 @@ const initialState = {
         loginRedirect: false,
         logoutRedirect: false,
         newUser: null,
-        notify: {
-            errors: [],
-            info: []  
-        }
     },
     users: {
         list: {},
-        notify: {
-            errors: [],
-            info: []  
-        }
     },
-
+    notification: {
+        list: []
+    }
 };
 
 export default initialState

@@ -9,16 +9,3 @@ export const getListErrors = (state) => {
     }
     return errorList;
 }
-
-export const getNotifyMessage = ({ auth, users }) => {
-    return {
-        errors: [
-            ...auth?.notify?.errors,
-            ...users?.notify?.errors 
-        ],
-        info: [
-            ...auth?.notify?.info,
-            ...users?.notify?.info
-        ]
-    }
-}

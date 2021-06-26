@@ -22,14 +22,11 @@ const PopupNotify = () => {
     }
 
     useEffect(() => {
-        if (Array.isArray(notify.info) && notify.info.length > 0) {
-            setTextMessage(notify.info.pop());
-            setSeverity(getSeverity(1));
-            setOpen(true);
-        }
-        if (Array.isArray(notify.errors) && notify.errors.length > 0) {
-            setTextMessage(notify.errors.pop());
-            setSeverity(getSeverity(2));
+        const { list } = notify;
+        if (Array.isArray(list) && list.length > 0) {
+            const lastNotify = list.pop();
+            setSeverity(getSeverity(lastNotify.type));
+            setTextMessage(lastNotify.message);
             setOpen(true);
         }
     }, [ notify ])
