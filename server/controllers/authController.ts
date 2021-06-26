@@ -241,13 +241,23 @@ class Auth {
     async reset(req:Request, res:Response, next:NextFunction) {
         try {
             const { email } = req.body;
-            const { recoveryToken, id, username } = await generateRecoveryToken(email);
-            const emailResult: any = await sendRecoveryEmail(recoveryToken, email, id, username);
-            if (emailResult.accepted) {
-                res.status(200).json({ success: true, id });
-                return
+            const { recoveryToken, id, username, message, success } = await generateRecoveryToken(email);
+            if (success) {
+                const emailResult: any = await sendRecoveryEmail(recoveryToken, email, id, username);
+                if (emailResult.accepted) {
+                    res.status(200).json({ success: true, id });
+                    return
+                }
+                throw {
+                    emailResult,
+                    success: false,
+                    message: "Impossible to send an email"
+                };
             }
-            throw emailResult;
+            throw {
+                message,
+                success: false
+            };
         } catch (error) {
             next(error);
         }

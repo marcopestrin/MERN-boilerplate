@@ -78,14 +78,18 @@ export function* logoutRequest() {
 
 export function* resetPasswordRequest(payload) {
     try {
-        yield resetPassword(payload);
-        yield put({
-            type: actions.RESET_PASSWORD_SUCCESS
-        })
-    } catch (error) {
+        const res = yield resetPassword(payload);
+        if (res.success) {
+            yield put({
+                type: actions.RESET_PASSWORD_SUCCESS
+            })
+            return
+        }
+        throw res
+    } catch (e) {
         yield put({
             type: actions.RESET_PASSWORD_FAILURE,
-            payload: { error }
+            payload: { error: e.error }
         })
     }
 };

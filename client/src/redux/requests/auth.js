@@ -43,13 +43,20 @@ export const resetPassword = async({ payload }) => {
     const { auth } = await getEndpointList();
     const { email } = payload;
 
-    return await request({
-        url: auth.resetPassword,
-        method: "POST",
-        payload: {
-            email
-        }
+    const result = await http.post(auth.resetPassword, {
+        email
     });
+    if (result.success) {
+        return {
+            success: true,
+            result
+        };
+    }
+    return {
+        error: result.error?.data?.message,
+        success: false,
+        result
+    };
 }
 
 export const logout = async(refreshToken) => {

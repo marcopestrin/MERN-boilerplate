@@ -4,7 +4,7 @@ import moment from "moment";
 import { Tokens, IToken, IUser } from "../interfaces";
 import schema from "../models/token";
 import { secretKeyAccessToken, secretKeyRefreshToken, accessTokenLife, refreshTokenLife } from "../../const";
-import { getUserByName } from "./user.service";
+import { getUserByEmail } from "./user.service";
 
 const generateToken = (payload:object, secret:string, life:string) => {
     const options: object = {
@@ -40,19 +40,29 @@ export const deleteToken = async(token:string, type:string) => {
 }
 
 export const generateRecoveryToken = async(name:string) => {
-    const { username, password, id }:IUser = await getUserByName(name);
-    const recoveryToken = crypto
-        .createHash("md5")
-        .update(username.concat(password))
-        .digest("hex");
-    const expires: moment.Moment = moment()
-        .add("60", "m");
-    await saveToken(recoveryToken, username, expires, "recovery");
-    return {
-        recoveryToken,
-        id,
-        username
-    };
+    try {
+        const { username, password, id }:IUser = await getUserByEmail(name);
+        const recoveryToken = crypto
+            .createHash("md5")
+            .update(username.concat(password))
+            .digest("hex");
+        const expires: moment.Moment = moment()
+            .add("60", "m");
+        await saveToken(recoveryToken, username, expires, "recovery");
+        return {
+            success: true,
+            message: "ok",
+            recoveryToken,
+            id,
+            username
+        };
+    } catch (e) {
+        return {
+            success: false,
+            message: "User not found"
+        }
+    }
+
 }
 
 export const generateTokens = async(username:string, password:string) => {

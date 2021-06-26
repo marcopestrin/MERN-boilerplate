@@ -1,5 +1,10 @@
 import * as actions from "@redux/actions";
 
+const notify = {
+    errors: [],
+    info: []
+};
+
 export default function auth(prevState = {}, action){
     let clonedState = JSON.parse(JSON.stringify(prevState));
     const errorList = clonedState?.notify?.errors;
@@ -10,8 +15,9 @@ export default function auth(prevState = {}, action){
         case actions.REGISTRATION_REQUEST:
             clonedState = {
                 ...clonedState,
-                newUser: null
-            }
+                newUser: null,
+                notify
+            };
             break;
 
         case actions.REGISTRATION_SUCCESS:
@@ -27,7 +33,6 @@ export default function auth(prevState = {}, action){
                     success: true
                 }
             };
-            delete clonedState.error;
             break;
                           
         case actions.REGISTRATION_FAILURE:
@@ -37,8 +42,15 @@ export default function auth(prevState = {}, action){
                 newUser: null,
                 notify: {
                     info: [],
-                    error: errorList,
+                    errors: errorList,
                 }
+            };
+            break;
+
+        case actions.RESET_PASSWORD_REQUEST:
+            clonedState = {
+                ...clonedState,
+                notify
             };
             break;
 
@@ -55,6 +67,21 @@ export default function auth(prevState = {}, action){
             break;
             
         case actions.RESET_PASSWORD_FAILURE:
+            errorList.push(payload.error);
+            clonedState = {
+                ...clonedState,
+                notify: {
+                    info: [],
+                    errors: errorList,
+                }
+            };
+            break;
+
+        case actions.LOGIN_REQUEST:
+            clonedState = {
+                ...clonedState,
+                notify
+            };
             break;
 
         case actions.LOGIN_SUCCESS:
@@ -99,7 +126,6 @@ export default function auth(prevState = {}, action){
             localStorage.removeItem("accessToken");
             localStorage.removeItem("refreshToken");
             localStorage.removeItem("userId");
-            delete clonedState.error;
             break;
               
         case actions.LOGOUT_FAILURE:
