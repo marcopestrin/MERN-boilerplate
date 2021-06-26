@@ -64,13 +64,11 @@ async function handleError(error) {
             throw error.response;
         }
         // to handle other type of errors here
-     } catch (error) {        
+     } catch (error) {     
         return {
             success: false,
-            error,
             message: error?.data?.message
         }
-        //return Promise.reject(error);
     }
 }
 

@@ -85,11 +85,11 @@ export function* resetPasswordRequest(payload) {
             })
             return
         }
-        throw res
-    } catch (e) {
+        throw res.message
+    } catch (error) {
         yield put({
             type: actions.RESET_PASSWORD_FAILURE,
-            payload: { error: e.error }
+            payload: { error }
         })
     }
 };
