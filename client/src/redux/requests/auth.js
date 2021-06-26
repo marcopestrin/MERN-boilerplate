@@ -1,4 +1,4 @@
-import { getEndpointList, request } from "./helpers";
+import { getEndpointList } from "./helpers";
 import http from "./index";
 
 export const login = async({ payload }) => {
@@ -27,14 +27,10 @@ export const registration = async({ payload }) => {
     const { user } = await getEndpointList();
     const { username, password, email } = payload;
 
-    return await request({
-        url: user.registration,
-        method: "POST",
-        payload: {
-            username,
-            password,
-            email
-        }
+    return await http.post(user.registration, {
+        username,
+        password,
+        email
     });
 };
 
@@ -43,9 +39,7 @@ export const resetPassword = async({ payload }) => {
     const { auth } = await getEndpointList();
     const { email } = payload;
 
-    const result = await http.post(auth.resetPassword, {
-        email
-    });
+    const result = await http.post(auth.resetPassword, { email });
     if (result.success) {
         return {
             success: true,
@@ -60,13 +54,7 @@ export const resetPassword = async({ payload }) => {
 }
 
 export const logout = async(refreshToken) => {
+
     const { auth } = await getEndpointList();
-    
-    return await request({
-        url: auth.logout,
-        method: "POST",
-        payload: {
-            refreshToken
-        }
-    })
+    return await http.post(auth.logout, { refreshToken })
 }
