@@ -33,9 +33,8 @@ const EditUser = ({
             email,
             username,
             admin,
-            currentPassword,
             id: data.id,
-            ...(password !== "" ? { password } : {})
+            ...(password !== "" ? { password, currentPassword } : {})
         };
         confirmEdit(payload);
     }
@@ -69,8 +68,8 @@ const EditUser = ({
     };
 
     const validationPassword = useCallback(() => {
-        return password !== "" && repeatPassword !== "" && password === repeatPassword;
-    }, [ password, repeatPassword ]);
+        return password !== "" && repeatPassword !== "" && password === repeatPassword && currentPassword !== "";
+    }, [ password, repeatPassword, currentPassword ]);
 
     const validationForm = () => {
         if (changePasswordEnabled && !validationPassword()) {

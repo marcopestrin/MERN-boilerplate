@@ -344,24 +344,34 @@ class User {
         try {
             const id = req.query.id as string;
             const payload = req.body;
+            const { password, currentPassword, admin } = payload
             const token = req.headers.refreshtoken as string;
-            console.log("payload", payload);
-            if (await checkCurrentPassword(token, payload.currentPassword)) {
-                if (payload.password) {
-                    payload.password = encryptPassword(payload.password);
+            if (password && currentPassword) {
+                if (await checkCurrentPassword(token, currentPassword)) {
+                    // si vuole anche modificare la password dell'utente
+                    payload.password = encryptPassword(password);
+                } else {
+                    res.status(400).json({
+                        success: false,
+                        message: "Current password wrong"
+                    })
+                    return
                 }
-                payload.role = payload.admin ? 1 : 2;
-                const result:Update = await updateUser(payload, { id });
-                if (result.ok) {
-                    res.status(200).json({
-                        success: true
-                    });
-                    return;
-                }
-            };
+            } else {
+                // in queato caso non si dovrà aggiornare la password
+                delete payload.password;
+            }
+            payload.role = admin ? 1 : 2;
+            const result:Update = await updateUser(payload, { id });
+            if (result.ok) {
+                res.status(200).json({
+                    success: true
+                });
+                return;
+            }
             res.status(400).json({
                 success: false,
-                message: "Current password wrong"
+                message: "generic error"
             })
         } catch (error) {
             next(error);
