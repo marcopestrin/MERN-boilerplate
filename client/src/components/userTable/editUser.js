@@ -23,6 +23,7 @@ const EditUser = ({
     const [ saveButtonEnabled, setSaveButtonEnabled ] = useState(false);
     const [ password, setPassword ] = useState("");
     const [ repeatPassword, setRepeatPassword ] = useState("");
+    const [ currentPassword, setCurrentPassword ] = useState("");
     const [ username, setUsername ] = useState("");
     const [ email, setEmail ] = useState("");
     const [ admin, setAdmin ] = useState(false);
@@ -32,6 +33,7 @@ const EditUser = ({
             email,
             username,
             admin,
+            currentPassword,
             id: data.id,
             ...(password !== "" ? { password } : {})
         };
@@ -57,6 +59,10 @@ const EditUser = ({
     const changeRepeatPassword = (event) => {
         setRepeatPassword(event.target.value);
     };
+
+    const writeCurrentPassword = (event) => {
+        setCurrentPassword(event.target.value);
+    }
 
     const enableChangePassword = () => {
         setChangePasswordEnabled(!changePasswordEnabled);
@@ -151,6 +157,15 @@ const EditUser = ({
                                 </Grid>
                                 { changePasswordEnabled &&
                                     <>
+                                        <Grid item xs={12}>
+                                            <TextField
+                                                fullWidth
+                                                type="password"
+                                                label="La tua password"
+                                                onChange={writeCurrentPassword}
+                                                value={currentPassword}
+                                            />
+                                        </Grid>
                                         <Grid item xs={12}>
                                             <TextField
                                                 fullWidth

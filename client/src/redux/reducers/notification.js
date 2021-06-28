@@ -15,7 +15,7 @@ export default function notification(prevState = {}, { type, payload }){
 
         case actions.EDIT_USER_FAILURE:
             obj = {
-                message: "error",
+                message: payload.error,
                 type: 2
             };
             break;

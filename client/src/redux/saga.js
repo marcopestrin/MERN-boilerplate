@@ -104,10 +104,13 @@ export function* editUserRequest({payload}) {
             yield put({
                 type: actions.GET_USERS_LIST_REQUEST
             })
+            return
         }
+        throw res.message
     } catch(error) {
         yield put({
-            type: actions.EDIT_USER_FAILURE
+            type: actions.EDIT_USER_FAILURE,
+            payload: { error }
         })
     }
 }

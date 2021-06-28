@@ -16,7 +16,8 @@ import {
     encryptPassword,
     generateActiveCode,
     generateUserId,
-    getContentByDocument
+    getContentByDocument,
+    checkCurrentPassword
 } from "../services/helper.service";
 import { sendRegistrationEmail } from "../services/email.service";
 
@@ -329,29 +330,39 @@ class User {
      *      - in: body
      *        name: email
      *        required: true 
+     *      - in: body
+     *        name: currentPassword
+     *        required: false
      * 
      *      responses:
      *        200:
      *          description: User Updated
+     *        400:
+     *          description: Current password wrong
      */
     async updateUser(req:Request, res:Response, next:NextFunction) {
         try {
             const id = req.query.id as string;
             const payload = req.body;
-            if (payload.password) {
-                payload.password = encryptPassword(payload.password);
-            }
-            payload.role = payload.admin ? 1 : 2;
-            const result:Update = await updateUser(payload, { id });
-            if (result.ok) {
-                res.status(200).json({
-                    success: true
-                });
-                return;
-            }
+            const token = req.headers.refreshtoken as string;
+            console.log("payload", payload);
+            if (await checkCurrentPassword(token, payload.currentPassword)) {
+                if (payload.password) {
+                    payload.password = encryptPassword(payload.password);
+                }
+                payload.role = payload.admin ? 1 : 2;
+                const result:Update = await updateUser(payload, { id });
+                if (result.ok) {
+                    res.status(200).json({
+                        success: true
+                    });
+                    return;
+                }
+            };
             res.status(400).json({
-                success: false
-            });
+                success: false,
+                message: "Current password wrong"
+            })
         } catch (error) {
             next(error);
         }
