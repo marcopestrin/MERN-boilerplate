@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { cleanLocalStorage } from "@redux/helpers";
 
 function getBaseURL () {
     return process.env.REACT_APP_BASE_URL_SERVER;
@@ -57,8 +58,13 @@ async function handleError(error) {
                 instance.defaults.headers.common['accessToken'] = accessToken;
                 return instance(originalRequest);
             }
+            cleanLocalStorage();
+            return {
+                success: false,
+                error: "Token expired"
+            }
             // example: when login credentials are wrong
-            return instance;
+            // return instance;
         }
         if ([ 500, 403 ].includes(error?.response?.status)) {
             throw error.response;

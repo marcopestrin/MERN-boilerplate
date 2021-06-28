@@ -1,4 +1,5 @@
 import * as actions from "@redux/actions";
+import { cleanLocalStorage } from "@redux/helpers";
 
 export default function auth(prevState = {}, action){
     let clonedState = JSON.parse(JSON.stringify(prevState));
@@ -55,11 +56,7 @@ export default function auth(prevState = {}, action){
                 logoutRedirect: true,
                 logged: false
             };
-            localStorage.removeItem("role");
-            localStorage.removeItem("active");
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
-            localStorage.removeItem("userId");
+            cleanLocalStorage()
             break;
               
         case actions.LOGOUT_FAILURE:

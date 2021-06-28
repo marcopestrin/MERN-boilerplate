@@ -1,8 +1,6 @@
 import * as actions from "@redux/actions";
 
-export default function notification(prevState = {}, action){
-    const { type, payload } = action;
-    let clonedState = JSON.parse(JSON.stringify(prevState));
+export default function notification(prevState = {}, { type, payload }){
     const list = [];
     let obj = null;
 
@@ -77,6 +75,13 @@ export default function notification(prevState = {}, action){
                 type: 2
             };
             break;
+
+        case actions.GET_USERS_LIST_FAILURE:
+            obj = {
+                message: payload.error,
+                type: 2
+            };
+            break
         
         default:
             break;

@@ -9,3 +9,11 @@ export const getListErrors = (state) => {
     }
     return errorList;
 }
+
+export const cleanLocalStorage = () => {
+    localStorage.removeItem("role");
+    localStorage.removeItem("active");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("userId");
+}

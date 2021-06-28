@@ -12,13 +12,6 @@ export default function users(prevState = {}, action){
                 loginRedirect: false
             };
             break;
-                          
-        case actions.GET_USERS_LIST_FAILURE:
-            clonedState = {
-                ...clonedState,
-                error: payload.error
-            };
-            break;
 
         default:
             break;
