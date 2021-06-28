@@ -341,6 +341,7 @@ class User {
             if (payload.password) {
                 payload.password = encryptPassword(payload.password);
             }
+            payload.role = payload.admin ? 1 : 2;
             const result:Update = await updateUser(payload, { id });
             if (result.ok) {
                 res.status(200).json({
