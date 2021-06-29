@@ -17,28 +17,28 @@ export const editUser = async(payload) => {
 
 }
 
-export const removeUser = async(payload) => {
+export const removeUser = async({payload}) => {
 
-    console.log("1111", payload);
-    return {
-        success: true
-    }
+    const { user } = await getEndpointList();
+    return await http.delete(`${user.delete}?id=${payload}`);
 
 }
 
-export const enableUser = async(payload) => {
+export const enableUser = async({payload}) => {
 
-    console.log("2222", payload);
-    return {
-        success: true
-    }
+    const { user } = await getEndpointList();
+    return await http.put(user.active, {}, {
+        params: { id: payload }
+    });
+
 }
 
-export const disableUser = async(payload) => {
+export const disableUser = async({payload}) => {
 
-    console.log("333", payload);
-    return {
-        success: true
-    }
+    const { user } = await getEndpointList();
+    return await http.put(user.disable, {}, {
+        params: { id: payload }
+    });
+
 }
 

@@ -122,6 +122,10 @@ export function* enableUserRequest(payload) {
                 type: actions.ENABLE_USER_SUCCESS,
                 payload: res
             });
+            yield put({
+                type: actions.GET_USERS_LIST_REQUEST
+            })
+            return
         }
     } catch(error) {
         yield put({
@@ -138,6 +142,10 @@ export function* disableUserRequest(payload) {
                 type: actions.DISABLE_USER_SUCCESS,
                 payload: res
             });
+            yield put({
+                type: actions.GET_USERS_LIST_REQUEST
+            })
+            return
         }
     } catch(error) {
         yield put({
@@ -154,6 +162,10 @@ export function* removeUserRequest(payload) {
                 type: actions.REMOVE_USER_SUCCESS,
                 payload: res
             });
+            yield put({
+                type: actions.GET_USERS_LIST_REQUEST
+            })
+            return
         }
     } catch(error) {
         yield put({
