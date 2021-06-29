@@ -2,7 +2,7 @@ import { put } from "redux-saga/effects";
 
 import * as actions from "./actions";
 import { login, registration, resetPassword, logout } from "./requests/auth";
-import { getUsersList, editUser } from "./requests/users";
+import { getUsersList, editUser, disableUser, enableUser, removeUser } from "./requests/users";
 
 export function* getUsersListRequest() {
     try {
@@ -21,8 +21,7 @@ export function* getUsersListRequest() {
             payload: { error }
         })
     }
-
-}
+};
 
 export function* loginRequest(payload) {
     try {
@@ -113,4 +112,53 @@ export function* editUserRequest({payload}) {
             payload: { error }
         })
     }
-}
+};
+
+export function* enableUserRequest(payload) {
+    try {
+        const res = yield enableUser(payload);
+        if (res.success) {
+            yield put({
+                type: actions.ENABLE_USER_SUCCESS,
+                payload: res
+            });
+        }
+    } catch(error) {
+        yield put({
+            type: actions.ENABLE_USER_FAILURE,
+            payload: { error }
+        });
+    }
+}; 
+export function* disableUserRequest(payload) {
+    try {
+        const res = yield disableUser(payload);
+        if (res.success) {
+            yield put({
+                type: actions.DISABLE_USER_SUCCESS,
+                payload: res
+            });
+        }
+    } catch(error) {
+        yield put({
+            type: actions.DISABLE_USER_FAILURE,
+            payload: { error }
+        });
+    }
+};
+export function* removeUserRequest(payload) {
+    try {
+        const res = yield removeUser(payload);
+        if (res.success) {
+            yield put({
+                type: actions.REMOVE_USER_SUCCESS,
+                payload: res
+            });
+        }
+    } catch(error) {
+        yield put({
+            type: actions.REMOVE_USER_FAILURE,
+            payload: { error }
+        });
+    }
+};

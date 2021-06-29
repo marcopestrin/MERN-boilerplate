@@ -11,19 +11,30 @@ import {
 } from "@material-ui/core";
 import {
     ExploreOff,
+    Explore,
     Edit,
     Check,
-    Close
+    Close,
+    DeleteForever
 } from "@material-ui/icons";
 import "./styles.scss";
 import DisableUser from "./disableUser";
+import EnableUser from "./enableUser";
 import EditUser from "./editUser";
-import { EDIT_USER_REQUEST } from "@redux/actions"
+import RemoveUser from "./removeUser";
+import {
+    EDIT_USER_REQUEST,
+    DISABLE_USER_REQUEST,
+    ENABLE_USER_REQUEST,
+    REMOVE_USER_REQUEST
+ } from "@redux/actions"
 
 const UserTable = ({ users }) => {
 
     const [ disableUserModal, setDisableUserModal ] = useState(false);
+    const [ enableUserModal, setEnableUserModal ] = useState(false);
     const [ editUserModal, setEditUserModal ] = useState(false);
+    const [ removeUserModal, setRemoveUserModal ] = useState(false);
     const [ userRef, setUserRef ] = useState({});
 
     const dispatch = useDispatch();
@@ -32,8 +43,19 @@ const UserTable = ({ users }) => {
     const userId = localStorage.getItem("userId");
     const isAdmin = role === "ADMIN";
 
-    const disableUser = () => {
+    const disableUser = (user) => {
+        setUserRef(user);
         setDisableUserModal(true);
+    };
+
+    const enableUser = (user) => {
+        setUserRef(user);
+        setEnableUserModal(true);
+    };
+
+    const removeUser = (user) => {
+        setUserRef(user);
+        setRemoveUserModal(true)
     };
     
     const editUser = (user) => {
@@ -44,11 +66,35 @@ const UserTable = ({ users }) => {
     const closeModal = () => {
         setDisableUserModal(false);
         setEditUserModal(false);
+        setRemoveUserModal(false);
+        setEnableUserModal(false);
         setUserRef({});
     };
 
     const confirmDisable = () => {
+        dispatch({
+            type: DISABLE_USER_REQUEST,
+            payload: userRef
+        });
         setDisableUserModal(false);
+        closeModal();
+    };
+
+    const confirmEnable = () => {
+        dispatch({
+            type: ENABLE_USER_REQUEST,
+            payload: userRef
+        });
+        setDisableUserModal(false);
+        closeModal();
+    };
+
+    const confirmDelete = () => {
+        dispatch({
+            type: REMOVE_USER_REQUEST,
+            payload: userRef
+        });
+        setRemoveUserModal(false);
         closeModal();
     }
 
@@ -59,7 +105,7 @@ const UserTable = ({ users }) => {
         });
         setEditUserModal(false);
         closeModal();
-    }
+    };
 
     return (
         <TableContainer>
@@ -91,16 +137,32 @@ const UserTable = ({ users }) => {
                                         <TableCell className="optionCell">
                                             { isAdmin &&
                                                 <Tooltip title="Disabilita Utente">
-                                                    <ExploreOff
-                                                        onClick={disableUser}
-                                                        className="icon"
-                                                    />
+                                                    { active ?
+                                                    <>
+                                                        <ExploreOff
+                                                            onClick={() => disableUser(id)}
+                                                            className="icon"
+                                                        />
+                                                    </> : <>
+                                                        <Explore
+                                                            className="icon"
+                                                            onClick={() => enableUser(id)}
+                                                        />
+                                                    </> }
                                                 </Tooltip>
                                             }
                                             {(isAdmin || (userId === id)) &&
                                                 <Tooltip title="Modifica Utente">
                                                     <Edit
                                                         onClick={() => editUser(user)}
+                                                        className="icon"
+                                                    />
+                                                </Tooltip>
+                                            }
+                                            { isAdmin && (userId !== id) &&
+                                                <Tooltip title="Elimina utente">
+                                                    <DeleteForever
+                                                        onClick={() => removeUser(id)}
                                                         className="icon"
                                                     />
                                                 </Tooltip>
@@ -114,6 +176,16 @@ const UserTable = ({ users }) => {
                     <DisableUser
                         confirmDisable={confirmDisable}
                         open={disableUserModal}
+                        handleClose={closeModal}
+                    />
+                    <EnableUser
+                        confirmEnable={confirmEnable}
+                        open={enableUserModal}
+                        handleClose={closeModal}
+                    />
+                    <RemoveUser
+                        confirmDelete={confirmDelete}
+                        open={removeUserModal}
                         handleClose={closeModal}
                     />
                     <EditUser

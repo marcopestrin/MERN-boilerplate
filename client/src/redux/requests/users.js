@@ -16,3 +16,29 @@ export const editUser = async(payload) => {
     });
 
 }
+
+export const removeUser = async(payload) => {
+
+    console.log("1111", payload);
+    return {
+        success: true
+    }
+
+}
+
+export const enableUser = async(payload) => {
+
+    console.log("2222", payload);
+    return {
+        success: true
+    }
+}
+
+export const disableUser = async(payload) => {
+
+    console.log("333", payload);
+    return {
+        success: true
+    }
+}
+
