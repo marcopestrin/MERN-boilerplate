@@ -11,6 +11,9 @@ import {
     FormControlLabel
 } from "@material-ui/core";
 
+import validation from "@validator";
+import editUserSchema from "@validator/editUser";
+
 const EditUser = ({
     open,
     handleClose,
@@ -20,13 +23,30 @@ const EditUser = ({
 }) => {
 
     const [ changePasswordEnabled, setChangePasswordEnabled ] = useState(false);
-    const [ saveButtonEnabled, setSaveButtonEnabled ] = useState(false);
     const [ password, setPassword ] = useState("");
     const [ repeatPassword, setRepeatPassword ] = useState("");
     const [ currentPassword, setCurrentPassword ] = useState("");
     const [ username, setUsername ] = useState("");
     const [ email, setEmail ] = useState("");
     const [ admin, setAdmin ] = useState(false);
+    const [ validForm, setValidForm ] = useState(false);
+
+    useEffect(() => {
+        // validation form 
+        const payload = {
+            username,
+            email,
+            admin,
+            changePasswordEnabled,
+            currentPassword,
+            password,
+            repeatPassword
+        };
+        const result = validation(editUserSchema, payload);
+        const valid = !result.error;
+        setValidForm(valid);
+        // validation form
+    }, [ username, email, admin, changePasswordEnabled, currentPassword, password, repeatPassword ])
 
     const save = () => {
         const payload = {
@@ -67,22 +87,6 @@ const EditUser = ({
         setChangePasswordEnabled(!changePasswordEnabled);
     };
 
-    const validationPassword = useCallback(() => {
-        return password !== "" && repeatPassword !== "" && password === repeatPassword && currentPassword !== "";
-    }, [ password, repeatPassword, currentPassword ]);
-
-    const validationForm = () => {
-        if (changePasswordEnabled && !validationPassword()) {
-            setSaveButtonEnabled(false);
-            return;
-        }
-        if (username === "" || email === "") {
-            setSaveButtonEnabled(false);
-            return;
-        }
-        setSaveButtonEnabled(true);
-    }
-
     const setPreloadData = (data) => {
         if (data.email) {
             setEmail(data.email);
@@ -94,8 +98,6 @@ const EditUser = ({
             setAdmin(data.role === 1);
         }
     }
-
-    useEffect(validationForm, [ changePasswordEnabled, username, email, validationPassword ]);
 
     useEffect(() => {
         setPreloadData(data);
@@ -199,7 +201,7 @@ const EditUser = ({
                                     onClick={save}
                                     variant="contained"
                                     color="primary"
-                                    disabled={!saveButtonEnabled}
+                                    disabled={validForm === false}
                                 >Salva</Button>
                             </Grid>
                         </Grid>
