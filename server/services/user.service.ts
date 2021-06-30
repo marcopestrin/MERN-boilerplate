@@ -1,4 +1,4 @@
-import { IUser, Update, CreateUserInput } from "../interfaces/index"
+import { IUser, Update, CreateUserInput, RequestData } from "../interfaces/index"
 import schema from "../models/user";
 
 export const getUserByName = async(username:string) => {
@@ -32,9 +32,35 @@ export const removeUserById = async(id:string) => {
 }
 
 export const createUser = async(payload:CreateUserInput) => {
-    const user = await getUserByEmail(payload.email);
-    if (!user) {
-        return await schema.create(payload) as IUser;
+    try {
+        const user = await getUserByEmail(payload.email);
+        if (!user) {
+            const validUsername:boolean = await checkAvailableUsername(payload.username);
+            if (validUsername) {
+                const data = await schema.create(payload) as IUser;
+                return {
+                    success: true,
+                    data,
+                    error: null
+                } as RequestData;
+            }
+            throw "Existing username"
+        }
+        throw "Existing email";
+        
+    } catch (error) {
+        return {
+            success: false,
+            error,
+            data: null
+        } as RequestData;
     }
-    return null
+}
+
+const checkAvailableUsername = async(username:string) => {
+    const result = await schema.find({ username });
+    if (result.length > 0) {
+        return false
+    }
+    return true
 }

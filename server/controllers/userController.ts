@@ -2,7 +2,8 @@ import { Response, Request, NextFunction } from "express";
 import {
     IUser,
     Update,
-    CreateUserInput
+    CreateUserInput,
+    RequestData
 } from "../interfaces";
 import { 
     getUserList,
@@ -128,11 +129,12 @@ class User {
                 email,
                 id: generateUserId(email),
                 activeCode
-            };
-            const result:IUser | null = await createUser(payload);
-            if (!result) {
+            };            
+            const result:RequestData = await createUser(payload);
+            if (!result.success) {
                 res.status(400).json({
-                    success: false
+                    success: false,
+                    message: result.error,
                 });
                 return;
             }
