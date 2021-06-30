@@ -12,9 +12,9 @@ export function* getUsersListRequest() {
                 type: actions.GET_USERS_LIST_SUCCESS,
                 payload: res.data
             })
-        } else {
-            throw res.error
+            return;
         }
+        throw res.error;
     } catch (error) {
         yield put({
             type: actions.GET_USERS_LIST_FAILURE,
@@ -30,10 +30,10 @@ export function* loginRequest(payload) {
             yield put({
                 type: actions.LOGIN_SUCCESS,
                 payload: res.data
-            })
-        } else {
-            throw res.message;
+            });
+            return;
         }
+        throw res.message;
     } catch (error) {
         yield put({
             type: actions.LOGIN_FAILURE,
@@ -50,7 +50,9 @@ export function* registrationRequest(payload) {
                 type: actions.REGISTRATION_SUCCESS,
                 payload: res
             })
+            return;
         }
+        throw res.message;
     } catch (error) {
         yield put({
             type: actions.REGISTRATION_FAILURE,
@@ -65,7 +67,7 @@ export function* logoutRequest() {
         if (res.success) {
             yield put({
                 type: actions.LOGOUT_SUCCESS
-            })
+            });
         }
     } catch (error) {
         yield put({
@@ -81,10 +83,10 @@ export function* resetPasswordRequest(payload) {
         if (res.success) {
             yield put({
                 type: actions.RESET_PASSWORD_SUCCESS
-            })
-            return
+            });
+            return;
         }
-        throw res.message
+        throw res.message;
     } catch (error) {
         yield put({
             type: actions.RESET_PASSWORD_FAILURE,
@@ -102,10 +104,10 @@ export function* editUserRequest({payload}) {
             })
             yield put({
                 type: actions.GET_USERS_LIST_REQUEST
-            })
-            return
+            });
+            return;
         }
-        throw res.message
+        throw res.message;
     } catch(error) {
         yield put({
             type: actions.EDIT_USER_FAILURE,
@@ -124,8 +126,7 @@ export function* enableUserRequest(payload) {
             });
             yield put({
                 type: actions.GET_USERS_LIST_REQUEST
-            })
-            return
+            });
         }
     } catch(error) {
         yield put({
@@ -144,8 +145,7 @@ export function* disableUserRequest(payload) {
             });
             yield put({
                 type: actions.GET_USERS_LIST_REQUEST
-            })
-            return
+            });
         }
     } catch(error) {
         yield put({
@@ -164,8 +164,7 @@ export function* removeUserRequest(payload) {
             });
             yield put({
                 type: actions.GET_USERS_LIST_REQUEST
-            })
-            return
+            });
         }
     } catch(error) {
         yield put({
