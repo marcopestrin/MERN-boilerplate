@@ -51,7 +51,7 @@ export const generateRecoveryToken = async(name:string) => {
         await saveToken(recoveryToken, username, expires, "recovery");
         return {
             success: true,
-            message: "ok",
+            info: "ok",
             recoveryToken,
             id,
             username
@@ -59,7 +59,7 @@ export const generateRecoveryToken = async(name:string) => {
     } catch (e) {
         return {
             success: false,
-            message: "User not found"
+            info: "User not found"
         }
     }
 

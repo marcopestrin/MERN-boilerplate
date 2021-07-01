@@ -141,7 +141,8 @@ class User {
             const isSended = await sendRegistrationEmail(email, activeCode);
             if (!isSended) {
                 res.status(400).json({
-                    success: false
+                    success: false,
+                    message: message.errorSendEmail
                 });
                 return
             }
@@ -260,7 +261,8 @@ class User {
             const user:IUser = await getUserById(id);
             if (user === null) {
                 res.status(400).json({
-                    success: false
+                    success: false,
+                    message: message.userNotFound
                 });
                 return;
             }
@@ -355,7 +357,7 @@ class User {
                 } else {
                     res.status(400).json({
                         success: false,
-                        message: "Current password wrong"
+                        message: message.errorCurrentPassword
                     })
                     return
                 }
@@ -373,7 +375,7 @@ class User {
             }
             res.status(400).json({
                 success: false,
-                message: "generic error"
+                message: message.genericError
             })
         } catch (error) {
             next(error);

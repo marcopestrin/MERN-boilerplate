@@ -198,9 +198,9 @@ class Auth {
 
             const { password, resetToken } = req.body;
             const username = await getUsernameByResetToken(resetToken);
-            if (!username) throw "Wrong token";
+            if (!username) throw message.wrongToken;
             const userDocument:IUser = await getUserByName(username);
-            if (!userDocument) throw "User not found";
+            if (!userDocument) throw message.userNotFound;
             const payload:object = {
                 ...userDocument,
                 password: encryptPassword(password)
@@ -214,7 +214,8 @@ class Auth {
                 return;
             }
             res.status(400).json({
-                success: false
+                success: false,
+                message: message.errorAddNewPassword
             });
         } catch (error) {
             next(error);
@@ -241,7 +242,7 @@ class Auth {
     async reset(req:Request, res:Response, next:NextFunction) {
         try {
             const { email } = req.body;
-            const { recoveryToken, id, username, message, success } = await generateRecoveryToken(email);
+            const { recoveryToken, id, username, info, success } = await generateRecoveryToken(email);
             if (success) {
                 const emailResult: any = await sendRecoveryEmail(recoveryToken, email, id, username);
                 if (emailResult.accepted) {
@@ -251,11 +252,11 @@ class Auth {
                 throw {
                     emailResult,
                     success: false,
-                    message: "Impossible to send an email"
+                    message: message.errorSendEmail
                 };
             }
             throw {
-                message,
+                message: info,
                 success: false
             };
         } catch (error) {

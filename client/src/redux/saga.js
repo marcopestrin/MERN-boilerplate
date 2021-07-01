@@ -12,9 +12,7 @@ export function* getUsersListRequest() {
                 type: actions.GET_USERS_LIST_SUCCESS,
                 payload: res.data
             })
-            return;
         }
-        throw res.error;
     } catch (error) {
         yield put({
             type: actions.GET_USERS_LIST_FAILURE,
@@ -47,8 +45,7 @@ export function* registrationRequest(payload) {
         const res = yield registration(payload);
         if (res.success) {
             yield put({
-                type: actions.REGISTRATION_SUCCESS,
-                payload: res
+                type: actions.REGISTRATION_SUCCESS
             })
             return;
         }
@@ -121,8 +118,7 @@ export function* enableUserRequest(payload) {
         const res = yield enableUser(payload);
         if (res.success) {
             yield put({
-                type: actions.ENABLE_USER_SUCCESS,
-                payload: res
+                type: actions.ENABLE_USER_SUCCESS
             });
             yield put({
                 type: actions.GET_USERS_LIST_REQUEST
@@ -140,8 +136,7 @@ export function* disableUserRequest(payload) {
         const res = yield disableUser(payload);
         if (res.success) {
             yield put({
-                type: actions.DISABLE_USER_SUCCESS,
-                payload: res
+                type: actions.DISABLE_USER_SUCCESS
             });
             yield put({
                 type: actions.GET_USERS_LIST_REQUEST
@@ -159,8 +154,7 @@ export function* removeUserRequest(payload) {
         const res = yield removeUser(payload);
         if (res.success) {
             yield put({
-                type: actions.REMOVE_USER_SUCCESS,
-                payload: res
+                type: actions.REMOVE_USER_SUCCESS
             });
             yield put({
                 type: actions.GET_USERS_LIST_REQUEST

@@ -5,8 +5,12 @@
     "genericError": "Generic Error",
     "wrongCredentials": "wrong credentials",
     "wrongInput": "wrong input",
+    "wrongToken": "wrong token",
     "invalidPassword": "password not valid",
     "userAlreadyExist": "user alrady exist!",
     "userActivated": "all good!! user activated",
+    "errorSendEmail": "Unable to send e-mail",
+    "errorCurrentPassword": "Current password wrong",
+    "errorAddNewPassword": "Impossible to add new password",
     "good": "good"
 }
