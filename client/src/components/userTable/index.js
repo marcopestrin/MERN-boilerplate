@@ -174,11 +174,11 @@ const UserTable = ({ users }) => {
                             })}
                         </TableBody>
                     </Table>
-                    <ModalContext.Provider value={{ closeModal, disableUserModal, enableUserModal, removeUserModal, editUserModal }}>
-                        <DisableUser confirmDisable={confirmDisable} />
-                        <EnableUser confirmEnable={confirmEnable} />
-                        <RemoveUser confirmDelete={confirmDelete} />
-                        <EditUser confirmEdit={confirmEdit} root={isAdmin} data={userRef} />
+                    <ModalContext.Provider value={{ confirmDisable, confirmEnable, confirmDelete, confirmEdit, closeModal, disableUserModal, enableUserModal, removeUserModal, editUserModal }}>
+                        <DisableUser />
+                        <EnableUser />
+                        <RemoveUser />
+                        <EditUser root={isAdmin} data={userRef} />
                     </ModalContext.Provider>
                 </>
             )}

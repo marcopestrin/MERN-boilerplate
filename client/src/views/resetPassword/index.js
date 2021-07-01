@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { FormControl, TextField, Grid, Button } from '@material-ui/core';
+import { FormControl, TextField, Grid, Button, Typography } from '@material-ui/core';
+import { Link } from "react-router-dom";
 import "./styles.scss";
-
 import { RESET_PASSWORD_REQUEST } from "@redux/actions";
 import validation from "@validator";
 import resetPasswordSchema from "@validator/resetPassword";
@@ -57,6 +57,24 @@ const ResetPassword = () => {
                     >
                         Recupera password
                     </Button>
+                </Grid>
+                <Grid item xs={12} sm={12} md={6}>
+                    <Typography
+                        variant="subtitle1"
+                        gutterBottom
+                        color="primary"
+                        className="hypertext"
+                    >
+                        <Link to="/signUp">Registra un nuovo account</Link>   
+                    </Typography>
+                    <Typography
+                        variant="subtitle1"
+                        gutterBottom
+                        color="primary"
+                        className="hypertext"
+                    >
+                        <Link to="/login">Accedi alla piattaforma</Link>   
+                    </Typography>
                 </Grid>
             </Grid>
 

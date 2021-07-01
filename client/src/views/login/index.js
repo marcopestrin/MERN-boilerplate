@@ -2,26 +2,17 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { FormControl, TextField, Typography, Grid, Button } from '@material-ui/core';
-
 import { LOGIN_REQUEST } from "@redux/actions";
 import validation from "@validator";
 import signUpSchema from "@validator/login";
-
 import "./styles.scss";
+
 const Login = () => {
 
     const [ username, setUsername ] = useState("");
     const [ password, setPassword ] = useState("");
     const [ validForm, setValidForm ] = useState(false);
     const dispatch = useDispatch();
-
-    const goToForgetPassword = () => {
-
-    };
-
-    const goToSignUp = () => {
-
-    };
 
     const loginRequest = () => {
         dispatch({
@@ -85,7 +76,6 @@ const Login = () => {
                         gutterBottom
                         color="primary"
                         className="hypertext"
-                        onClick={goToForgetPassword}
                     >
                         <Link to="/resetPassword">Recupera la password dimenticata</Link>    
                     </Typography>
@@ -94,7 +84,6 @@ const Login = () => {
                         gutterBottom
                         color="primary"
                         className="hypertext"
-                        onClick={goToSignUp}
                     >
                         <Link to="/signUp">Registra un nuovo account</Link>   
                     </Typography>

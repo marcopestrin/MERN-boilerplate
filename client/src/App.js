@@ -1,7 +1,6 @@
 import React from "react";
 import { Container, Grid } from "@material-ui/core";
 import { BrowserRouter } from "react-router-dom";
-
 import Login from "@views/login";
 import SignUp from "@views/signup";
 import ResetPassword from "@views/resetPassword";

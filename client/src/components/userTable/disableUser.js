@@ -9,9 +9,9 @@ import {
     Grid
 } from "@material-ui/core";
 
-const DisableUser = ({ confirmDisable }) => {
+const DisableUser = () => {
 
-    const { closeModal, disableUserModal } = useContext(ModalContext);
+    const { closeModal, disableUserModal, confirmDisable } = useContext(ModalContext);
 
     return (
         <Dialog
@@ -20,9 +20,7 @@ const DisableUser = ({ confirmDisable }) => {
             fullWidth
             onClose={closeModal}
         >
-            <DialogTitle>
-                Sei sicuro di voler disattivare l'utente?
-            </DialogTitle>
+            <DialogTitle> Sei sicuro di voler disattivare l'utente? </DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         <Grid container spacing={2}>

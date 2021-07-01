@@ -9,9 +9,9 @@ import {
 } from "@material-ui/core";
 import { ModalContext } from "./index";
 
-const EnableUser = ({ confirmEnable }) => {
+const EnableUser = () => {
 
-    const { closeModal, enableUserModal } = useContext(ModalContext);
+    const { closeModal, enableUserModal, confirmEnable } = useContext(ModalContext);
 
     return (
         <Dialog
@@ -20,9 +20,7 @@ const EnableUser = ({ confirmEnable }) => {
             fullWidth
             onClose={closeModal}
         >
-            <DialogTitle>
-                Sei sicuro di voler attivare l'utente manualmente?
-            </DialogTitle>
+            <DialogTitle> Sei sicuro di voler attivare l'utente manualmente? </DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         <Grid container spacing={2}>

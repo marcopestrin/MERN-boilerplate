@@ -1,4 +1,3 @@
-
 export const getSeverity = (color) => {
     let severity = "info";
     switch (color) {

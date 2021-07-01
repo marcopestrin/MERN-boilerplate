@@ -15,9 +15,9 @@ import validation from "@validator";
 import editUserSchema from "@validator/editUser";
 import { ModalContext } from "./index";
 
-const EditUser = ({ confirmEdit, data, root }) => {
+const EditUser = ({ data, root }) => {
 
-    const { closeModal, editUserModal } = useContext(ModalContext);
+    const { closeModal, editUserModal, confirmEdit } = useContext(ModalContext);
     const [ changePasswordEnabled, setChangePasswordEnabled ] = useState(false);
     const [ password, setPassword ] = useState("");
     const [ repeatPassword, setRepeatPassword ] = useState("");
@@ -55,34 +55,6 @@ const EditUser = ({ confirmEdit, data, root }) => {
         confirmEdit(payload);
     }
 
-    const changeEmail = (event) => {
-        setEmail(event.target.value);
-    };
-
-    const changeUsername = (event) => {
-        setUsername(event.target.value);
-    };
-
-    const switchRole = (event) => {
-        setAdmin(event.target.checked);
-    };
-
-    const changePassword = (event) => {
-        setPassword(event.target.value);
-    };
-
-    const changeRepeatPassword = (event) => {
-        setRepeatPassword(event.target.value);
-    };
-
-    const writeCurrentPassword = (event) => {
-        setCurrentPassword(event.target.value);
-    }
-
-    const enableChangePassword = () => {
-        setChangePasswordEnabled(!changePasswordEnabled);
-    };
-
     const setPreloadData = (data) => {
         if (data.email) {
             setEmail(data.email);
@@ -95,9 +67,15 @@ const EditUser = ({ confirmEdit, data, root }) => {
         }
     }
 
-    useEffect(() => {
-        setPreloadData(data);
-    }, [ data ]);
+    const changeEmail = (event) => setEmail(event.target.value);
+    const changeUsername = (event) => setUsername(event.target.value);
+    const switchRole = (event) => setAdmin(event.target.checked);
+    const changePassword = (event) => setPassword(event.target.value);
+    const changeRepeatPassword = (event) => setRepeatPassword(event.target.value);
+    const writeCurrentPassword = (event) => setCurrentPassword(event.target.value);
+    const enableChangePassword = () => setChangePasswordEnabled(!changePasswordEnabled);
+
+    useEffect(() => setPreloadData(data), [ data ]);
 
     return (
         <Dialog

@@ -1,7 +1,6 @@
 import React, { memo, useEffect } from "react"
 import { Typography } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
-
 import { GET_USERS_LIST_REQUEST } from "@redux/actions";
 import { selectorUsers } from "@redux/selectors"
 import Logout from "@components/logout";
@@ -12,12 +11,6 @@ const Dashboard = () => {
     const { list } = useSelector(selectorUsers);
     const role = localStorage.getItem("role");
 
-    const getAllUsers = () => {
-        dispatch({
-            type: GET_USERS_LIST_REQUEST
-        });
-    };
-
     const listAvailable = (list) => {
         if (list === undefined || list === null || Object.keys(list).length === 0 || list.length < 1) {
             return false;
@@ -25,7 +18,11 @@ const Dashboard = () => {
         return true;
     }
 
-    useEffect(getAllUsers, []);
+    useEffect(() => {
+        dispatch({
+            type: GET_USERS_LIST_REQUEST
+        });
+    }, []);
 
     return (
         <>

@@ -9,9 +9,9 @@ import {
 } from "@material-ui/core";
 import { ModalContext } from "./index";
 
-const RemoveUser = ({ confirmDelete }) => {
+const RemoveUser = () => {
 
-    const { closeModal, removeUserModal } = useContext(ModalContext);
+    const { closeModal, removeUserModal, confirmDelete } = useContext(ModalContext);
 
     return (
         <Dialog
@@ -20,9 +20,7 @@ const RemoveUser = ({ confirmDelete }) => {
             fullWidth
             onClose={closeModal}
         >
-            <DialogTitle>
-                Sei sicuro di voler eliminare definitivamente l'utente?
-            </DialogTitle>
+            <DialogTitle> Sei sicuro di voler eliminare definitivamente l'utente? </DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         <Grid container spacing={2}>
@@ -42,12 +40,9 @@ const RemoveUser = ({ confirmDelete }) => {
                                 >Elimina</Button>
                             </Grid>
                         </Grid>
-
                     </DialogContentText>
                 </DialogContent>
         </Dialog>
-
-
     )
 }
 

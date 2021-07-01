@@ -2,12 +2,11 @@ import React, { useState } from "react";
 import { FormControl, TextField, Typography, Grid, Button } from '@material-ui/core';
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
-
 import { REGISTRATION_REQUEST } from "@redux/actions";
 import validation from "@validator";
 import signUpSchema from "@validator/signUp";
-
 import "./styles.scss";
+
 const SignUp = () => {
 
     const [ username, setUsername ] = useState("");
@@ -16,10 +15,6 @@ const SignUp = () => {
     const [ email, setEmail ] = useState("");
     const [ validForm, setValidForm ] = useState(false);
     const dispatch = useDispatch();
-
-    const goToLogin = () => {
-
-    };
 
     const validateForm = () => {
         const payload = {
@@ -105,15 +100,22 @@ const SignUp = () => {
                         Registra nuovo utente
                     </Button>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} sm={12} md={6}>
                     <Typography
                         variant="subtitle1"
                         gutterBottom
                         color="primary"
                         className="hypertext"
-                        onClick={goToLogin}
                     >
                         <Link to="/login">Accedi alla piattaforma</Link>   
+                    </Typography>
+                    <Typography
+                        variant="subtitle1"
+                        gutterBottom
+                        color="primary"
+                        className="hypertext"
+                    >
+                        <Link to="/resetPassword">Recupera la password dimenticata</Link>    
                     </Typography>
                 </Grid>
 

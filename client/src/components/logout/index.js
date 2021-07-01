@@ -1,10 +1,9 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { FormControl, Grid, Button } from "@material-ui/core";
-
 import { LOGOUT_REQUEST } from "@redux/actions";
-
 import "./styles.scss";
+
 const Logout = () => {
 
     const dispatch = useDispatch();
