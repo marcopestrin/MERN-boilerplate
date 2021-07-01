@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
     Dialog,
     DialogContent,
@@ -7,19 +7,18 @@ import {
     Button,
     Grid
 } from "@material-ui/core";
+import { ModalContext } from "./index";
 
-const RemoveUser = ({
-    open,
-    handleClose,
-    confirmDelete
-}) => {
+const RemoveUser = ({ confirmDelete }) => {
+
+    const { closeModal, removeUserModal } = useContext(ModalContext);
 
     return (
         <Dialog
-            open={open}
+            open={removeUserModal}
             maxWidth="sm"
             fullWidth
-            onClose={handleClose}
+            onClose={closeModal}
         >
             <DialogTitle>
                 Sei sicuro di voler eliminare definitivamente l'utente?
@@ -30,7 +29,7 @@ const RemoveUser = ({
                             <Grid item xs={6}>
                                 <Button
                                     fullWidth
-                                    onClick={handleClose}
+                                    onClick={closeModal}
                                     variant="contained"
                                 >Mantieni</Button>
                             </Grid>

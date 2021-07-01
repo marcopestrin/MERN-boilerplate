@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
     Dialog,
     DialogContent,
@@ -7,19 +7,18 @@ import {
     Button,
     Grid
 } from "@material-ui/core";
+import { ModalContext } from "./index";
 
-const EnableUser = ({
-    open,
-    handleClose,
-    confirmEnable
-}) => {
+const EnableUser = ({ confirmEnable }) => {
+
+    const { closeModal, enableUserModal } = useContext(ModalContext);
 
     return (
         <Dialog
-            open={open}
+            open={enableUserModal}
             maxWidth="sm"
             fullWidth
-            onClose={handleClose}
+            onClose={closeModal}
         >
             <DialogTitle>
                 Sei sicuro di voler attivare l'utente manualmente?
@@ -30,7 +29,7 @@ const EnableUser = ({
                             <Grid item xs={6}>
                                 <Button
                                     fullWidth
-                                    onClick={handleClose}
+                                    onClick={closeModal}
                                     variant="contained"
                                 >Annulla</Button>
                             </Grid>

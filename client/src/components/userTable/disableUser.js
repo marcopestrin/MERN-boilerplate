@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useContext } from "react";
+import { ModalContext } from "./index";
 import {
     Dialog,
     DialogContent,
@@ -8,18 +9,16 @@ import {
     Grid
 } from "@material-ui/core";
 
-const DisableUser = ({
-    open,
-    handleClose,
-    confirmDisable
-}) => {
+const DisableUser = ({ confirmDisable }) => {
+
+    const { closeModal, disableUserModal } = useContext(ModalContext);
 
     return (
         <Dialog
-            open={open}
+            open={disableUserModal}
             maxWidth="sm"
             fullWidth
-            onClose={handleClose}
+            onClose={closeModal}
         >
             <DialogTitle>
                 Sei sicuro di voler disattivare l'utente?
@@ -30,7 +29,7 @@ const DisableUser = ({
                             <Grid item xs={6}>
                                 <Button
                                     fullWidth
-                                    onClick={handleClose}
+                                    onClick={closeModal}
                                     variant="contained"
                                 >Annulla</Button>
                             </Grid>
@@ -47,8 +46,6 @@ const DisableUser = ({
                     </DialogContentText>
                 </DialogContent>
         </Dialog>
-
-
     )
 }
 

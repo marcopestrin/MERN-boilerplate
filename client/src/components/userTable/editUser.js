@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useContext } from "react"
 import {
     Dialog,
     DialogContent,
@@ -13,15 +13,11 @@ import {
 
 import validation from "@validator";
 import editUserSchema from "@validator/editUser";
+import { ModalContext } from "./index";
 
-const EditUser = ({
-    open,
-    handleClose,
-    confirmEdit,
-    data,
-    root
-}) => {
+const EditUser = ({ confirmEdit, data, root }) => {
 
+    const { closeModal, editUserModal } = useContext(ModalContext);
     const [ changePasswordEnabled, setChangePasswordEnabled ] = useState(false);
     const [ password, setPassword ] = useState("");
     const [ repeatPassword, setRepeatPassword ] = useState("");
@@ -105,10 +101,10 @@ const EditUser = ({
 
     return (
         <Dialog
-            open={open}
+            open={editUserModal}
             maxWidth="sm"
             fullWidth
-            onClose={handleClose}
+            onClose={closeModal}
         >
             <DialogTitle> Modifica l'utente </DialogTitle>
                 <DialogContent>
@@ -191,7 +187,7 @@ const EditUser = ({
                             <Grid item xs={6}>
                                 <Button
                                     fullWidth
-                                    onClick={handleClose}
+                                    onClick={closeModal}
                                     variant="contained"
                                 >Annulla</Button>
                             </Grid>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, createContext } from "react";
 import { useDispatch } from "react-redux";
 import {
     Table,
@@ -28,6 +28,8 @@ import {
     ENABLE_USER_REQUEST,
     REMOVE_USER_REQUEST
  } from "@redux/actions"
+
+export const ModalContext = createContext(null);
 
 const UserTable = ({ users }) => {
 
@@ -135,37 +137,36 @@ const UserTable = ({ users }) => {
                                         </TableCell>
                                         <TableCell>{ timeRegistration }</TableCell>
                                         <TableCell className="optionCell">
-                                            { isAdmin &&
+                                            { isAdmin && (userId !== id) &&
                                                 <Tooltip title="Disabilita Utente">
                                                     { active ?
-                                                    <>
                                                         <ExploreOff
                                                             onClick={() => disableUser(id)}
                                                             className="icon"
                                                         />
-                                                    </> : <>
+                                                    :
                                                         <Explore
                                                             className="icon"
                                                             onClick={() => enableUser(id)}
                                                         />
-                                                    </> }
+                                                    }
                                                 </Tooltip>
                                             }
                                             {(isAdmin || (userId === id)) &&
-                                                <Tooltip title="Modifica Utente">
-                                                    <Edit
-                                                        onClick={() => editUser(user)}
-                                                        className="icon"
-                                                    />
-                                                </Tooltip>
-                                            }
-                                            { isAdmin && (userId !== id) &&
-                                                <Tooltip title="Elimina utente">
-                                                    <DeleteForever
-                                                        onClick={() => removeUser(id)}
-                                                        className="icon"
-                                                    />
-                                                </Tooltip>
+                                                <>
+                                                    <Tooltip title="Modifica Utente">
+                                                        <Edit
+                                                            onClick={() => editUser(user)}
+                                                            className="icon"
+                                                        />
+                                                    </Tooltip>
+                                                    <Tooltip title="Elimina utente">
+                                                        <DeleteForever
+                                                            onClick={() => removeUser(id)}
+                                                            className="icon"
+                                                        />
+                                                    </Tooltip>
+                                                </>
                                             }
                                         </TableCell>
                                     </TableRow>
@@ -173,28 +174,12 @@ const UserTable = ({ users }) => {
                             })}
                         </TableBody>
                     </Table>
-                    <DisableUser
-                        confirmDisable={confirmDisable}
-                        open={disableUserModal}
-                        handleClose={closeModal}
-                    />
-                    <EnableUser
-                        confirmEnable={confirmEnable}
-                        open={enableUserModal}
-                        handleClose={closeModal}
-                    />
-                    <RemoveUser
-                        confirmDelete={confirmDelete}
-                        open={removeUserModal}
-                        handleClose={closeModal}
-                    />
-                    <EditUser
-                        confirmEdit={confirmEdit}
-                        open={editUserModal}
-                        root={isAdmin}
-                        data={userRef}
-                        handleClose={closeModal}
-                    />
+                    <ModalContext.Provider value={{ closeModal, disableUserModal, enableUserModal, removeUserModal, editUserModal }}>
+                        <DisableUser confirmDisable={confirmDisable} />
+                        <EnableUser confirmEnable={confirmEnable} />
+                        <RemoveUser confirmDelete={confirmDelete} />
+                        <EditUser confirmEdit={confirmEdit} root={isAdmin} data={userRef} />
+                    </ModalContext.Provider>
                 </>
             )}
         </TableContainer>
