@@ -42,7 +42,7 @@ const EditUser = ({ data, root }) => {
         const valid = !result.error;
         setValidForm(valid);
         // validation form
-    }, [ username, email, admin, changePasswordEnabled, currentPassword, password, repeatPassword ])
+    }, [ username, email, admin, changePasswordEnabled, currentPassword, password, repeatPassword ]);
 
     const save = () => {
         const payload = {
@@ -53,7 +53,7 @@ const EditUser = ({ data, root }) => {
             ...(password !== "" ? { password, currentPassword } : {})
         };
         confirmEdit(payload);
-    }
+    };
 
     const setPreloadData = (data) => {
         if (data.email) {
@@ -65,7 +65,7 @@ const EditUser = ({ data, root }) => {
         if (data.role) {
             setAdmin(data.role === 1);
         }
-    }
+    };
 
     const changeEmail = (event) => setEmail(event.target.value);
     const changeUsername = (event) => setUsername(event.target.value);

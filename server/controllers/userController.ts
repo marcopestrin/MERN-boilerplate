@@ -11,7 +11,8 @@ import {
     createUser,
     updateUser,
     checkActiveCode,
-    removeUserById
+    removeUserById,
+    checkDataOnEdit
 } from "../services/user.service";
 import {
     encryptPassword,
@@ -348,8 +349,16 @@ class User {
         try {
             const id = req.query.id as string;
             const payload = req.body;
-            const { password, currentPassword, admin } = payload
+            const { password, currentPassword, admin, username, email } = payload;
             const token = req.headers.refreshtoken as string;
+            const validData = await checkDataOnEdit(email, username, id);
+            if (!validData.success) {
+                res.status(400).json({
+                    success: false,
+                    message: validData.error
+                });
+                return;
+            }
             if (password && currentPassword) {
                 if (await checkCurrentPassword(token, currentPassword)) {
                     // si vuole anche modificare la password dell'utente
@@ -358,8 +367,8 @@ class User {
                     res.status(400).json({
                         success: false,
                         message: message.errorCurrentPassword
-                    })
-                    return
+                    });
+                    return;
                 }
             } else {
                 // in queato caso non si dovrà aggiornare la password
@@ -376,7 +385,7 @@ class User {
             res.status(400).json({
                 success: false,
                 message: message.genericError
-            })
+            });
         } catch (error) {
             next(error);
         }
