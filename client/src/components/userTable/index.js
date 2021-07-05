@@ -138,19 +138,23 @@ const UserTable = ({ users }) => {
                                         <TableCell>{ timeRegistration }</TableCell>
                                         <TableCell className="optionCell">
                                             { isAdmin && (userId !== id) &&
-                                                <Tooltip title="Disabilita Utente">
+                                                <>
                                                     { active ?
-                                                        <ExploreOff
-                                                            onClick={() => disableUser(id)}
-                                                            className="icon"
-                                                        />
+                                                        <Tooltip title="Disabilita Utente">
+                                                            <ExploreOff
+                                                                onClick={() => disableUser(id)}
+                                                                className="icon"
+                                                            />
+                                                        </Tooltip>
                                                     :
-                                                        <Explore
-                                                            className="icon"
-                                                            onClick={() => enableUser(id)}
-                                                        />
+                                                        <Tooltip title="Abilita Utente">
+                                                            <Explore
+                                                                className="icon"
+                                                                onClick={() => enableUser(id)}
+                                                            />
+                                                        </Tooltip>
                                                     }
-                                                </Tooltip>
+                                                </>
                                             }
                                             {(isAdmin || (userId === id)) &&
                                                 <>
