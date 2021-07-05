@@ -6,6 +6,13 @@ export default function notification(prevState = {}, { type, payload }){
 
     switch (type) {
 
+        case actions.TOKEN_EXPIRED:
+            obj = {
+                message: "Session token expired",
+                type: 2
+            };
+            break;
+
         case actions.EDIT_USER_SUCCESS:
             obj = {
                 message: "Updated user",
