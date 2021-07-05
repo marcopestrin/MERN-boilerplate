@@ -49,6 +49,7 @@ export default function auth(prevState = {}, action){
         case actions.GET_USERS_LIST_FAILURE:
             break;
 
+        case actions.TOKEN_EXPIRED:
         case actions.LOGOUT_SUCCESS:
             clonedState = {
                 ...clonedState,

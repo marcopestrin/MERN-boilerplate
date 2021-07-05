@@ -5,7 +5,7 @@ export const getUsersList = async() => {
 
     const { user } = await getEndpointList();
     return await http.get(user.getAllUsers);
-    
+        
 }
 
 export const editUser = async(payload) => {

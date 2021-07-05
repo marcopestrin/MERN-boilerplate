@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios from 'axios';
 import { cleanLocalStorage } from "@redux/helpers";
 
 function getBaseURL () {
@@ -61,7 +61,8 @@ async function handleError(error) {
             cleanLocalStorage();
             return {
                 success: false,
-                error: "Token expired"
+                error: "Token expired",
+                tokenError: true
             }
             // example: when login credentials are wrong
             // return instance;
