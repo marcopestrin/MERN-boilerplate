@@ -17,30 +17,36 @@ const App = () => {
             <Container maxWidth="md" className="wrapper-container">
                 <Grid container spacing={2}>
                     <BrowserRouter>
-                        <ForceRedirect />
-                        <PublicRoute
-                            exec
-                            path="/login"
-                            component={Login}
-                        >
-                        </PublicRoute>
-                        <PublicRoute
-                            exec
-                            path="/signUp"
-                            component={SignUp}
-                        >
-                        </PublicRoute>
-                        <PublicRoute
-                            exec
-                            path="/resetPassword"
-                            component={ResetPassword}
-                        >
-                        </PublicRoute>
-                        <PrivateRoute
-                            exec
-                            path="/dashboard"
-                            component={Dashboard}
-                        />
+                        <ForceRedirect>
+                            <PublicRoute
+                                exec
+                                path="/login"
+                                component={Login}
+                            >
+                            </PublicRoute>
+                            <PublicRoute
+                                exec
+                                path="/signUp"
+                                component={SignUp}
+                            >
+                            </PublicRoute>
+                            <PublicRoute
+                                exec
+                                path="/resetPassword"
+                                component={ResetPassword}
+                            >
+                            </PublicRoute>
+                            <PrivateRoute
+                                exec
+                                path="/dashboard"
+                                component={Dashboard}
+                            />
+                            <PrivateRoute
+                                exec
+                                path="/"
+                                component={Dashboard}
+                            />
+                        </ForceRedirect>
                     </BrowserRouter>
                 </Grid>
             </Container>
