@@ -28,7 +28,7 @@ export const checkActiveCode = async(activeCode:string) => {
 }
 
 export const removeUserById = async(id:string) => {
-    return await schema.deleteOne({ id })
+    return await schema.deleteOne({ id });
 }
 
 export const createUser = async(payload:CreateUserInput) => {

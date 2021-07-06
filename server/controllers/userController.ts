@@ -22,6 +22,7 @@ import {
     checkCurrentPassword
 } from "../services/helper.service";
 import { sendRegistrationEmail } from "../services/email.service";
+import { removeTokensByUsername } from "../services/token.service";
 
 const message = require("./message.json");
 class User {
@@ -305,8 +306,9 @@ class User {
     async deleteUser(req:Request, res:Response, next:NextFunction){
         try {
             const id = req.query.id as string;
+            const { username } = await getUserById(id);
             await removeUserById(id);
-            // da rimuovere anche tutti i token associati a quell'utente
+            await removeTokensByUsername(username);
             res.status(200).json({
                 success:true
             });

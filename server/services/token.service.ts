@@ -78,9 +78,13 @@ export const getUsernameByResetToken = async(token:string) => {
     const document:IToken | null = await schema.findOne({ token, type: "reset" });
     if (!document) return;
     return document.username
-}
+};
 
 export const removeTokenExpired = () => {
     const currentDate = moment().toDate();
     schema.deleteMany({expires: { $lte: currentDate }});
-}
+};
+
+export const removeTokensByUsername = async(username:string) => {
+    return await schema.deleteMany({ username });
+};

@@ -56,7 +56,7 @@ npm run dev / npm run start
 | March 2021 | <ul> <li>Authentication system </li><li> CRUD API on User Mode </li><li> First Deploy on Heroku </li><li> Creating frontend (login/signup/logout) </ul>|
 | April 2021 | <ul> <li>Handle function http request</li><li>Frontend alias import</li><li>Split controller-services backend</li><li>Created custom token collection in DB</li><li>Added Joi Validator for endpoint input</li>|
 | May 2021 | <ul><li>Added interceptors to manage token renewal</li><li>Frontend: Ability to change the information of your user and other users if you are admin</li><li>Created public kanban board for frontend and backend</li></ul>|
-| June 2021 | <ul><li>Added Joi validator each frontend form</li><li>Created notifications reducer (Frontend) for popupNotify component</li><li>When update a password of a user, you must add the password of current logged user</li><li>When edit or add a new user, check if email and username are available to avoid duplicate</li><li>auto-remove token expired</li></ul>|
+| June 2021 | <ul><li>Added Joi validator each frontend form</li><li>Created notifications reducer (Frontend) for popupNotify component</li><li>When update a password of a user, you must add the password of current logged user</li><li>When edit or add a new user, check if email and username are available to avoid duplicate</li><li>Auto-remove token expired</li><li>when I remove a user, I also remove all tokens associated with it</li></ul>|
 
 ## Others
 This project are made in my free time. Currently under construction by myself.
