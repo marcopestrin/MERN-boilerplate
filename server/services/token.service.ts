@@ -79,3 +79,8 @@ export const getUsernameByResetToken = async(token:string) => {
     if (!document) return;
     return document.username
 }
+
+export const removeTokenExpired = () => {
+    const currentDate = moment().toDate();
+    schema.deleteMany({expires: { $lte: currentDate }});
+}

@@ -10,7 +10,8 @@ import {
     deleteToken,
     verifyToken,
     generateRecoveryToken,
-    getUsernameByResetToken
+    getUsernameByResetToken,
+    removeTokenExpired
 } from "../services/token.service";
 import { getUserByName, updateUser } from "../services/user.service";
 import { sendRecoveryEmail } from "../services/email.service";
@@ -40,6 +41,7 @@ class Auth {
     async logout(req:Request, res:Response, next:NextFunction) {
         try {
             await deleteToken(req.body.refreshToken, "refresh");
+            await removeTokenExpired();
             res.status(200).json({
                 success: true
             });
