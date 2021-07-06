@@ -41,11 +41,6 @@ const App = () => {
                                 path="/dashboard"
                                 component={Dashboard}
                             />
-                            <PrivateRoute
-                                exec
-                                path="/"
-                                component={Dashboard}
-                            />
                         </ForceRedirect>
                     </BrowserRouter>
                 </Grid>
