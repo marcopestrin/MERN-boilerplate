@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FormControl, TextField, Typography, Grid, Button } from '@material-ui/core';
+import { FormControl, TextField, Typography, Grid, Button } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { REGISTRATION_REQUEST } from "@redux/actions";
@@ -115,7 +115,7 @@ const SignUp = () => {
                         color="primary"
                         className="hypertext"
                     >
-                        <Link to="/resetPassword">Recupera la password dimenticata</Link>    
+                        <Link to="/recoveryPassword">Recupera la password dimenticata</Link>    
                     </Typography>
                 </Grid>
 

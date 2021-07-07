@@ -41,14 +41,14 @@ export default function notification(prevState = {}, { type, payload }){
             };
             break;
 
-        case actions.RESET_PASSWORD_SUCCESS:
+        case actions.RECOVERY_PASSWORD_SUCCESS:
             obj = {
                 message: "Check you inbox",
                 type: 1
             };
             break;
 
-        case actions.RESET_PASSWORD_FAILURE:
+        case actions.RECOVERY_PASSWORD_FAILURE:
             obj = {
                 message: payload.error,
                 type: 2

@@ -3,6 +3,7 @@ import { Container, Grid } from "@material-ui/core";
 import { BrowserRouter } from "react-router-dom";
 import Login from "@views/login";
 import SignUp from "@views/signup";
+import RecoveryPassword from "@views/recoveryPassword";
 import ResetPassword from "@views/resetPassword";
 import "./styles.scss";
 import { PrivateRoute, PublicRoute } from "./hooks/routes";
@@ -32,10 +33,14 @@ const App = () => {
                             </PublicRoute>
                             <PublicRoute
                                 exec
-                                path="/resetPassword"
-                                component={ResetPassword}
+                                path="/recoveryPassword"
+                                component={RecoveryPassword}
                             >
                             </PublicRoute>
+                            <PublicRoute
+                                path="/resetPassword/:id/:token/:username"
+                                component={ResetPassword}
+                            />
                             <PrivateRoute
                                 exec
                                 path="/dashboard"

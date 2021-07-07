@@ -1,32 +1,31 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { FormControl, TextField, Typography, Grid, Button } from '@material-ui/core';
-import { LOGIN_REQUEST } from "@redux/actions";
-import validation from "@validator";
-import signUpSchema from "@validator/login";
+import { FormControl, TextField, Grid, Button, Typography } from '@material-ui/core';
+import { Link } from "react-router-dom";
 import "./styles.scss";
+import { RECOVERY_PASSWORD_REQUEST } from "@redux/actions";
+import validation from "@validator";
+import recoveryPasswordSchema from "@validator/recoveryPassword";
 
-const Login = () => {
+const RecoveryPassword = () => {
 
-    const [ username, setUsername ] = useState("");
-    const [ password, setPassword ] = useState("");
+    const [ email, setEmail ] = useState("");
     const [ validForm, setValidForm ] = useState(false);
+
     const dispatch = useDispatch();
 
-    const loginRequest = () => {
+    const recoveryPasswordRequest = () => {
         dispatch({
-            type: LOGIN_REQUEST,
+            type: RECOVERY_PASSWORD_REQUEST,
             payload: {
-                username,
-                password
+                email
             }
         });
     };
 
     const validateForm = () => {
-        const payload = { username, password };
-        const result = validation(signUpSchema, payload);
+        const payload = { email };
+        const result = validation(recoveryPasswordSchema, payload);
         const valid = !result.error;
         setValidForm(valid)
     }
@@ -37,26 +36,15 @@ const Login = () => {
             margin="normal"
         >
             <Grid container spacing={2}>
-                <Grid item xs={12} sm={12} md={6}>
+                <Grid item xs={12}>
                     <TextField
-                        label="Username"
+                        label="email"
                         type="input"
+                        onKeyUp={validateForm}
                         color="primary"
                         fullWidth
-                        onKeyUp={validateForm}
-                        value={username}
-                        onChange={(event) => setUsername(event.target.value)}
-                    />
-                </Grid>
-                <Grid item xs={12} sm={12} md={6}>
-                    <TextField
-                        label="Password"
-                        type="password"
-                        color="primary"
-                        fullWidth
-                        onKeyUp={validateForm}
-                        value={password}
-                        onChange={(event) => setPassword(event.target.value)}
+                        value={email}
+                        onChange={(event) => setEmail(event.target.value)}
                     />
                 </Grid>
                 <Grid item xs={12}>
@@ -64,10 +52,10 @@ const Login = () => {
                         variant="outlined"
                         color="primary"
                         fullWidth
-                        onClick={loginRequest}
                         disabled={validForm === false}
+                        onClick={recoveryPasswordRequest}
                     >
-                        Accedi alla piattaforma
+                        Recupera password
                     </Button>
                 </Grid>
                 <Grid item xs={12} sm={12} md={6}>
@@ -77,7 +65,7 @@ const Login = () => {
                         color="primary"
                         className="hypertext"
                     >
-                        <Link to="/recoveryPassword">Recupera la password dimenticata</Link>    
+                        <Link to="/signUp">Registra un nuovo account</Link>   
                     </Typography>
                     <Typography
                         variant="subtitle1"
@@ -85,14 +73,13 @@ const Login = () => {
                         color="primary"
                         className="hypertext"
                     >
-                        <Link to="/signUp">Registra un nuovo account</Link>   
+                        <Link to="/login">Accedi alla piattaforma</Link>   
                     </Typography>
                 </Grid>
-
             </Grid>
 
         </FormControl>
     )
 }
 
-export default Login
+export default RecoveryPassword

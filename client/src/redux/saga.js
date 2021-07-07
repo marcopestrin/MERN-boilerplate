@@ -1,8 +1,23 @@
 import { put } from "redux-saga/effects";
 
 import * as actions from "./actions";
-import { login, registration, resetPassword, logout } from "./requests/auth";
+import { login, registration, recoveryPassword, logout, changePassword } from "./requests/auth";
 import { getUsersList, editUser, disableUser, enableUser, removeUser } from "./requests/users";
+
+export function* changePasswordRequest({ payload}) {
+    try {
+        const res = yield changePassword(payload);
+        if (res.success) {
+            yield put({
+                type: actions.CHANGE_PASSWORD_SUCCESS
+            });
+        }
+    } catch (error) {
+        yield put({
+            type: actions.CHANGE_PASSWORD_FAILURE
+        });
+    }
+};
 
 export function* getUsersListRequest() {
     try {
@@ -79,19 +94,19 @@ export function* logoutRequest() {
     }
 };
 
-export function* resetPasswordRequest(payload) {
+export function* recoveryPasswordRequest(payload) {
     try {
-        const res = yield resetPassword(payload);
+        const res = yield recoveryPassword(payload);
         if (res.success) {
             yield put({
-                type: actions.RESET_PASSWORD_SUCCESS
+                type: actions.RECOVERY_PASSWORD_SUCCESS
             });
             return;
         }
         throw res.message;
     } catch (error) {
         yield put({
-            type: actions.RESET_PASSWORD_FAILURE,
+            type: actions.RECOVERY_PASSWORD_FAILURE,
             payload: { error }
         })
     }

@@ -28,7 +28,7 @@ const sendEmail = (mailOptions:MailOptions) => {
     })
 }
 export const sendRecoveryEmail = async(token:string, email:string, id:string, username:string) => {
-    const url:string = `${process.env.FRONTEND_URL}/reset?id=${id}&resetToken=${token}&username=${username}}`;
+    const url:string = `${process.env.FRONTEND_URL}/reset/${id}/${token}/${username}}`;
     const mailOptions:MailOptions = {
         from: `${applicationDomain}`,
         to: email,

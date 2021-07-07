@@ -18,7 +18,7 @@ export const login = async({ payload }) => {
         message: "Wrong credentials",
         data: null,
         success: false
-    }
+    };
 };
 
 export const registration = async({ payload }) => {
@@ -31,13 +31,18 @@ export const registration = async({ payload }) => {
     });
 };
 
-export const resetPassword = async({ payload }) => {
+export const recoveryPassword = async({ payload }) => {
     const { auth } = await getEndpointList();
     const { email } = payload;
-    return await http.post(auth.resetPassword, { email });
-}
+    return await http.post(auth.recoveryPassword, { email });
+};
 
 export const logout = async(refreshToken) => {
     const { auth } = await getEndpointList();
-    return await http.post(auth.logout, { refreshToken })
-}
+    return await http.post(auth.logout, { refreshToken });
+};
+
+export const changePassword = async(payload ) => {
+    const { auth } = await getEndpointList();
+    return await http.post(auth.resetPassword, payload);
+};
