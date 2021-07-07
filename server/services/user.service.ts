@@ -73,6 +73,14 @@ export const checkAvailableEmail = async(email:string) => {
     return false as boolean;
 }
 
+export const checkValidEmail = async(email:string) => {
+    const user = await getUserByEmail(email);
+    if (!user) {
+        return false as boolean;
+    }
+    return true as boolean;
+}
+
 export const checkDataOnEdit = async(email:string, username:string, id:string) => {
     const userByUsername = await schema.find({ username });
     if (userByUsername.length === 0 || (userByUsername.length === 1 && userByUsername[0].id === id)) {

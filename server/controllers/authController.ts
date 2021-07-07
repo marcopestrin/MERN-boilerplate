@@ -13,7 +13,11 @@ import {
     getUsernameByResetToken,
     removeTokenExpired
 } from "../services/token.service";
-import { getUserByName, updateUser } from "../services/user.service";
+import {
+    getUserByName,
+    updateUser,
+    checkValidEmail
+} from "../services/user.service";
 import { sendRecoveryEmail } from "../services/email.service";
 import { checkCredentials } from "../services/auth.service";
 import { encryptPassword } from "../services/helper.service";
@@ -244,23 +248,30 @@ class Auth {
     async reset(req:Request, res:Response, next:NextFunction) {
         try {
             const { email } = req.body;
-            const { recoveryToken, id, username, info, success } = await generateRecoveryToken(email);
-            if (success) {
-                const emailResult: any = await sendRecoveryEmail(recoveryToken, email, id, username);
-                if (emailResult.accepted) {
-                    res.status(200).json({ success: true, id });
-                    return
+            const validEmail = await checkValidEmail(email);
+            if (validEmail) {
+                const { recoveryToken, id, username, info, success } = await generateRecoveryToken(email);
+                if (success) {
+                    const emailResult: any = await sendRecoveryEmail(recoveryToken, email, id, username);
+                    if (emailResult.accepted) {
+                        res.status(200).json({ success: true, id });
+                        return
+                    }
+                    throw {
+                        emailResult,
+                        success: false,
+                        message: message.errorSendEmail
+                    };
                 }
                 throw {
-                    emailResult,
-                    success: false,
-                    message: message.errorSendEmail
+                    message: info,
+                    success: false
                 };
             }
             throw {
-                message: info,
+                message: message.userNotFound,
                 success: false
-            };
+            }
         } catch (error) {
             next(error);
         }
