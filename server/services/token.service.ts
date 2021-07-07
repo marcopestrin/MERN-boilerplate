@@ -40,9 +40,9 @@ export const deleteToken = async(token:string, type:string) => {
 }
 
 export const generateRecoveryToken = async(name:string) => {
+    const { username, password, id }:IUser = await getUserByEmail(name);
     try {
-        const { username, password, id }:IUser = await getUserByEmail(name);
-        const recoveryToken = crypto
+        const recoveryToken: string = crypto
             .createHash("md5")
             .update(username.concat(password))
             .digest("hex");
@@ -59,7 +59,10 @@ export const generateRecoveryToken = async(name:string) => {
     } catch (e) {
         return {
             success: false,
-            info: "User not found"
+            info: "User not found",
+            recoveryToken: "",
+            id,
+            username
         }
     }
 

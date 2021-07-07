@@ -27,26 +27,26 @@ const sendEmail = (mailOptions:MailOptions) => {
         })
     })
 }
-export const sendRecoveryEmail = async(token, email, id, username) => {
-    const url:string = `http://${process.env.HOST_APPLICATION}:${process.env.PORT}/reset?id=${id}&resetToken=${token}&username=${username}}`;
+export const sendRecoveryEmail = async(token:string, email:string, id:string, username:string) => {
+    const url:string = `${process.env.FRONTEND_URL}/reset?id=${id}&resetToken=${token}&username=${username}}`;
     const mailOptions:MailOptions = {
-        from: `${applicationDomain} - recovery password`,
+        from: `${applicationDomain}`,
         to: email,
-        subject: "Recovery Password",
-        text: "Hello world?",
-        html: `this is the token: <b>${token}</b>; this is the id: ${id}. Click <a target='_blank' href='${url}'>here</a>`
+        subject: `${applicationDomain} - Recovery Password`,
+        text: `${applicationDomain} - Recovery Password`,
+        html: `This is the token: <b>${token}</b>;<br />This is the id: <b>${id}</b>. Click <a target='_blank' href='${url}'>here</a> to set a new password.`
     };
     return await sendEmail(mailOptions);
 }
 
-export const sendRegistrationEmail = async(email, activeCode) => {
+export const sendRegistrationEmail = async(email:string, activeCode:string) => {
     const url:string = `http://${process.env.HOST_APPLICATION}:${process.env.PORT}/v1/user/confirmEmail/${activeCode}`;
     const mailOptions:MailOptions = {
         from: `${applicationDomain}`,
         to: email,
-        subject: "Confirm Email",
-        text: "Hello world?",
-        html: `Click <a target='_blank' href='${url}'>here</a> to activate the account`
+        subject: `${applicationDomain} - Confirm your account`,
+        text: `${applicationDomain} - Confirm your account`,
+        html: `Click <b><a target='_blank' href='${url}'>here</a></b> to activate the account`
     };
     return await sendEmail(mailOptions); 
 }

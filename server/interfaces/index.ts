@@ -23,7 +23,7 @@ export interface IUser extends Document {
     username: string,
     password: string,
     email: string,
-    id?: string,
+    id: string,
     activeCode: string,
     active?: boolean,
     timeRegistration?: Date,
