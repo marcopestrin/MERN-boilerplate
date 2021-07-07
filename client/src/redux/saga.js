@@ -11,6 +11,7 @@ export function* changePasswordRequest({ payload}) {
             yield put({
                 type: actions.CHANGE_PASSWORD_SUCCESS
             });
+            return;
         }
     } catch (error) {
         yield put({
@@ -94,7 +95,7 @@ export function* logoutRequest() {
     }
 };
 
-export function* recoveryPasswordRequest(payload) {
+export function* recoveryPasswordRequest({payload}) {
     try {
         const res = yield recoveryPassword(payload);
         if (res.success) {

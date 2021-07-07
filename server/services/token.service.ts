@@ -39,20 +39,20 @@ export const deleteToken = async(token:string, type:string) => {
     await document.remove();
 }
 
-export const generateRecoveryToken = async(name:string) => {
+export const generateResetToken = async(name:string) => {
     const { username, password, id }:IUser = await getUserByEmail(name);
     try {
-        const recoveryToken: string = crypto
+        const resetToken: string = crypto
             .createHash("md5")
             .update(username.concat(password))
             .digest("hex");
         const expires: moment.Moment = moment()
             .add("60", "m");
-        await saveToken(recoveryToken, username, expires, "recovery");
+        await saveToken(resetToken, username, expires, "reset");
         return {
             success: true,
             info: "ok",
-            recoveryToken,
+            resetToken,
             id,
             username
         };
@@ -60,10 +60,10 @@ export const generateRecoveryToken = async(name:string) => {
         return {
             success: false,
             info: "User not found",
-            recoveryToken: "",
+            resetToken: "",
             id,
             username
-        }
+        };
     }
 
 }

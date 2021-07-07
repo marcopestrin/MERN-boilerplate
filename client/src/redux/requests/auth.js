@@ -31,10 +31,9 @@ export const registration = async({ payload }) => {
     });
 };
 
-export const recoveryPassword = async({ payload }) => {
+export const recoveryPassword = async(payload) => {
     const { auth } = await getEndpointList();
-    const { email } = payload;
-    return await http.post(auth.recoveryPassword, { email });
+    return await http.post(auth.recoveryPassword, payload);
 };
 
 export const logout = async(refreshToken) => {

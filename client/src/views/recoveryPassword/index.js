@@ -1,50 +1,63 @@
 import React, { useState } from "react";
+import { FormControl, TextField, Grid, Button } from "@material-ui/core";
 import { useDispatch } from "react-redux";
-import { FormControl, TextField, Grid, Button, Typography } from '@material-ui/core';
-import { Link } from "react-router-dom";
-import "./styles.scss";
-import { RECOVERY_PASSWORD_REQUEST } from "@redux/actions";
+import { useParams } from "react-router-dom";
 import validation from "@validator";
 import recoveryPasswordSchema from "@validator/recoveryPassword";
+import { RECOVERY_PASSWORD_REQUEST } from "@redux/actions";
 
 const RecoveryPassword = () => {
 
-    const [ email, setEmail ] = useState("");
+    const [ password, setPassword ] = useState("");
+    const [ repeatPassword, setRepeatPassword] = useState("");
     const [ validForm, setValidForm ] = useState(false);
-
+    const { id, resetToken, username } = useParams();
     const dispatch = useDispatch();
 
-    const recoveryPasswordRequest = () => {
+    const confirmNewPassword = () => {
         dispatch({
             type: RECOVERY_PASSWORD_REQUEST,
             payload: {
-                email
+                resetToken,
+                password
             }
         });
     };
 
     const validateForm = () => {
-        const payload = { email };
+        const payload = { password, repeatPassword };
         const result = validation(recoveryPasswordSchema, payload);
         const valid = !result.error;
-        setValidForm(valid)
-    }
-
+        setValidForm(valid);
+    };
+    
     return (
         <FormControl
             fullWidth
             margin="normal"
         >
             <Grid container spacing={2}>
-                <Grid item xs={12}>
+                <Grid item xs={12}>{username}</Grid>
+                <Grid item xs={12} sm={12} md={6}>
                     <TextField
-                        label="email"
-                        type="input"
+                        label="Inserisci la nuova password"
+                        type="password"
                         onKeyUp={validateForm}
                         color="primary"
                         fullWidth
-                        value={email}
-                        onChange={(event) => setEmail(event.target.value)}
+                        value={password}
+                        onChange={(event) => setPassword(event.target.value)}
+                    />
+                </Grid>
+                <Grid item xs={12} sm={12} md={6}>
+                    <TextField
+                        label="Ripeti la nuova password"
+                        type="password"
+                        color="primary"
+                        onKeyUp={validateForm}
+                        fullWidth
+                        value={repeatPassword}
+                        onChange={(event) => setRepeatPassword(event.target.value)}
                     />
                 </Grid>
                 <Grid item xs={12}>
@@ -52,34 +65,18 @@ const RecoveryPassword = () => {
                         variant="outlined"
                         color="primary"
                         fullWidth
+                        onClick={confirmNewPassword}
                         disabled={validForm === false}
-                        onClick={recoveryPasswordRequest}
                     >
-                        Recupera password
+                        Conferma la nuova password
                     </Button>
                 </Grid>
-                <Grid item xs={12} sm={12} md={6}>
-                    <Typography
-                        variant="subtitle1"
-                        gutterBottom
-                        color="primary"
-                        className="hypertext"
-                    >
-                        <Link to="/signUp">Registra un nuovo account</Link>   
-                    </Typography>
-                    <Typography
-                        variant="subtitle1"
-                        gutterBottom
-                        color="primary"
-                        className="hypertext"
-                    >
-                        <Link to="/login">Accedi alla piattaforma</Link>   
-                    </Typography>
-                </Grid>
+
             </Grid>
 
         </FormControl>
     )
 }
+
 
 export default RecoveryPassword

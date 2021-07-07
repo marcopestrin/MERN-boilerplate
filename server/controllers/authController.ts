@@ -9,7 +9,7 @@ import {
     generateTokens,
     deleteToken,
     verifyToken,
-    generateRecoveryToken,
+    generateResetToken,
     getUsernameByResetToken,
     removeTokenExpired
 } from "../services/token.service";
@@ -208,10 +208,10 @@ class Auth {
             const userDocument:IUser = await getUserByName(username);
             if (!userDocument) throw message.userNotFound;
             const payload:object = {
-                ...userDocument,
+                ...userDocument._doc,
                 password: encryptPassword(password)
             }
-            const { nModified }:Update = await updateUser(payload, { username })
+            const { nModified }:Update = await updateUser(payload, { username });
             if (nModified > 0) {
                 await deleteToken(resetToken, "reset");
                 res.status(200).json({
@@ -250,9 +250,9 @@ class Auth {
             const { email } = req.body;
             const validEmail = await checkValidEmail(email);
             if (validEmail) {
-                const { recoveryToken, id, username, info, success } = await generateRecoveryToken(email);
+                const { resetToken, id, username, info, success } = await generateResetToken(email);
                 if (success) {
-                    const emailResult: any = await sendRecoveryEmail(recoveryToken, email, id, username);
+                    const emailResult: any = await sendRecoveryEmail(resetToken, email, id, username);
                     if (emailResult.accepted) {
                         res.status(200).json({ success: true, id });
                         return

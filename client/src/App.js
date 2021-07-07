@@ -33,13 +33,13 @@ const App = () => {
                             </PublicRoute>
                             <PublicRoute
                                 exec
-                                path="/recoveryPassword"
-                                component={RecoveryPassword}
+                                path="/resetPassword"
+                                component={ResetPassword}
                             >
                             </PublicRoute>
                             <PublicRoute
-                                path="/resetPassword/:id/:token/:username"
-                                component={ResetPassword}
+                                path="/recoveryPassword/:id/:resetToken/:username"
+                                component={RecoveryPassword}
                             />
                             <PrivateRoute
                                 exec

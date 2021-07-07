@@ -77,7 +77,7 @@ const Login = () => {
                         color="primary"
                         className="hypertext"
                     >
-                        <Link to="/recoveryPassword">Recupera la password dimenticata</Link>    
+                        <Link to="/resetPassword">Recupera la password dimenticata</Link>    
                     </Typography>
                     <Typography
                         variant="subtitle1"

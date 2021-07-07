@@ -29,6 +29,7 @@ export interface IUser extends Document {
     timeRegistration?: Date,
     resetToken?: string,
     role?: number
+    _doc?: object
 }
 
 export interface CreateUserInput {

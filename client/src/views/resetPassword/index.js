@@ -1,64 +1,50 @@
 import React, { useState } from "react";
-import { FormControl, TextField, Grid, Button } from "@material-ui/core";
 import { useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
+import { FormControl, TextField, Grid, Button, Typography } from '@material-ui/core';
+import { Link } from "react-router-dom";
+import "./styles.scss";
+import { CHANGE_PASSWORD_REQUEST } from "@redux/actions";
 import validation from "@validator";
 import resetPasswordSchema from "@validator/resetPassword";
-import { CHANGE_PASSWORD_REQUEST } from "@redux/actions";
 
 const ResetPassword = () => {
 
-    const [ password, setPassword ] = useState("");
-    const [ repeatPassword, setRepeatPassword] = useState("");
+    const [ email, setEmail ] = useState("");
     const [ validForm, setValidForm ] = useState(false);
-    const { id, token, username } = useParams();
+
     const dispatch = useDispatch();
 
-    const confirmNewPassword = () => {
+    const resetPasswordRequest = () => {
         dispatch({
             type: CHANGE_PASSWORD_REQUEST,
             payload: {
-                id,
-                token,
-                username,
-                password
+                email
             }
         });
     };
 
     const validateForm = () => {
-        const payload = { password, repeatPassword };
+        const payload = { email };
         const result = validation(resetPasswordSchema, payload);
         const valid = !result.error;
-        setValidForm(valid);
-    };
-    
+        setValidForm(valid)
+    }
+
     return (
         <FormControl
             fullWidth
             margin="normal"
         >
             <Grid container spacing={2}>
-                <Grid item xs={12} sm={12} md={6}>
+                <Grid item xs={12}>
                     <TextField
-                        label="Inserisci la nuova password"
-                        type="password"
+                        label="email"
+                        type="input"
                         onKeyUp={validateForm}
                         color="primary"
                         fullWidth
-                        value={password}
-                        onChange={(event) => setPassword(event.target.value)}
-                    />
-                </Grid>
-                <Grid item xs={12} sm={12} md={6}>
-                    <TextField
-                        label="Ripeti la nuova password"
-                        type="password"
-                        color="primary"
-                        onKeyUp={validateForm}
-                        fullWidth
-                        value={repeatPassword}
-                        onChange={(event) => setRepeatPassword(event.target.value)}
+                        value={email}
+                        onChange={(event) => setEmail(event.target.value)}
                     />
                 </Grid>
                 <Grid item xs={12}>
@@ -66,18 +52,34 @@ const ResetPassword = () => {
                         variant="outlined"
                         color="primary"
                         fullWidth
-                        onClick={confirmNewPassword}
                         disabled={validForm === false}
+                        onClick={resetPasswordRequest}
                     >
-                        Conferma la nuova password
+                        Recupera password
                     </Button>
                 </Grid>
-
+                <Grid item xs={12} sm={12} md={6}>
+                    <Typography
+                        variant="subtitle1"
+                        gutterBottom
+                        color="primary"
+                        className="hypertext"
+                    >
+                        <Link to="/signUp">Registra un nuovo account</Link>   
+                    </Typography>
+                    <Typography
+                        variant="subtitle1"
+                        gutterBottom
+                        color="primary"
+                        className="hypertext"
+                    >
+                        <Link to="/login">Accedi alla piattaforma</Link>   
+                    </Typography>
+                </Grid>
             </Grid>
 
         </FormControl>
     )
 }
-
 
 export default ResetPassword

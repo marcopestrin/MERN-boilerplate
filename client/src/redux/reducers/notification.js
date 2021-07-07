@@ -43,12 +43,26 @@ export default function notification(prevState = {}, { type, payload }){
 
         case actions.RECOVERY_PASSWORD_SUCCESS:
             obj = {
-                message: "Check you inbox",
+                message: "Password changed",
                 type: 1
             };
             break;
 
         case actions.RECOVERY_PASSWORD_FAILURE:
+            obj = {
+                message: payload.error,
+                type: 2
+            };
+            break;
+
+        case actions.CHANGE_PASSWORD_SUCCESS:
+            obj = {
+                message: "Check you inbox",
+                type: 1
+            };
+            break;
+
+        case actions.CHANGE_PASSWORD_FAILURE:
             obj = {
                 message: payload.error,
                 type: 2
