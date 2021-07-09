@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { FormControl, TextField, Typography, Grid, Button } from '@material-ui/core';
+import { FormControl, TextField, Grid, Button } from '@material-ui/core';
 import { LOGIN_REQUEST } from "@redux/actions";
 import validation from "@validator";
 import signUpSchema from "@validator/login";
 import "./styles.scss";
+import MenuAuth from "@components/menuAuth";
+import Title from "@components/title";
 
 const Login = () => {
 
@@ -32,66 +33,54 @@ const Login = () => {
     }
 
     return (
-        <FormControl
-            fullWidth
-            margin="normal"
-        >
-            <Grid container spacing={2}>
-                <Grid item xs={12} sm={12} md={6}>
-                    <TextField
-                        label="Username"
-                        type="input"
-                        color="primary"
-                        fullWidth
-                        onKeyUp={validateForm}
-                        value={username}
-                        onChange={(event) => setUsername(event.target.value)}
-                    />
-                </Grid>
-                <Grid item xs={12} sm={12} md={6}>
-                    <TextField
-                        label="Password"
-                        type="password"
-                        color="primary"
-                        fullWidth
-                        onKeyUp={validateForm}
-                        value={password}
-                        onChange={(event) => setPassword(event.target.value)}
-                    />
-                </Grid>
-                <Grid item xs={12}>
-                    <Button
-                        variant="outlined"
-                        color="primary"
-                        fullWidth
-                        onClick={loginRequest}
-                        disabled={validForm === false}
-                    >
-                        Accedi alla piattaforma
-                    </Button>
-                </Grid>
-                <Grid item xs={12} sm={12} md={6}>
-                    <Typography
-                        variant="subtitle1"
-                        gutterBottom
-                        color="primary"
-                        className="hypertext"
-                    >
-                        <Link to="/resetPassword">Recupera la password dimenticata</Link>    
-                    </Typography>
-                    <Typography
-                        variant="subtitle1"
-                        gutterBottom
-                        color="primary"
-                        className="hypertext"
-                    >
-                        <Link to="/signUp">Registra un nuovo account</Link>   
-                    </Typography>
+        <>
+            <Title titlePage="Login" />
+            <FormControl
+                fullWidth
+                margin="normal"
+            >
+                <Grid container spacing={2}>
+                    <Grid item xs={12} sm={12} md={6}>
+                        <TextField
+                            label="Username"
+                            type="input"
+                            color="primary"
+                            fullWidth
+                            onKeyUp={validateForm}
+                            value={username}
+                            onChange={(event) => setUsername(event.target.value)}
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={6}>
+                        <TextField
+                            label="Password"
+                            type="password"
+                            color="primary"
+                            fullWidth
+                            onKeyUp={validateForm}
+                            value={password}
+                            onChange={(event) => setPassword(event.target.value)}
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Button
+                            variant="outlined"
+                            color="primary"
+                            fullWidth
+                            onClick={loginRequest}
+                            disabled={validForm === false}
+                        >
+                            Accedi alla piattaforma
+                        </Button>
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={6}>
+                        <MenuAuth /> 
+                    </Grid>
+
                 </Grid>
 
-            </Grid>
-
-        </FormControl>
+            </FormControl>
+        </>
     )
 }
 

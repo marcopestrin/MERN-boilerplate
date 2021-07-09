@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import validation from "@validator";
 import recoveryPasswordSchema from "@validator/recoveryPassword";
 import { RECOVERY_PASSWORD_REQUEST } from "@redux/actions";
+import Title from "@components/title";
 
 const RecoveryPassword = () => {
 
@@ -32,49 +33,52 @@ const RecoveryPassword = () => {
     };
     
     return (
-        <FormControl
-            fullWidth
-            margin="normal"
-        >
-            <Grid container spacing={2}>
-                <Grid item xs={12}>{username}</Grid>
-                <Grid item xs={12} sm={12} md={6}>
-                    <TextField
-                        label="Inserisci la nuova password"
-                        type="password"
-                        onKeyUp={validateForm}
-                        color="primary"
-                        fullWidth
-                        value={password}
-                        onChange={(event) => setPassword(event.target.value)}
-                    />
-                </Grid>
-                <Grid item xs={12} sm={12} md={6}>
-                    <TextField
-                        label="Ripeti la nuova password"
-                        type="password"
-                        color="primary"
-                        onKeyUp={validateForm}
-                        fullWidth
-                        value={repeatPassword}
-                        onChange={(event) => setRepeatPassword(event.target.value)}
-                    />
-                </Grid>
-                <Grid item xs={12}>
-                    <Button
-                        variant="outlined"
-                        color="primary"
-                        fullWidth
-                        onClick={confirmNewPassword}
-                        disabled={validForm === false}
-                    >
-                        Conferma la nuova password
-                    </Button>
+        <>
+            <Title titlePage="Cambia la password" />
+            <FormControl
+                fullWidth
+                margin="normal"
+            >
+                <Grid container spacing={2}>
+                    <Grid item xs={12}>{username}</Grid>
+                    <Grid item xs={12} sm={12} md={6}>
+                        <TextField
+                            label="Inserisci la nuova password"
+                            type="password"
+                            onKeyUp={validateForm}
+                            color="primary"
+                            fullWidth
+                            value={password}
+                            onChange={(event) => setPassword(event.target.value)}
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={6}>
+                        <TextField
+                            label="Ripeti la nuova password"
+                            type="password"
+                            color="primary"
+                            onKeyUp={validateForm}
+                            fullWidth
+                            value={repeatPassword}
+                            onChange={(event) => setRepeatPassword(event.target.value)}
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Button
+                            variant="outlined"
+                            color="primary"
+                            fullWidth
+                            onClick={confirmNewPassword}
+                            disabled={validForm === false}
+                        >
+                            Conferma la nuova password
+                        </Button>
+                    </Grid>
+
                 </Grid>
 
-            </Grid>
-
-        </FormControl>
+            </FormControl>
+        </>
     )
 }
 
