@@ -1,6 +1,6 @@
 import { put } from "redux-saga/effects";
 import { getUsersList, editUser, disableUser, enableUser, removeUser } from "@redux/requests/users";
-import * as actions from "./actions";
+import * as actions from "@redux/actions";
 
 export function* getUsersListRequest() {
     try {

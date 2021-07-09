@@ -1,6 +1,6 @@
 import { put } from "redux-saga/effects";
 import { login, registration, recoveryPassword, logout, changePassword } from "@redux/requests/auth";
-import * as actions from "./actions";
+import * as actions from "@redux/actions";
 
 export function* loginRequest({ payload }) {
     try {
