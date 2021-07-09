@@ -17,13 +17,15 @@ import {
     registrationRequest,
     logoutRequest,
     recoveryPasswordRequest,
+    changePasswordRequest
+  } from "./controllers/auth";
+  import {
     getUsersListRequest,
     editUserRequest,
     removeUserRequest,
     disableUserRequest,
     enableUserRequest,
-    changePasswordRequest
-  } from "./saga";
+  } from "./controllers/users";
 
 function* rootSaga() {
     yield takeLatest(LOGIN_REQUEST, loginRequest);

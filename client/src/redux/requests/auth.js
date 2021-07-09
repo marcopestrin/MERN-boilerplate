@@ -1,7 +1,7 @@
 import { getEndpointList } from "./helpers";
 import http from "./index";
 
-export const login = async({ payload }) => {
+export const login = async(payload) => {
     const { auth } = await getEndpointList();
     const data = await http.post(auth.login, {
         username: payload?.username,
@@ -12,7 +12,7 @@ export const login = async({ payload }) => {
             data,
             success: true,
             message: ""
-        }
+        };
     }
     return {
         message: "Wrong credentials",
@@ -21,7 +21,7 @@ export const login = async({ payload }) => {
     };
 };
 
-export const registration = async({ payload }) => {
+export const registration = async(payload) => {
     const { user } = await getEndpointList();
     const { username, password, email } = payload;
     return await http.post(user.registration, {
