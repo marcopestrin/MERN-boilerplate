@@ -21,6 +21,13 @@ export default function auth(prevState = {}, action){
                 }
             };
             break;
+
+        case actions.RECOVERY_PASSWORD_SUCCESS:
+            clonedState = {
+                ...clonedState,
+                loginRedirect: true
+            };
+            break;
                           
         case actions.REGISTRATION_FAILURE:
             clonedState = {
