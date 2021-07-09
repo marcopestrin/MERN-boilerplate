@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from "react"
 import {
     Dialog,
     DialogContent,
-    DialogContentText,
     DialogTitle,
     Button,
     Grid,
@@ -86,100 +85,99 @@ const EditUser = ({ data, root }) => {
         >
             <DialogTitle> Modifica l'utente </DialogTitle>
                 <DialogContent>
-                    <DialogContentText>
-                        <Grid container spacing={2}>
-                            <Grid item container xs={12} spacing={2}>
-                                <Grid item xs={12}>
-                                    <TextField
-                                        fullWidth
-                                        label="Username"
-                                        onChange={changeUsername}
-                                        value={username}
-                                    />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <TextField
-                                        fullWidth
-                                        label="Email"
-                                        onChange={changeEmail}
-                                        value={email}
-                                    />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <FormControlLabel
-                                        label="Permessi da amministratore"
-                                        control={
-                                            <Switch
-                                                checked={admin}
-                                                disabled={!root}
-                                                onChange={switchRole}
-                                                color="primary"
-                                            />
-                                        }
-                                    />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <FormControlLabel
-                                        label="Cambia password utente"
-                                        control={
-                                            <Switch
-                                                disabled={false}
-                                                onChange={enableChangePassword}
-                                                color="primary"
-                                            />
-                                        }
-                                    />
-                                </Grid>
-                                { changePasswordEnabled &&
-                                    <>
-                                        <Grid item xs={12}>
-                                            <TextField
-                                                fullWidth
-                                                type="password"
-                                                label="La tua password"
-                                                onChange={writeCurrentPassword}
-                                                value={currentPassword}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12}>
-                                            <TextField
-                                                fullWidth
-                                                type="password"
-                                                label="Nuova Password"
-                                                onChange={changePassword}
-                                                value={password}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12}>
-                                            <TextField
-                                                fullWidth
-                                                type="password"
-                                                label="Ripeti nuova password"
-                                                onChange={changeRepeatPassword}
-                                                value={repeatPassword}
-                                            />
-                                        </Grid>
-                                    </>
-                                }
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Button
+                    <Grid container spacing={2}>
+                        <Grid item container xs={12} spacing={2}>
+                            <Grid item xs={12}>
+                                <TextField
                                     fullWidth
-                                    onClick={closeModal}
-                                    variant="contained"
-                                >Annulla</Button>
+                                    label="Username"
+                                    onChange={changeUsername}
+                                    value={username}
+                                />
                             </Grid>
-                            <Grid item xs={6}>
-                                <Button
+                            <Grid item xs={12}>
+                                <TextField
                                     fullWidth
-                                    onClick={save}
-                                    variant="contained"
-                                    color="primary"
-                                    disabled={validForm === false}
-                                >Salva</Button>
+                                    label="Email"
+                                    onChange={changeEmail}
+                                    value={email}
+                                />
                             </Grid>
+                            <Grid item xs={12}>
+                                <FormControlLabel
+                                    label="Permessi da amministratore"
+                                    control={
+                                        <Switch
+                                            checked={admin}
+                                            disabled={!root}
+                                            onChange={switchRole}
+                                            color="primary"
+                                        />
+                                    }
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <FormControlLabel
+                                    label="Cambia password utente"
+                                    control={
+                                        <Switch
+                                            disabled={false}
+                                            checked={changePasswordEnabled}
+                                            onChange={enableChangePassword}
+                                            color="primary"
+                                        />
+                                    }
+                                />
+                            </Grid>
+                            { changePasswordEnabled &&
+                                <>
+                                    <Grid item xs={12}>
+                                        <TextField
+                                            fullWidth
+                                            type="password"
+                                            label="La tua password"
+                                            onChange={writeCurrentPassword}
+                                            value={currentPassword}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <TextField
+                                            fullWidth
+                                            type="password"
+                                            label="Nuova Password"
+                                            onChange={changePassword}
+                                            value={password}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <TextField
+                                            fullWidth
+                                            type="password"
+                                            label="Ripeti nuova password"
+                                            onChange={changeRepeatPassword}
+                                            value={repeatPassword}
+                                        />
+                                    </Grid>
+                                </>
+                            }
                         </Grid>
-                    </DialogContentText>
+                        <Grid item xs={6}>
+                            <Button
+                                fullWidth
+                                onClick={closeModal}
+                                variant="contained"
+                            >Annulla</Button>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Button
+                                fullWidth
+                                onClick={save}
+                                variant="contained"
+                                color="primary"
+                                disabled={validForm === false}
+                            >Salva</Button>
+                        </Grid>
+                    </Grid>
                 </DialogContent>
         </Dialog>
     )
