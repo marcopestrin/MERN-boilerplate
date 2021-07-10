@@ -26,7 +26,7 @@ PUBLIC_URL=
 ```
 ## Environment variables
 | Key | Example | Description |
-| --- | --- |
+| --- | --- | --- |
 | CLUSTER | false | Start backend with or without cluster |
 | NODE_ENV | development | Run in "development" mode or in "production" mode |
 | PORT | 8000 | Port used by ExpressJS |
