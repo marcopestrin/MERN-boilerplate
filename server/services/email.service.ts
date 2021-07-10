@@ -21,12 +21,13 @@ const sendEmail = (mailOptions:MailOptions) => {
     return new Promise((resolve) => {
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
-                 resolve(error);
+                resolve(error);
             }
             resolve(info);
         })
     })
-}
+};
+
 export const sendRecoveryEmail = async(token:string, email:string, id:string, username:string) => {
     const url:string = `${process.env.FRONTEND_URL}/recoveryPassword/${id}/${token}/${username}`;
     const mailOptions:MailOptions = {
@@ -37,7 +38,7 @@ export const sendRecoveryEmail = async(token:string, email:string, id:string, us
         html: `This is the token: <b>${token}</b>;<br />This is the id: <b>${id}</b>. Click <a target='_blank' href='${url}'>here</a> to set a new password.`
     };
     return await sendEmail(mailOptions);
-}
+};
 
 export const sendRegistrationEmail = async(email:string, activeCode:string) => {
     const url:string = `http://${process.env.HOST_APPLICATION}:${process.env.PORT}/v1/user/confirmEmail/${activeCode}`;
@@ -49,5 +50,4 @@ export const sendRegistrationEmail = async(email:string, activeCode:string) => {
         html: `Click <b><a target='_blank' href='${url}'>here</a></b> to activate the account`
     };
     return await sendEmail(mailOptions); 
-}
-
+};

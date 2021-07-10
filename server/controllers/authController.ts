@@ -20,7 +20,7 @@ import {
 } from "../services/user.service";
 import { sendRecoveryEmail } from "../services/email.service";
 import { checkCredentials } from "../services/auth.service";
-import { encryptPassword } from "../services/helper.service";
+import { encryptPassword, getContentByDocument } from "../services/helper.service";
 
 const message = require("./message.json");
 class Auth {
@@ -207,8 +207,9 @@ class Auth {
             if (!username) throw message.wrongToken;
             const userDocument:IUser = await getUserByName(username);
             if (!userDocument) throw message.userNotFound;
+            const content = getContentByDocument(userDocument);
             const payload:object = {
-                ...userDocument._doc,
+                ...content,
                 password: encryptPassword(password)
             }
             const { nModified }:Update = await updateUser(payload, { username });

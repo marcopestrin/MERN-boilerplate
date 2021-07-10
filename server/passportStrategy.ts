@@ -12,7 +12,7 @@ export const applyPassportStrategy = () => {
             token = req.cookies['accessToken'];
         }
         return token as string;
-    }
+    };
 
     const tokensExtractor = (req) => {
         let token = "";
@@ -20,7 +20,7 @@ export const applyPassportStrategy = () => {
             token = req.headers.accesstoken
         }
         return token as string;
-    }
+    };
 
     const options: object = {
         //jwtFromRequest: cookieExtractor,
