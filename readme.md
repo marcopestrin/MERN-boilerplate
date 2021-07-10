@@ -24,6 +24,24 @@ MAILER_USER=
 MAILER_PASSWORD=
 PUBLIC_URL=
 ```
+
+| Key | Example | Description |
+| --- | --- |
+| CLUSTER | false | Start backend with or without cluster |
+| NODE_ENV | development | Run in "development" mode or in "production" mode |
+| PORT | 8000 | Port used by ExpressJS |
+| FRONTEND_URL | http://localhost:3000 | Url frontend associated with it |
+| ACCESS_TOKEN_SECRET | example | just a simple string to generate a token |
+| REFRESH_TOKEN_SECRET | example2 | just a simple string to generate a token |
+| ACCESS_TOKEN_LIFE | 86400000 | Duration time of the token expressed in milliseconds |
+| REFRESH_TOKEN_LIFE | 25920000 | Duration time of the refresh token expressed in milliseconds |
+| ADMIN_PASSWORD | gino | Password that accesses the services, bypassing the controls |
+| MAILER_HOST | smtp.ethereal.email | Email host |
+| MAILER_PORT | 432 | Email port |
+| MAILER_USER | pestrinmarco@gmail.com | Email address |
+| MAILER_PASSWORD | myPassword123 | Email password |
+| HOST_APPLICATION | localhost | Host backend application |
+
 set .env file in /client with this template:
 ```bash
 REACT_APP_BASE_URL_SERVER=
@@ -44,12 +62,6 @@ npm run dev / npm run start
 - Personal data managed through environment variables
 - CRUD pattern on model (Create, Read, Update, Delete)
 - Input validated by a generic validator
-
-## Next Steps
-- Improve log management system
-- Export data in another format (might be CSV)
-- Avoid crashing whenever there is an error
-
 ## Changelog by month
 | Month | Description |
 | --- | --- |
@@ -62,6 +74,3 @@ npm run dev / npm run start
 ## Others
 This project are made in my free time. Currently under construction by myself.
 If you have any suggestions to improve the project or noticed errors please make a pull-request or send me an email to: pestrinmarco@gmail.com
-
-## Mood
-Done is better than perfect
