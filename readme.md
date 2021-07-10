@@ -24,7 +24,7 @@ MAILER_USER=
 MAILER_PASSWORD=
 PUBLIC_URL=
 ```
-
+## Environment variables
 | Key | Example | Description |
 | --- | --- |
 | CLUSTER | false | Start backend with or without cluster |
