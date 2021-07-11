@@ -12,5 +12,6 @@
     "errorSendEmail": "Unable to send e-mail",
     "errorCurrentPassword": "Current password wrong",
     "errorAddNewPassword": "Impossible to add new password",
+    "youMustBeAnAdmin": "You don't have the right permit. To do this action you must be an admin",
     "good": "good"
 }

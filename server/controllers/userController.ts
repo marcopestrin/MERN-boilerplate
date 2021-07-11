@@ -22,7 +22,10 @@ import {
     checkCurrentPassword
 } from "../services/helper.service";
 import { sendRegistrationEmail } from "../services/email.service";
-import { removeTokensByUsername } from "../services/token.service";
+import {
+    removeTokensByUsername,
+    getRoleByRefreshToken
+} from "../services/token.service";
 
 const message = require("./message.json");
 class User {
@@ -255,33 +258,46 @@ class User {
      * 
      *      responses:
      *        200:
-     *          description: User disabled   
+     *          description: User disabled
+     *        403:
+     *          description: You don't have the right permit
      */
     async toggleActiveUser(req:Request, res:Response, next:NextFunction) {
         try {
             const id = req.query.id as string;
+            const refreshtoken = req.headers.refreshtoken as string;
             const user:IUser = await getUserById(id);
-            if (user === null) {
+            const role: number = await getRoleByRefreshToken(refreshtoken);
+            const isAdmin = role === 1;
+            if (isAdmin) {
+                if (user === null) {
+                    res.status(400).json({
+                        success: false,
+                        message: message.userNotFound
+                    });
+                    return;
+                }
+                const payload = {
+                    ...getContentByDocument(user),
+                    active: req.path === "/active"
+                };
+                const result:Update = await updateUser(payload, { id });
+                if (result.ok) {
+                    res.status(200).json({
+                        success: true
+                    });
+                    return;
+                }
                 res.status(400).json({
+                    success: false
+                });
+                return;
+            } else {
+                res.status(403).json({
                     success: false,
-                    message: message.userNotFound
-                });
-                return;
+                    message: message.youMustBeAnAdmin
+                })
             }
-            const payload = {
-                ...getContentByDocument(user),
-                active: req.path === "/active"
-            };
-            const result:Update = await updateUser(payload, { id });
-            if (result.ok) {
-                res.status(200).json({
-                    success: true
-                });
-                return;
-            }
-            res.status(400).json({
-                success: false
-            });
         } catch (error) {
             next(error);
         }
@@ -301,17 +317,29 @@ class User {
      * 
      *      responses:
      *        200:
-     *          description: User Removed  
+     *          description: User Removed
+     *        403:
+     *          description: You don't have the right permit
      */
     async deleteUser(req:Request, res:Response, next:NextFunction){
         try {
             const id = req.query.id as string;
+            const refreshtoken = req.headers.refreshtoken as string;
             const { username } = await getUserById(id);
-            await removeUserById(id);
-            await removeTokensByUsername(username);
-            res.status(200).json({
-                success:true
-            });
+            const role: number = await getRoleByRefreshToken(refreshtoken);
+            const isAdmin = role === 1;
+            if (isAdmin) {
+                await removeUserById(id);
+                await removeTokensByUsername(username);
+                res.status(200).json({
+                    success:true
+                });
+            } else {
+                res.status(403).json({
+                    success: false,
+                    message: message.youMustBeAnAdmin
+                })
+            }
         } catch (error) {
             next(error);
         }

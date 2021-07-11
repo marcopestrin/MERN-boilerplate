@@ -3,8 +3,13 @@ import crypto from "crypto";
 import moment from "moment";
 import { Tokens, IToken, IUser } from "../interfaces";
 import schema from "../models/token";
-import { secretKeyAccessToken, secretKeyRefreshToken, accessTokenLife, refreshTokenLife } from "../../const";
-import { getUserByEmail } from "./user.service";
+import {
+    secretKeyAccessToken,
+    secretKeyRefreshToken,
+    accessTokenLife,
+    refreshTokenLife
+} from "../../const";
+import { getUserByEmail, getUserByName } from "./user.service";
 
 const generateToken = (payload:object, secret:string, life:string) => {
     const options: object = {
@@ -90,4 +95,13 @@ export const removeTokenExpired = () => {
 
 export const removeTokensByUsername = async(username:string) => {
     return await schema.deleteMany({ username });
+};
+
+export const getRoleByRefreshToken = async(token: string) => {
+    const document:IToken | null = await schema.findOne({ token });
+    if (!document) {
+        return 0 as number
+    }
+    const { role } = await getUserByName(document.username)
+    return role as number;
 };

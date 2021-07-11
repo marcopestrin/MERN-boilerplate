@@ -17,7 +17,7 @@ export interface Update {
     ok: number,
     n: number,
     nModified: number
-}
+};
 
 export interface IUser extends Document {
     username: string,
@@ -28,8 +28,8 @@ export interface IUser extends Document {
     active?: boolean,
     timeRegistration?: Date,
     resetToken?: string,
-    role?: number
-}
+    role: number
+};
 
 export interface CreateUserInput {
     username: string,
@@ -37,23 +37,23 @@ export interface CreateUserInput {
     email: string,
     id: string,
     activeCode: string
-}
+};
 export interface IToken extends Document {
     token: string,
     username: string,
     type: string,
     expirs: Date
-}
+};
 
 export interface CheckCredentials {
     userRole: number | null,
     userActive: boolean | null,
     success: boolean,
     userId: string,
-}
+};
 
 export interface RequestData { 
     success: boolean;
     data: IUser | null;
     error?: any;
-}
+};
