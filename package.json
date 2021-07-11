@@ -1,6 +1,6 @@
 {
   "name": "mern-boilerplate",
-  "version": "0.1.19",
+  "version": "0.1.2",
   "description": "MERN Boilerplate is a project made with the follow technologies: Express JS, React JS, Redux, MongoDB, Typescript, NodeJs",
   "main": "index.ts",
   "scripts": {

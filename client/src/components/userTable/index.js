@@ -154,6 +154,12 @@ const UserTable = ({ users }) => {
                                                             />
                                                         </Tooltip>
                                                     }
+                                                    <Tooltip title="Elimina utente">
+                                                        <DeleteForever
+                                                            onClick={() => removeUser(id)}
+                                                            className="icon"
+                                                        />
+                                                    </Tooltip>
                                                 </>
                                             }
                                             {(isAdmin || (userId === id)) &&
@@ -161,12 +167,6 @@ const UserTable = ({ users }) => {
                                                     <Tooltip title="Modifica Utente">
                                                         <Edit
                                                             onClick={() => editUser(user)}
-                                                            className="icon"
-                                                        />
-                                                    </Tooltip>
-                                                    <Tooltip title="Elimina utente">
-                                                        <DeleteForever
-                                                            onClick={() => removeUser(id)}
                                                             className="icon"
                                                         />
                                                     </Tooltip>
