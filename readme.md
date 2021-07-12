@@ -51,7 +51,7 @@ npm run dev / npm run start
 | April 2021 | <ul> <li>Handle function http request</li><li>Frontend alias import</li><li>Split controller-services backend</li><li>Created custom token collection in DB</li><li>Added Joi Validator for endpoint input</li>|
 | May 2021 | <ul><li>Added interceptors to manage token renewal</li><li>Frontend: Ability to change the information of your user and other users if you are admin</li><li>Created public kanban board for frontend and backend</li></ul>|
 | June 2021 | <ul><li>Added Joi validator each frontend form</li><li>Created notifications reducer (Frontend) for popupNotify component</li><li>When update a password of a user, you must add the password of current logged user</li><li>When edit or add a new user, check if email and username are available to avoid duplicate</li></ul>|
-| July 2021 | <ul><li>Auto-remove token expired</li><li>When I remove a user, I also remove all tokens associated with it</li><li>Frontend: Reset password page </li><li>Added Title component and MenuAuth component</li><li>Check user permit server side for the functions delete, enable, disable user</li><li>Cannot delete yourself when you are logged</li></ul> |
+| July 2021 | <ul><li>Auto-remove token expired</li><li>When I remove a user, I also remove all tokens associated with it</li><li>Frontend: Reset password page </li><li>Added Title component and MenuAuth component</li><li>Check user permit server side for the functions delete, update, enable, disable user</li><li>Cannot delete yourself when you are logged</li></ul> |
 
 ## Environment variables
 | Key | Example | Description |

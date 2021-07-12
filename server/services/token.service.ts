@@ -102,6 +102,15 @@ export const getRoleByRefreshToken = async(token: string) => {
     if (!document) {
         return 0 as number
     }
-    const { role } = await getUserByName(document.username)
+    const { role } = await getUserByName(document.username);
     return role as number;
+};
+
+export const getUserIdByRefreshToken = async(token: string) => {
+    const document:IToken | null = await schema.findOne({ token, type: "refresh" });
+    if (!document) {
+        return null;
+    }
+    const { id } = await getUserByName(document.username);
+    return id as string;
 };

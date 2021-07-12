@@ -24,7 +24,8 @@ import {
 import { sendRegistrationEmail } from "../services/email.service";
 import {
     removeTokensByUsername,
-    getRoleByRefreshToken
+    getRoleByRefreshToken,
+    getUserIdByRefreshToken
 } from "../services/token.service";
 
 const message = require("./message.json");
@@ -374,42 +375,57 @@ class User {
      *          description: User Updated
      *        400:
      *          description: Current password wrong
+     *        403:
+     *          description: You don't have the right permit
      */
     async updateUser(req:Request, res:Response, next:NextFunction) {
         try {
             const id = req.query.id as string;
+            const refreshtoken = req.headers.refreshtoken as string;
             const payload = req.body;
             const { password, currentPassword, admin, username, email } = payload;
             const token = req.headers.refreshtoken as string;
             const validData = await checkDataOnEdit(email, username, id);
-            if (!validData.success) {
-                res.status(400).json({
-                    success: false,
-                    message: validData.error
-                });
-                return;
-            }
-            if (password && currentPassword) {
-                if (await checkCurrentPassword(token, currentPassword)) {
-                    // si vuole anche modificare la password dell'utente
-                    payload.password = encryptPassword(password);
-                } else {
+            const role: number = await getRoleByRefreshToken(refreshtoken);
+            const idAction: string | null = await getUserIdByRefreshToken(refreshtoken);
+            const isAdmin = role === 1;
+            if (isAdmin || id === idAction) {
+                // posso modificare un utente solo se sono admin oppure le informazioni di me stesso
+                if (!validData.success) {
                     res.status(400).json({
                         success: false,
-                        message: message.errorCurrentPassword
+                        message: validData.error
+                    });
+                    return;
+                }
+                if (password && currentPassword) {
+                    if (await checkCurrentPassword(token, currentPassword)) {
+                        // si vuole anche modificare la password dell'utente
+                        payload.password = encryptPassword(password);
+                    } else {
+                        res.status(400).json({
+                            success: false,
+                            message: message.errorCurrentPassword
+                        });
+                        return;
+                    }
+                } else {
+                    // in queato caso non si dovrà aggiornare la password
+                    delete payload.password;
+                }
+                payload.role = admin ? 1 : 2;
+                const result:Update = await updateUser(payload, { id });
+                if (result.ok) {
+                    res.status(200).json({
+                        success: true
                     });
                     return;
                 }
             } else {
-                // in queato caso non si dovrà aggiornare la password
-                delete payload.password;
-            }
-            payload.role = admin ? 1 : 2;
-            const result:Update = await updateUser(payload, { id });
-            if (result.ok) {
-                res.status(200).json({
-                    success: true
-                });
+                res.status(403).json({
+                    success: false,
+                    message: message.youMustBeAnAdmin
+                })
                 return;
             }
             res.status(400).json({
