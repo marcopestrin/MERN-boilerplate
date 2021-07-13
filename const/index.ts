@@ -3,9 +3,9 @@ export const port = process.env.PORT ? process.env.PORT : 8000;
 export const host = `http://localhost:${port}`;
 export const applicationDomain = "pes-mern-boilerplate";
 
-const databaseName = "mern-boilerplate";
-const databasePort = "27017";
-const databaseServer = "localhost";
+const databaseName = process.env.DATABASE_NAME; //"mern-boilerplate";
+const databasePort = process.env.DATABASE_PORT; //"27017";
+const databaseServer = process.env.DATABASE_SERVER; //"localhost"; 
 
 // tokens
 export const secretKeyAccessToken = process.env.ACCESS_TOKEN_SECRET !== null && process.env.ACCESS_TOKEN_SECRET !== undefined ? process.env.ACCESS_TOKEN_SECRET : applicationDomain;
