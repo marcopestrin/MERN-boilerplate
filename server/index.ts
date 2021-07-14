@@ -2,12 +2,12 @@ import express from "express";
 import http, { Server } from "http";
 import { connect } from 'mongoose';
 import bodyParser from "body-parser";
-import path from "path";
 import cookieParser from "cookie-parser";
 import { port, host, isProduction, urlDatabaseDevelopment, urlDatabaseProduction } from "../const";
 import initializeRoutes from "./initializeRoutes";
 import initializeCors from "./initializeCors";
 import initializeSwagger from "./initializeSwagger";
+import initializeFrontend from "./initializeFrontend";
 import { applyPassportStrategy } from "./passportStrategy";
 import errorMiddlewares from "./middlewares/error";
 import headersResponseMiddlewares from "./middlewares/headers";
@@ -35,14 +35,8 @@ export function createServer(): void {
     app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
     app.use(cookieParser());
 
-    connectDatabase();
-
-    if(isProduction) {
-        app.use(express.static('client/build'));
-        app.get('*', (req, res) => {
-          res.sendFile(path.resolve(__dirname, 'client/build', 'index.html'));
-        });
-    }
+    connectDatabase();    
+    initializeFrontend(app);
     applyPassportStrategy();
     initializeRoutes(router);
     initializeCors(app);
