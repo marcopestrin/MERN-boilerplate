@@ -19,6 +19,7 @@ export default function initializeCors(app: Express): void {
 		credentials: true,
 		origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
 			console.log("origin", origin);
+			console.log("whitelist", whitelist);
 			if (!origin) {
 				callback(null, true);
 			} else if (whitelist.indexOf(origin) !== -1) {
