@@ -8,7 +8,8 @@ export default function initializeCors(app: Express): void {
 		whitelist = [ process.env.FRONTEND_URL as string ];
 	} else {
 		whitelist = [
-			`http://localhost:3000`,
+			`https://localhost:9000`,
+			`https://localhost:3000`,
 			`http://localhost:9000`,
 			`http://localhost:3000`,
 			`https://mern-boilerplate-pes.herokuapp.com`,
@@ -17,6 +18,7 @@ export default function initializeCors(app: Express): void {
 	const corsOptions: CorsOptions = {
 		credentials: true,
 		origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
+			console.log("origin", origin);
 			if (!origin) {
 				callback(null, true);
 			} else if (whitelist.indexOf(origin) !== -1) {
