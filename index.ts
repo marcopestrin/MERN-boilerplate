@@ -2,7 +2,6 @@ import { createServer } from "./server";
 import cluster from "cluster";
 import os from "os";
 
-
 async function startCluster(): Promise<void> {
     if (cluster.isMaster){
         os.cpus().forEach((cpu: os.CpuInfo): cluster.Worker => {

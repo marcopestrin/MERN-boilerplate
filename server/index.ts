@@ -2,6 +2,7 @@ import express from "express";
 import http, { Server } from "http";
 import { connect } from 'mongoose';
 import bodyParser from "body-parser";
+import path from "path";
 import cookieParser from "cookie-parser";
 import { port, host, isProduction, urlDatabaseDevelopment, urlDatabaseProduction } from "../const";
 import initializeRoutes from "./initializeRoutes";
@@ -35,6 +36,13 @@ export function createServer(): void {
     app.use(cookieParser());
 
     connectDatabase();
+
+    if(isProduction) {
+        app.use(express.static('client/build'));
+        app.get('*', (req, res) => {
+          res.sendFile(path.resolve(__dirname, 'client/build', 'index.html'));
+        });
+    }
     applyPassportStrategy();
     initializeRoutes(router);
     initializeCors(app);
