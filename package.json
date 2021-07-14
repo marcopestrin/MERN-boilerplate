@@ -3,6 +3,7 @@
   "version": "0.1.21",
   "description": "MERN Boilerplate is a project made with the follow technologies: Express JS, React JS, Redux, MongoDB, Typescript, NodeJs",
   "main": "index.ts",
+  "type": "module",
   "scripts": {
     "test": "test",
     "lint": "eslint",
