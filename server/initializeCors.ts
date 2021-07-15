@@ -21,10 +21,13 @@ export default function initializeCors(app: Express): void {
 			console.log("origin", origin);
 			console.log("whitelist", whitelist);
 			if (!origin) {
+				console.log("NON consentito 1")
 				callback(null, true);
 			} else if (whitelist.indexOf(origin) !== -1) {
+				console.log("consentito 2")
 				callback(null, true);
 			} else {
+				console.log("NON consentito 3")
 				callback(new Error(`${origin} is not allowed by CORS`));
 			}
 		},
