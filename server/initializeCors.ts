@@ -13,6 +13,7 @@ export default function initializeCors(app: Express): void {
 			`http://localhost:9000`,
 			`http://localhost:3000`,
 			`https://mern-boilerplate-pes.herokuapp.com`,
+			`http://mern-boilerplate-pes.herokuapp.com`,
 		];
 	}
 	const corsOptions: CorsOptions = {
