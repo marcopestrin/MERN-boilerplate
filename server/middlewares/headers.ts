@@ -8,6 +8,9 @@ export default function headersResponseMiddlewares(app: Express): void {
         next:NextFunction
     ): void => {
         res.header("Access-Control-Allow-Origin", "*"); //no cors
+        res.header("Cache-Control", "no-cache, no-store, must-revalidate");
+        res.header("Pragma", "no-cache");
+        res.header("Expires", 0);
         res.header(
             "Access-Control-Allow-Headers",
             "Origin, X-Requested-With, Content-Type, Accept"
