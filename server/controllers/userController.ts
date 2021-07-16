@@ -178,9 +178,8 @@ class User {
      */
     async getAllUsers(req:Request, res:Response, next:NextFunction) {
         try {
-            console.log("example1", res)
+            console.log("qui dentro")
             const data: Array<object> = await getUserList();
-            console.log("example2", data)
             res.status(200).json({
                 success: true,
                 data
