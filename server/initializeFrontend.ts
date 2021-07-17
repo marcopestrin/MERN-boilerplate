@@ -6,5 +6,10 @@ export default function initializeFrontend(app: Express): void {
   const indexBuild = path.resolve(path.resolve("./"), "client/build", "index.html");
   if(isProduction) {
       app.use(express.static(indexBuild));
+      app.get("/frontend/*", (req, res) => {
+        console.log("/frontend/*");
+        res.sendFile(indexBuild);
+      });
+      
   }
 }
