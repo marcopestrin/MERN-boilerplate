@@ -4,6 +4,7 @@
   "description": "MERN Boilerplate is a project made with the follow technologies: Express JS, React JS, Redux, MongoDB, Typescript, NodeJs",
   "main": "index.ts",
   "homepage": ".",
+  "proxy": "http://localhost:3000",
   "scripts": {
     "test": "test",
     "lint": "eslint",

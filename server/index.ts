@@ -36,7 +36,6 @@ export function createServer(): void {
     app.use(cookieParser());
 
     connectDatabase();    
-    initializeFrontend(app);
     applyPassportStrategy();
     initializeRoutes(router);
     initializeCors(app);
@@ -44,6 +43,7 @@ export function createServer(): void {
     app.use(router);
     const server: Server = http.createServer(app);
     errorMiddlewares(app);
+    initializeFrontend(app);
 	server.listen(port, () => console.log(`App listening on ${host}`));
 
     // process.on('uncaughtException', function (error) {
