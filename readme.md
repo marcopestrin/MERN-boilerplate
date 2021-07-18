@@ -46,7 +46,7 @@ npm run dev / npm run start
 - Input validated by a generic validator
 - Combine Express routes (Backend endpoint) and React routes (Frontend pages)
 
-##Demo
+## Demo
 You can see the first deploy in Heroku [here](https://mern-boilerplate-pes.herokuapp.com/login)
 ## Changelog by month
 | Month | Description |
