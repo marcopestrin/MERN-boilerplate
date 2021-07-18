@@ -7,7 +7,6 @@ import { port, host, isProduction, urlDatabaseDevelopment, urlDatabaseProduction
 import initializeRoutes from "./initializeRoutes";
 import initializeCors from "./initializeCors";
 import initializeSwagger from "./initializeSwagger";
-import initializeFrontend from "./initializeFrontend";
 import { applyPassportStrategy } from "./passportStrategy";
 import errorMiddlewares from "./middlewares/error";
 import headersResponseMiddlewares from "./middlewares/headers";
@@ -43,7 +42,6 @@ export function createServer(): void {
     app.use(router);
     const server: Server = http.createServer(app);
     errorMiddlewares(app);
-    initializeFrontend(app);
 	server.listen(port, () => console.log(`App listening on ${host}`));
 
     // process.on('uncaughtException', function (error) {
